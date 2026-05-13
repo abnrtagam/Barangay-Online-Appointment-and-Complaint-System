@@ -437,9 +437,13 @@ exports.forgotPassword = async (req, res) => {
       [email, token, otp, expiresAt]
     )
 
-    // Send OTP via email (will be implemented in COMMIT 3)
-    // For now, just mark as sent
-    console.log(`Password reset OTP for ${email}: ${otp}`)
+    // Send OTP via email
+    const emailResult = await emailService.sendPasswordResetOTPEmail(email, otp, user.first_name)
+    
+    if (!emailResult.success) {
+      console.error('Failed to send password reset OTP email:', emailResult.error)
+      // Still return success to user for security (don't reveal if email failed)
+    }
 
     res.status(200).json({ 
       message: 'If an account exists with this email, you will receive password reset instructions.',

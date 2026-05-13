@@ -225,8 +225,111 @@ const sendApprovalEmail = async (to, firstName, isApproved) => {
   }
 }
 
+/**
+ * Send password reset OTP email
+ * @param {string} to - Recipient email address
+ * @param {string} otp - 6-digit OTP code for password reset
+ * @param {string} firstName - User's first name for personalization
+ */
+const sendPasswordResetOTPEmail = async (to, otp, firstName = 'Resident') => {
+  const mailOptions = {
+    from: {
+      name: 'Barangay Portal',
+      address: process.env.GMAIL_USER,
+    },
+    to,
+    subject: 'Password Reset Code - Barangay Portal',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
+          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+          .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
+          .logo { width: 60px; height: 60px; margin: 0 auto 15px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
+          .content { background: #ffffff; padding: 40px 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+          .otp-box { background: #fef3c7; border: 2px dashed #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 25px 0; }
+          .otp-code { font-size: 36px; font-weight: bold; color: #d97706; letter-spacing: 8px; font-family: 'Courier New', monospace; }
+          .otp-label { color: #78350f; font-size: 14px; margin-bottom: 10px; font-weight: 600; }
+          .warning { background: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 6px; font-size: 14px; }
+          .footer { text-align: center; color: #6b7280; font-size: 13px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
+          ul { padding-left: 20px; }
+          li { margin: 8px 0; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="logo">
+              <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
+                <path d="M16 4L4 11v2h24v-2L16 4zM6 14v10h4V14H6zm8 0v10h4V14h-4zm8 0v10h4V14h-4zM4 26h24v2H4v-2z" fill="white"/>
+              </svg>
+            </div>
+            <h1 style="margin: 0; font-size: 24px; font-weight: 700;">Password Reset</h1>
+            <p style="margin: 10px 0 0; opacity: 0.95; font-size: 15px;">Barangay Citizen Services Portal</p>
+          </div>
+          
+          <div class="content">
+            <h2 style="color: #d97706; margin-top: 0;">Hello, ${firstName}!</h2>
+            
+            <p>We received a request to reset your password. To proceed with resetting your password, please use the One-Time Password (OTP) below:</p>
+            
+            <div class="otp-box">
+              <div class="otp-label">YOUR PASSWORD RESET CODE</div>
+              <div class="otp-code">${otp}</div>
+            </div>
+            
+            <div class="warning">
+              <strong>⚠️ Important:</strong> This OTP will expire in <strong>15 minutes</strong>. Do not share this code with anyone, and barangay staff will never ask for it.
+            </div>
+            
+            <h3 style="color: #374151; font-size: 16px;">To Reset Your Password:</h3>
+            <ul style="color: #4b5563;">
+              <li>Go to the password reset page on the portal</li>
+              <li>Enter your email address</li>
+              <li>Enter the OTP code above</li>
+              <li>Create a new password (minimum 5 characters)</li>
+              <li>Confirm your new password and submit</li>
+            </ul>
+            
+            <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
+              <p style="margin: 0; font-size: 14px; color: #166534;">
+                <strong>💡 Security Reminder:</strong> Use a strong, unique password that you haven't used before. Avoid using personal information like birthdate or address.
+              </p>
+            </div>
+            
+            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
+              If you didn't request this password reset, please ignore this email. Your account is still secure.
+            </p>
+          </div>
+          
+          <div class="footer">
+            <p><strong>Barangay Citizen Services Portal</strong></p>
+            <p>This is an automated message. Please do not reply to this email.</p>
+            <p style="margin-top: 10px;">© ${new Date().getFullYear()} Barangay Portal. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Password reset OTP email sent:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Failed to send password reset OTP email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
 module.exports = {
   verifyConnection,
   sendOTPEmail,
   sendApprovalEmail,
+  sendPasswordResetOTPEmail,
 }
