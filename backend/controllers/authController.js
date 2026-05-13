@@ -387,4 +387,135 @@ exports.adminLogin = async (req, res) => {
   }
 }
 
+// POST /api/auth/forgot-password
+exports.forgotPassword = async (req, res) => {
+  const { email } = req.body
+
+  if (!email) {
+    return res.status(422).json({ message: 'Email is required.' })
+  }
+
+  try {
+    // Check if user exists
+    const [users] = await db.query(
+      'SELECT id, first_name FROM users WHERE email = ?',
+      [email]
+    )
+
+    if (!users.length) {
+      // Don't reveal if email exists for security
+      return res.status(200).json({ 
+        message: 'If an account exists with this email, you will receive password reset instructions.' 
+      })
+    }
+
+    const user = users[0]
+
+    // Check if recently requested (prevent spam)
+    const [recent] = await db.query(
+      'SELECT created_at FROM password_reset_tokens WHERE email = ? AND used = FALSE ORDER BY created_at DESC LIMIT 1',
+      [email]
+    )
+
+    if (recent.length) {
+      const timeSinceLastRequest = (Date.now() - new Date(recent[0].created_at)) / 1000
+      if (timeSinceLastRequest < 300) { // 5 minutes cooldown
+        return res.status(429).json({ 
+          message: `Please wait ${Math.ceil(300 - timeSinceLastRequest)} seconds before requesting another reset.` 
+        })
+      }
+    }
+
+    // Generate OTP and token
+    const otp = generateOTP()
+    const token = crypto.randomBytes(32).toString('hex')
+    const expiresAt = new Date(Date.now() + 15 * 60 * 1000) // 15 minutes
+
+    // Save password reset token
+    await db.query(
+      'INSERT INTO password_reset_tokens (email, token, otp_code, expires_at) VALUES (?, ?, ?, ?)',
+      [email, token, otp, expiresAt]
+    )
+
+    // Send OTP via email (will be implemented in COMMIT 3)
+    // For now, just mark as sent
+    console.log(`Password reset OTP for ${email}: ${otp}`)
+
+    res.status(200).json({ 
+      message: 'If an account exists with this email, you will receive password reset instructions.',
+      email // Safe to return for frontend
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to process password reset request.' })
+  }
+}
+
+// POST /api/auth/reset-password
+exports.resetPassword = async (req, res) => {
+  const { email, otp, newPassword, confirmPassword } = req.body
+
+  if (!email || !otp || !newPassword || !confirmPassword) {
+    return res.status(422).json({ message: 'All fields are required.' })
+  }
+
+  if (newPassword !== confirmPassword) {
+    return res.status(422).json({ message: 'Passwords do not match.' })
+  }
+
+  // Password strength validation
+  if (newPassword.length < 5) {
+    return res.status(422).json({ message: 'Password must be at least 5 characters.' })
+  }
+
+  try {
+    // Find valid reset token
+    const [tokens] = await db.query(
+      'SELECT * FROM password_reset_tokens WHERE email = ? AND otp_code = ? AND used = FALSE ORDER BY created_at DESC LIMIT 1',
+      [email, otp]
+    )
+
+    if (!tokens.length) {
+      return res.status(401).json({ message: 'Invalid or expired reset code.' })
+    }
+
+    const resetToken = tokens[0]
+
+    // Check if expired
+    if (new Date(resetToken.expires_at) < new Date()) {
+      return res.status(401).json({ message: 'Reset code has expired. Please request a new one.' })
+    }
+
+    // Check if user exists
+    const [users] = await db.query(
+      'SELECT id FROM users WHERE email = ?',
+      [email]
+    )
+
+    if (!users.length) {
+      return res.status(404).json({ message: 'User not found.' })
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12)
+
+    // Update password
+    await db.query(
+      'UPDATE users SET password = ? WHERE email = ?',
+      [hashedPassword, email]
+    )
+
+    // Mark token as used
+    await db.query(
+      'UPDATE password_reset_tokens SET used = TRUE WHERE id = ?',
+      [resetToken.id]
+    )
+
+    res.json({ message: 'Password reset successfully. You can now login with your new password.' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Password reset failed.' })
+  }
+}
+
 module.exports = exports

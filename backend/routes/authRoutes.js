@@ -12,4 +12,8 @@ router.post('/resend-otp', ctrl.resendOTP)
 router.post('/login', ctrl.login)
 router.post('/admin-login', ctrl.adminLogin)
 
+// Forgot Password
+router.post('/forgot-password', ctrl.forgotPassword)
+router.post('/reset-password', ctrl.resetPassword)
+
 module.exports = router
