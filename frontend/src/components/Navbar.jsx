@@ -74,21 +74,21 @@ export default function Navbar() {
           height: var(--navbar-h);
           background: var(--primary-700);
           display: flex; align-items: center; justify-content: space-between;
-          padding: 0 28px; gap: 24px;
+          padding: 0 32px; gap: 28px;
           box-shadow: 0 2px 12px rgba(0,0,0,.15);
         }
-        .navbar-brand { display: flex; align-items: center; gap: 12px; flex-shrink: 0; }
+        .navbar-brand { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
         .brand-logo { display: flex; }
         .brand-name { display: block; font-family: var(--font-heading); font-weight: 800; font-size: 1rem; color: white; line-height: 1.1; }
         .brand-sub  { display: block; font-size: .7rem; color: var(--primary-200); letter-spacing: .04em; }
-        .navbar-links { display: flex; gap: 4px; }
+        .navbar-links { display: flex; gap: 12px; }
         .nav-link {
-          padding: 8px 14px; border-radius: var(--radius-md);
+          padding: 10px 16px; border-radius: var(--radius-md);
           font-family: var(--font-heading); font-weight: 600; font-size: .875rem;
           color: var(--primary-100); transition: var(--transition);
         }
         .nav-link:hover { background: rgba(255,255,255,.15); color: white; }
-        .navbar-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+        .navbar-actions { display: flex; align-items: center; gap: 14px; flex-shrink: 0; }
         .icon-btn {
           position: relative; width: 36px; height: 36px; border: none;
           border-radius: var(--radius-md); background: rgba(255,255,255,.12);

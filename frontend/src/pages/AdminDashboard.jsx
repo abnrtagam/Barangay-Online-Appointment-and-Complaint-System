@@ -41,15 +41,15 @@ export default function AdminDashboard() {
       <div className="grid-4 mb-3">
         <DashboardCard title="Total Residents"    value={stats.totalResidents    || 0} icon={<FiUsers/>}       color="blue"   sub="Registered accounts"/>
         <DashboardCard title="Total Complaints"   value={stats.totalComplaints   || 0} icon={<FiAlertCircle/>} color="red"    sub="All time"/>
-        <DashboardCard title="Pending Complaints" value={stats.pendingComplaints || 0} icon={<FiClock/>}       color="orange" sub="Needs attention"/>
-        <DashboardCard title="Total Appointments" value={stats.totalAppointments || 0} icon={<FiCalendar/>}    color="purple" sub="All time"/>
+        <DashboardCard title="Pending Complaints" value={stats.pendingComplaints || 0} icon={<FiClock/>}       color="warning" sub="Needs attention"/>
+        <DashboardCard title="Total Appointments" value={stats.totalAppointments || 0} icon={<FiCalendar/>}    color="info" sub="All time"/>
       </div>
 
       {/* Stats Row 2 */}
       <div className="grid-4 mb-3">
         <DashboardCard title="Approved"     value={stats.approvedComplaints || 0}   icon={<FiCheckCircle/>} color="green"  sub="Complaints"/>
-        <DashboardCard title="Resolved"     value={stats.resolvedComplaints || 0}   icon={<FiCheckCircle/>} color="purple" sub="Complaints"/>
-        <DashboardCard title="Pending Appt" value={stats.pendingAppointments || 0}  icon={<FiClock/>}       color="orange" sub="Appointments"/>
+        <DashboardCard title="Resolved"     value={stats.resolvedComplaints || 0}   icon={<FiCheckCircle/>} color="success" sub="Complaints"/>
+        <DashboardCard title="Pending Appt" value={stats.pendingAppointments || 0}  icon={<FiClock/>}       color="warning" sub="Appointments"/>
         <DashboardCard title="Completed"    value={stats.completedAppointments || 0} icon={<FiCalendar/>}   color="green"  sub="Appointments"/>
       </div>
 

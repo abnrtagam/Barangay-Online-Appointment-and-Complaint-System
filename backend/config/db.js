@@ -17,10 +17,10 @@ const pool = mysql.createPool({
 ;(async () => {
   try {
     const conn = await pool.getConnection()
-    console.log('✅ MySQL connected — database:', process.env.DB_NAME)
+    console.log('MySQL connected — database:', process.env.DB_NAME)
     conn.release()
   } catch (err) {
-    console.error('❌ MySQL connection failed:', err.message)
+    console.error('MySQL connection failed:', err.message)
     console.error('   Make sure XAMPP MySQL is running and the database exists.')
   }
 })()

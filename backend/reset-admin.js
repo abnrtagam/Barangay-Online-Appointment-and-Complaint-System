@@ -67,10 +67,10 @@ async function resetAdmin() {
 
   if (verify.length > 0) {
     const isMatch = await bcrypt.compare('admin1234', verify[0].password)
-    console.log('\n✅ Verification:')
+    console.log('\nVerification:')
     console.log('   Email:', verify[0].email)
     console.log('   Role:', verify[0].role)
-    console.log('   Password matches admin1234:', isMatch ? 'YES ✅' : 'NO ❌')
+    console.log('   Password matches admin1234:', isMatch ? 'YES' : 'NO')
   }
 
   await db.end()

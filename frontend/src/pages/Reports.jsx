@@ -66,7 +66,7 @@ export default function Reports() {
           <div className="grid-4 mb-3">
             <DashboardCard title="Total Residents"    value={stats.totalResidents    || 0} icon={<FiUsers/>}       color="blue"/>
             <DashboardCard title="Total Complaints"   value={stats.totalComplaints   || 0} icon={<FiAlertCircle/>} color="red"/>
-            <DashboardCard title="Total Appointments" value={stats.totalAppointments || 0} icon={<FiCalendar/>}    color="purple"/>
+            <DashboardCard title="Total Appointments" value={stats.totalAppointments || 0} icon={<FiCalendar/>}    color="info"/>
             <DashboardCard title="Resolved Cases"     value={stats.resolvedComplaints || 0} icon={<FiFileText/>}  color="green"/>
           </div>
 

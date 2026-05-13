@@ -21,6 +21,7 @@
   --accent-sky:  #0284c7;
 
   /* Neutrals */
+  --gray-950: #0f172a;
   --gray-900: #111827;
   --gray-800: #1f2937;
   --gray-700: #374151;
@@ -29,18 +30,26 @@
   --gray-400: #9ca3af;
   --gray-300: #d1d5db;
   --gray-200: #e5e7eb;
-  --gray-100: #f3f4f6;
+  --gray-150: #f3f4f6;
+  --gray-100: #f8fafc;
   --gray-50:  #f9fafb;
   --white:    #ffffff;
 
   /* Status Colors */
-  --status-pending:   #f59e0b;
-  --status-approved:  #10b981;
-  --status-scheduled: #3b82f6;
-  --status-resolved:  #6366f1;
-  --status-rejected:  #ef4444;
-  --status-completed: #059669;
-  --status-cancelled: #9ca3af;
+  --success-100: #d1fae5;
+  --success-700: #047857;
+  --warning-100: #fef3c7;
+  --warning-700: #92400e;
+  --danger-100:  #fee2e2;
+  --danger-700:  #991b1b;
+  --info-100:    #dbeafe;
+  --info-700:    #1d4ed8;
+  --amber-50:    #fffbeb;
+  --amber-100:   #fef3c7;
+  --amber-200:   #fde68a;
+  --amber-300:   #fcd34d;
+  --amber-700:   #b45309;
+  --amber-900:   #78350f;
 
   /* Semantic */
   --success: #10b981;
@@ -51,19 +60,48 @@
   /* Typography */
   --font-heading: 'Plus Jakarta Sans', sans-serif;
   --font-body:    'DM Sans', sans-serif;
+  --text-xs: .75rem;
+  --text-sm: .875rem;
+  --text-base: 1rem;
+  --text-md: 1.05rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
 
   /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-7: 28px;
+  --space-8: 32px;
+
   --radius-sm:  6px;
   --radius-md:  10px;
   --radius-lg:  16px;
   --radius-xl:  24px;
   --radius-full: 9999px;
 
+  /* Borders */
+  --border: 1px solid rgba(15, 23, 42, 0.12);
+  --border-strong: 1px solid rgba(15, 23, 42, 0.16);
+  --border-muted: 1px solid rgba(15, 23, 42, 0.08);
+
   /* Shadows */
-  --shadow-sm:  0 1px 3px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.06);
-  --shadow-md:  0 4px 12px rgba(0,0,0,.10);
-  --shadow-lg:  0 10px 30px rgba(0,0,0,.12);
-  --shadow-blue: 0 4px 20px rgba(37,99,235,.25);
+  --shadow-sm:  0 1px 3px rgba(15, 23, 42, .08), 0 1px 2px rgba(15, 23, 42, .06);
+  --shadow-md:  0 4px 10px rgba(15, 23, 42, .10);
+  --shadow-lg:  0 10px 24px rgba(15, 23, 42, .14);
+  --shadow-blue: 0 4px 18px rgba(37, 99, 235, .18);
 
   /* Sidebar width */
   --sidebar-w: 260px;

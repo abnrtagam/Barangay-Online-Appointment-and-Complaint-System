@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { FiBell } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 export default function Announcements() {
   const [announcements, setAnnouncements] = useState([])
@@ -55,7 +56,7 @@ export default function Announcements() {
                         {a.priority || 'Normal'} Priority
                       </span>
                       <span style={{ fontSize: '.78rem', color: 'var(--gray-400)' }}>
-                        {new Date(a.created_at).toLocaleDateString('en-PH', { year: 'numeric', month: 'long', day: 'numeric' })}
+                        {formatDate(a.created_at)}
                       </span>
                     </div>
                     <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.05rem', marginBottom: 10 }}>{a.title}</h3>

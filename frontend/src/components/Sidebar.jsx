@@ -79,15 +79,15 @@ export default function Sidebar() {
           box-shadow: 2px 0 12px rgba(0,0,0,.15);
         }
         .sidebar-brand {
-          display: flex; align-items: center; gap: 12px;
-          padding: 24px 20px 20px;
+          display: flex; align-items: center; gap: 14px;
+          padding: 28px 22px 22px;
           border-bottom: 1px solid rgba(255,255,255,.1);
         }
         .brand-title { font-family: var(--font-heading); font-weight: 800; font-size: 1.1rem; color: white; }
         .brand-sub   { font-size: .7rem; color: var(--primary-300); letter-spacing: .04em; }
         .sidebar-admin-info {
           display: flex; align-items: center; gap: 12px;
-          padding: 16px 20px; border-bottom: 1px solid rgba(255,255,255,.08);
+          padding: 18px 20px; border-bottom: 1px solid rgba(255,255,255,.08);
         }
         .admin-avatar {
           width: 38px; height: 38px; border-radius: 10px;
@@ -97,7 +97,7 @@ export default function Sidebar() {
         }
         .admin-name { font-family: var(--font-heading); font-weight: 600; font-size: .9rem; color: white; }
         .admin-role { font-size: .72rem; color: var(--primary-300); }
-        .sidebar-nav { flex: 1; padding: 16px 12px; }
+        .sidebar-nav { flex: 1; padding: 18px 14px; }
         .nav-section-label {
           font-size: .68rem; letter-spacing: .08em; text-transform: uppercase;
           color: var(--primary-400); font-family: var(--font-heading); font-weight: 700;
@@ -105,11 +105,11 @@ export default function Sidebar() {
         }
         .sidebar-link {
           display: flex; align-items: center; gap: 12px;
-          padding: 11px 12px; border-radius: var(--radius-md);
+          padding: 12px 14px; border-radius: var(--radius-md);
           font-family: var(--font-heading); font-weight: 600; font-size: .9rem;
           color: var(--primary-200); cursor: pointer; border: none;
           background: none; width: 100%; text-align: left;
-          transition: var(--transition); margin-bottom: 2px;
+          transition: var(--transition); margin-bottom: 8px;
         }
         .sidebar-link:hover { background: rgba(255,255,255,.1); color: white; }
         .sidebar-link.active { background: rgba(255,255,255,.15); color: white; }

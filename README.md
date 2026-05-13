@@ -1,74 +1,164 @@
-# 🏛️ Barangay Complaint & Appointment System
+﻿# Barangay Complaint and Appointment Booking System
 
-A full-stack web application for barangay offices to manage resident complaints and appointment bookings.
+## Project Overview
 
-## 📁 Project Structure
+This is a full-stack barangay service system for managing resident accounts, complaint submissions, appointment bookings, and admin review workflows.
 
+The system is built with:
+- React.js for the frontend user interface
+- Node.js + Express.js for the main API middleware
+- Laravel for additional backend services
+- MySQL for the database
+- XAMPP to run Apache and MySQL locally
+
+Residents can:
+- register and verify their email
+- submit complaints with file attachments
+- book appointments with barangay staff
+- track complaint and appointment status updates
+- view announcements
+
+Admins can:
+- review and approve resident verifications
+- manage complaint records and change statuses
+- approve or reject appointments
+- suspend and reactivate accounts
+- post announcements and monitor system activity
+
+Complaint handling includes filing, admin review, status updates, and notification of residents. Appointment booking includes scheduling requests, admin approval, and resident updates.
+
+## System Features
+
+- Resident Registration
+- Email Verification
+- Admin Verification Approval
+- Complaint Submission
+- File Attachment Uploads
+- Appointment Booking
+- Complaint Status Tracking
+- Dashboard Management
+- Account Suspension / Reactivation
+- Announcements Management
+- Complaint Resolution Workflow
+
+## System Workflow
+
+### Resident Registration Workflow
+
+```text
+Register
+→ Email Verification
+→ Pending Verification
+→ Admin Review
+→ Approved or Rejected
+→ User Gains Access
 ```
-barangay-system/
-├── frontend/               ← React.js (Vite) — Port 3000
-├── backend/                ← Node.js + Express — Port 5000
-├── laravel-backend/        ← Laravel — Port 8000
-└── barangay_complaint_system.sql  ← MySQL schema (import in phpMyAdmin)
+
+Each step explained:
+- Register: Resident creates an account with name, email, and password.
+- Email Verification: The system sends an OTP or verification message to the resident email.
+- Pending Verification: The request is stored while admin review is pending.
+- Admin Review: An admin checks the resident details and confirms identity.
+- Approved or Rejected: The admin grants or denies access.
+- User Gains Access: Approved residents can submit complaints and book appointments.
+
+### Complaint Workflow
+
+```text
+Resident Submits Complaint
+→ Admin Reviews Complaint
+→ Status Updates
+→ Resident Receives Update
+→ Complaint Resolved
 ```
 
-## ⚙️ TECH STACK
+### Appointment Workflow
 
-| Layer     | Technology              |
-|-----------|-------------------------|
-| Frontend  | React.js (Vite), React Router v6 |
-| Middleware | Node.js + Express       |
-| Backend   | Laravel 10 + Sanctum    |
-| Database  | MySQL via XAMPP         |
+```text
+Resident Books Appointment
+→ Admin Reviews Appointment
+→ Schedule Approval/Rejection
+→ Resident Receives Update
+```
 
----
+### Account Suspension/Reactivation Workflow
 
-## 🚀 SETUP INSTRUCTIONS
+```text
+Admin Suspends Account
+→ User Loses Access
+→ User Requests Reactivation
+→ Admin Reviews Request
+→ Account Reactivated
+```
 
-### STEP 1 — Start XAMPP
-1. Open XAMPP Control Panel
-2. Start **Apache** and **MySQL**
+## Project Structure
 
-### STEP 2 — Import the Database
-1. Open **phpMyAdmin** → `http://localhost/phpmyadmin`
-2. Click **Import** tab
-3. Choose file: `barangay_complaint_system.sql`
-4. Click **Go**
+```text
+frontend/           React frontend application
+backend/            Node.js + Express backend middleware
+laravel-backend/    Laravel backend services
+uploads/            Uploaded file storage
+barangay_complaint_system.sql  MySQL schema import file
+```
 
-This creates the database with all tables, categories, and the admin account.
+## Requirements
 
-**Admin Login:**
-- Email: `admin@barangay.gov.ph`
-- Password: `admin1234`
+- Node.js
+- npm
+- Composer
+- PHP 8.2+
+- XAMPP
+- MySQL
+- Git
 
----
+## Step-by-Step Installation Guide
 
-### STEP 3 — Set up Laravel Backend
+### 1. Clone the Repository
 
 ```bash
-cd laravel-backend
-
-# Copy environment file
-cp .env.example .env
-
-# Install dependencies
-composer install
-
-# Generate app key
-php artisan key:generate
-
-# Run migrations (if not using the SQL file)
-php artisan migrate --seed
-
-# Link storage
-php artisan storage:link
-
-# Start server
-php artisan serve --port=8000
+git clone <repository-url>
+cd barangay-system/barangay-system
 ```
 
-**laravel-backend/.env key values:**
+> Make sure you are in the folder that contains `frontend/`, `backend/`, and `laravel-backend/`.
+
+### 2. Setup XAMPP
+
+1. Open the XAMPP Control Panel.
+2. Start **Apache**.
+3. Start **MySQL**.
+4. Open **phpMyAdmin** at `http://localhost/phpmyadmin`.
+
+### 3. Create Database
+
+1. In phpMyAdmin, click **New** and create the database `barangay_complaint_system`.
+2. Click **Import**.
+3. Choose `barangay_complaint_system.sql`.
+4. Click **Go**.
+
+This imports all required tables, seed data, and the initial admin account.
+
+### 4. Configure Backend Environment
+
+#### Node backend
+
+Edit `backend/.env` and confirm the MySQL settings:
+
+```env
+PORT=5000
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=
+DB_NAME=barangay_complaint_system
+JWT_SECRET=your_jwt_secret_here
 ```
+
+#### Laravel backend
+
+Edit `laravel-backend/.env` and confirm:
+
+```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -77,152 +167,82 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
----
+If `.env` is missing, copy from `.env.example`:
+- macOS/Linux: `cp .env.example .env`
+- Windows PowerShell: `Copy-Item .env.example .env`
 
-### STEP 4 — Set up Node.js Backend
-
-```bash
-cd backend
-
-# Install dependencies
-npm install
-
-# Check .env (already configured for XAMPP)
-# Make sure DB credentials match
-
-# Start development server
-npm run dev
-# or
-node server.js
-```
-
-Node runs on **port 5000** and connects directly to MySQL.
-
----
-
-### STEP 5 — Set up React Frontend
+### 5. Install Frontend Dependencies
 
 ```bash
 cd frontend
-
-# Install dependencies
 npm install
-
-# Start development server
 npm run dev
 ```
 
-React runs on **port 3000** and proxies `/api` → `http://localhost:5000`.
+The React app will start at `http://localhost:3000`.
 
----
+### 6. Install Backend Dependencies
 
-## 🌐 Access the System
-
-| URL                              | Description          |
-|----------------------------------|----------------------|
-| `http://localhost:3000`          | Landing page         |
-| `http://localhost:3000/register` | Resident register    |
-| `http://localhost:3000/login`    | Resident login       |
-| `http://localhost:3000/admin/login` | Admin login       |
-
----
-
-## 👥 USER ROLES
-
-### Resident
-- Register / Login
-- Submit complaints with file attachment
-- Book appointments with time slot selection
-- Track complaint and appointment status
-- View barangay announcements
-
-### Admin
-- Dashboard with statistics
-- Manage all complaints (Approve / Reject / Schedule / Resolve)
-- Manage all appointments (Approve / Reject / Complete)
-- Manage residents
-- Post announcements
-- Generate and export reports (CSV)
-
----
-
-## 📊 Database Tables
-
-| Table                  | Purpose                              |
-|------------------------|--------------------------------------|
-| `users`                | All user accounts (residents + admin)|
-| `residents`            | Resident profile linked to user      |
-| `admins`               | Admin profile linked to user         |
-| `complaint_categories` | Predefined complaint types           |
-| `complaints`           | Resident complaints                  |
-| `appointments`         | Resident appointment bookings        |
-| `announcements`        | Barangay announcements               |
-| `notifications`        | System notifications (future use)    |
-
----
-
-## 🔐 Default Credentials
-
-| Role     | Email                       | Password   |
-|----------|-----------------------------|------------|
-| Admin    | admin@barangay.gov.ph       | admin1234  |
-| Resident | (register via /register)    | your choice|
-
----
-
-## 📦 Complaint Statuses
-`Pending` → `Approved` → `Scheduled` → `Resolved`  
-`Pending` → `Rejected`
-
-## 📅 Appointment Statuses
-`Pending` → `Approved` → `Completed`  
-`Pending` → `Rejected`  
-`Approved` → `Cancelled`
-
----
-
-## 🎨 Theme
-- **Primary:** Blue (`#2563eb`)
-- **Background:** White (`#ffffff`)
-- **Font:** Plus Jakarta Sans (headings) + DM Sans (body)
-- **Design:** Clean government portal aesthetic
-
----
-
-## 📂 Key Source Files
-
+```bash
+cd ../backend
+npm install
+npm run dev
 ```
-frontend/src/
-├── pages/
-│   ├── LandingPage.jsx        — public homepage
-│   ├── ResidentLogin.jsx      — resident login
-│   ├── ResidentRegister.jsx   — registration form
-│   ├── ResidentDashboard.jsx  — resident home
-│   ├── SubmitComplaint.jsx    — complaint form + file upload
-│   ├── ComplaintHistory.jsx   — resident complaint tracker
-│   ├── BookAppointment.jsx    — slot picker + booking form
-│   ├── AppointmentHistory.jsx — resident appointment tracker
-│   ├── Announcements.jsx      — public announcements
-│   ├── AdminDashboard.jsx     — admin stats overview
-│   ├── ManageComplaints.jsx   — admin complaint management
-│   ├── ManageAppointments.jsx — admin appointment management
-│   ├── ManageResidents.jsx    — admin resident directory
-│   ├── ManageAnnouncements.jsx— admin announcements CRUD
-│   └── Reports.jsx            — admin reports + CSV export
-│
-backend/
-├── controllers/
-│   ├── authController.js      — register, login, admin-login
-│   ├── complaintController.js — categories, submit, list
-│   ├── appointmentController.js — slots, book, list
-│   ├── adminController.js     — all admin endpoints + reports
-│   └── announcementController.js — CRUD announcements
-│
-laravel-backend/app/Http/Controllers/
-│   ├── AuthController.php
-│   ├── ComplaintController.php
-│   ├── AppointmentController.php
-│   ├── AdminController.php
-│   ├── AnnouncementController.php
-│   └── ResidentController.php
+
+The Node backend runs on `http://localhost:5000`.
+
+### 7. Install Laravel Backend
+
+```bash
+cd ../laravel-backend
+composer install
+php artisan key:generate
+php artisan serve --port=8000
 ```
+
+The Laravel backend runs on `http://localhost:8000`.
+
+## Running the System
+
+Open these URLs:
+
+- Frontend: `http://localhost:3000`
+- Backend API: `http://localhost:5000/api`
+- Laravel Backend: `http://localhost:8000`
+
+## Admin Access
+
+Admin users can:
+- log in through the admin portal
+- approve or reject resident verifications
+- manage complaints and update statuses
+- approve or reject appointment bookings
+- suspend and reactivate resident accounts
+- create announcements
+
+Residents can:
+- register and verify accounts
+- submit complaints with attached files
+- book appointments and track responses
+- view announcements
+
+## Common Troubleshooting
+
+- npm install issues: delete `node_modules` and `package-lock.json`, then run `npm install` again.
+- composer install issues: ensure PHP is installed and run `composer install` inside `laravel-backend`.
+- MySQL connection issues: confirm XAMPP MySQL is running and the database name is `barangay_complaint_system`.
+- port already in use: use a different port for frontend, backend, or Laravel.
+- uploads not showing: ensure `backend/uploads` exists and `backend/server.js` is serving `/uploads`.
+- CORS issues: verify `backend/server.js` allows `http://localhost:3000`.
+- email verification issues: update SMTP/Gmail credentials in `backend/.env`.
+
+## Important Instructions
+
+- Do not commit `.env` files with credentials.
+- Start XAMPP before running the backend.
+- Use the SQL file to create the MySQL schema.
+- Run frontend, Node backend, and Laravel backend together for the full system.
+
+---
+
+Thank you for using the Barangay Complaint and Appointment Booking System. This guide is designed for developers and beginners to install and run the project successfully.

@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
+import { FiCheck } from 'react-icons/fi'
 
 export default function VerifyOTP() {
   const navigate = useNavigate()
@@ -102,13 +103,14 @@ export default function VerifyOTP() {
         <div style={{ textAlign: 'center', marginBottom: 32 }}>
           <div style={{
             width: 64, height: 64, borderRadius: 16,
-            background: 'linear-gradient(135deg, var(--primary-600), var(--primary-700))',
+            background: 'var(--primary-600)',
             display: 'flex', alignItems: 'center', justifyContent: 'center',
-            margin: '0 auto 16px', color: 'white', fontSize: 32
+            margin: '0 auto 16px', color: 'white', fontSize: 24,
+            fontFamily: 'var(--font-heading)', fontWeight: 800,
           }}>
-            🔐
+            OTP
           </div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.5rem', marginBottom: 8 }}>Verify Your Email</h1>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.5rem', marginBottom: 8, color: 'var(--gray-950)' }}>Verify Your Email</h1>
           <p style={{ color: 'var(--gray-600)', fontSize: '.95rem' }}>
             We've sent a verification code to<br/>
             <strong>{email}</strong>
@@ -137,12 +139,12 @@ export default function VerifyOTP() {
                       onKeyDown={e => handleKeyDown(idx, e)}
                       onPaste={handlePaste}
                       maxLength="1"
-                      style={{
+                        style={{
                         width: '100%', padding: '16px', fontSize: '24px', fontWeight: 700,
-                        textAlign: 'center', border: '2px solid var(--border-color)',
+                        textAlign: 'center', border: '2px solid var(--gray-300)',
                         borderRadius: 8, transition: 'all 0.2s',
                         background: digit ? 'var(--primary-50)' : 'white',
-                        borderColor: digit ? 'var(--primary-300)' : 'var(--border-color)'
+                        borderColor: digit ? 'var(--primary-300)' : 'var(--gray-300)'
                       }}
                       onFocus={e => e.target.style.borderColor = 'var(--primary-600)'}
                       onBlur={e => e.target.style.borderColor = digit ? 'var(--primary-300)' : 'var(--border-color)'}
@@ -150,7 +152,7 @@ export default function VerifyOTP() {
                   ))}
                 </div>
                 <div style={{ fontSize: 12, color: 'var(--gray-500)' }}>
-                  💡 Tip: You can paste the code directly
+                  Tip: You can paste the code directly into the fields.
                 </div>
               </div>
 
@@ -160,11 +162,10 @@ export default function VerifyOTP() {
                 padding: 16, borderRadius: 8, marginBottom: 24, fontSize: 14
               }}>
                 <div style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-                  <span style={{ fontSize: 18 }}>⏰</span>
                   <div>
                     <strong>Code expires in 10 minutes</strong>
                     <div style={{ color: 'var(--gray-600)', fontSize: 12, marginTop: 2 }}>
-                      Check your email spam folder if you don't see the code
+                      Please review your inbox and spam folder for the verification code.
                     </div>
                   </div>
                 </div>
@@ -207,10 +208,12 @@ export default function VerifyOTP() {
         <div style={{ marginTop: 24, padding: 16, background: 'white', borderRadius: 8 }}>
           <h3 style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: 'var(--gray-700)' }}>What happens next?</h3>
           <ul style={{ fontSize: 13, color: 'var(--gray-600)', lineHeight: 1.8, paddingLeft: 20 }}>
-            <li>✓ Your email will be verified</li>
-            <li>✓ Your account will be pending admin review</li>
-            <li>✓ You'll receive an email when approved</li>
-            <li>✓ Then you can log in and access services</li>
+            {['Your email will be verified', 'Your account will be pending admin review', 'You will receive an email when approved', 'Then you can log in and access services'].map(item => (
+              <li key={item} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <FiCheck size={14} style={{ color: 'var(--success)' }}/>
+                {item}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

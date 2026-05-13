@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Modal } from '../components/DashboardCard'
 import { FiEye, FiSearch, FiUser } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 export default function ManageResidents() {
   const [residents, setResidents] = useState([])
@@ -63,7 +64,7 @@ export default function ManageResidents() {
                       <td style={{ fontSize: '.85rem' }}>{r.email}</td>
                       <td style={{ fontSize: '.85rem' }}>{r.phone}</td>
                       <td style={{ fontSize: '.82rem', color: 'var(--gray-500)', maxWidth: 180, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{r.address}</td>
-                      <td style={{ fontSize: '.8rem', color: 'var(--gray-400)' }}>{new Date(r.created_at).toLocaleDateString()}</td>
+                      <td style={{ fontSize: '.8rem', color: 'var(--gray-400)' }}>{formatDate(r.created_at)}</td>
                       <td><button className="btn btn-secondary btn-sm" onClick={() => setSelected(r)}><FiEye/> View</button></td>
                     </tr>
                   ))}
@@ -87,7 +88,7 @@ export default function ManageResidents() {
               <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1.1rem' }}>{selected.first_name} {selected.last_name}</div>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: '110px 1fr', gap: '10px 16px', fontSize: '.9rem' }}>
-              {[['Email', selected.email], ['Phone', selected.phone], ['Address', selected.address], ['Registered', new Date(selected.created_at).toLocaleDateString()]].map(([l, v]) => (
+              {[['Email', selected.email], ['Phone', selected.phone], ['Address', selected.address], ['Registered', formatDate(selected.created_at)]].map(([l, v]) => (
                 <React.Fragment key={l}>
                   <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>{l}</span>
                   <span>{v}</span>

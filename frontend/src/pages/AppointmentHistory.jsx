@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { StatusBadge, Modal } from '../components/DashboardCard'
 import { FiEye, FiPlus } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 export default function AppointmentHistory() {
   const [appointments, setAppointments] = useState([])
@@ -66,10 +67,10 @@ export default function AppointmentHistory() {
                   <tr key={a.id}>
                     <td style={{ color: 'var(--gray-400)', fontSize: '.8rem' }}>{i + 1}</td>
                     <td style={{ fontWeight: 600, fontFamily: 'var(--font-heading)' }}>{a.purpose}</td>
-                    <td>{new Date(a.appointment_date).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                    <td>{formatDate(a.appointment_date, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                     <td>{a.time_slot}</td>
                     <td><StatusBadge status={a.status}/></td>
-                    <td style={{ fontSize: '.82rem', color: 'var(--gray-500)' }}>{new Date(a.created_at).toLocaleDateString()}</td>
+                    <td style={{ fontSize: '.82rem', color: 'var(--gray-500)' }}>{formatDate(a.created_at)}</td>
                     <td>
                       <button className="btn btn-secondary btn-sm" onClick={() => setSelected(a)}>
                         <FiEye/> View
@@ -91,10 +92,10 @@ export default function AppointmentHistory() {
           <div style={{ fontSize: '.9rem', lineHeight: 1.8 }}>
             <div style={{ display: 'grid', gridTemplateColumns: '130px 1fr', gap: '8px 16px', marginBottom: 16 }}>
               {[['Status', <StatusBadge status={selected.status}/>],
-                ['Date', new Date(selected.appointment_date).toLocaleDateString('en-PH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })],
+                ['Date', formatDate(selected.appointment_date, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })],
                 ['Time Slot', selected.time_slot],
                 ['Purpose', selected.purpose],
-                ['Booked On', new Date(selected.created_at).toLocaleString()],
+                ['Booked On', formatDate(selected.created_at, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })],
               ].map(([label, value]) => (
                 <React.Fragment key={label}>
                   <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>{label}</span>

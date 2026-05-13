@@ -27,22 +27,22 @@ export default function AdminLogin() {
   return (
     <div style={{
       minHeight: '100vh',
-      background: 'linear-gradient(135deg, var(--primary-900) 0%, var(--primary-700) 100%)',
+      background: 'var(--primary-50)',
       display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
     }}>
       <div style={{ width: '100%', maxWidth: 400 }}>
-        <div style={{ textAlign: 'center', marginBottom: 28, color: 'white' }}>
+        <div style={{ textAlign: 'center', marginBottom: 28 }}>
           <div style={{
-            width: 64, height: 64, borderRadius: 16, background: 'rgba(255,255,255,.15)',
+            width: 64, height: 64, borderRadius: 16, background: 'var(--primary-100)',
             display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px',
-            border: '1.5px solid rgba(255,255,255,.3)',
+            border: '1.5px solid var(--primary-200)',
           }}>
             <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
-              <path d="M16 4L4 11v2h24v-2L16 4zM6 14v10h4V14H6zm8 0v10h4V14h-4zm8 0v10h4V14h-4zM4 26h24v2H4v-2z" fill="white"/>
+              <path d="M16 4L4 11v2h24v-2L16 4zM6 14v10h4V14H6zm8 0v10h4V14h-4zm8 0v10h4V14h-4zM4 26h24v2H4v-2z" fill="var(--primary-700)"/>
             </svg>
           </div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.6rem', marginBottom: 6 }}>Admin Portal</h1>
-          <p style={{ color: 'var(--primary-200)', fontSize: '.9rem' }}>Authorized personnel only</p>
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.6rem', marginBottom: 6, color: 'var(--gray-950)' }}>Admin Portal</h1>
+          <p style={{ color: 'var(--gray-600)', fontSize: '.9rem' }}>Authorized personnel only</p>
         </div>
 
         <div className="card">

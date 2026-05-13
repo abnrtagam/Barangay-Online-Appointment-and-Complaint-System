@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { StatusBadge, Modal, AlertMessage } from '../components/DashboardCard'
 import { FiEye, FiFilter, FiCheck, FiX, FiCalendar, FiCheckSquare } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 const STATUS_OPTS = ['', 'Pending', 'Approved', 'Scheduled', 'Resolved', 'Rejected']
 
@@ -127,7 +128,7 @@ export default function ManageComplaints() {
                           {c.subject}
                         </div>
                       </td>
-                      <td style={{ fontSize: '.82rem', color: 'var(--gray-500)' }}>{new Date(c.created_at).toLocaleDateString()}</td>
+                      <td style={{ fontSize: '.82rem', color: 'var(--gray-500)' }}>{formatDate(c.created_at)}</td>
                       <td><StatusBadge status={c.status}/></td>
                       <td>
                         <div style={{ display: 'flex', gap: 6 }}>
@@ -168,7 +169,7 @@ export default function ManageComplaints() {
             <div style={{ display: 'grid', gridTemplateColumns: '120px 1fr', gap: '6px 14px', marginBottom: 18, fontSize: '.88rem' }}>
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Resident</span><span>{selected.resident_name}</span>
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Category</span><span>{selected.category_name}</span>
-              <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Filed</span><span>{new Date(selected.created_at).toLocaleString()}</span>
+              <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Filed</span><span>{formatDate(selected.created_at)}</span>
             </div>
             <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 4 }}>{selected.subject}</div>
             <div style={{ background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', padding: '12px 14px', marginBottom: 18, fontSize: '.88rem', color: 'var(--gray-700)', whiteSpace: 'pre-wrap' }}>

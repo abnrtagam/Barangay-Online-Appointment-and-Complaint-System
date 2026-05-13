@@ -39,10 +39,10 @@ const transporter = nodemailer.createTransport({
 const verifyConnection = async () => {
   try {
     await transporter.verify()
-    console.log('✅ Email service is ready to send messages')
+    console.log('Email service is ready to send messages')
     return true
   } catch (error) {
-    console.error('❌ Email service error:', error.message)
+    console.error('Email service error:', error.message)
     console.error('Make sure GMAIL_USER and GMAIL_APP_PASSWORD are set in .env')
     return false
   }
@@ -61,7 +61,7 @@ const sendOTPEmail = async (to, otp, firstName = 'Resident') => {
       address: process.env.GMAIL_USER,
     },
     to,
-    subject: '🔐 Email Verification - Barangay Portal',
+    subject: 'Email Verification - Barangay Portal',
     html: `
       <!DOCTYPE html>
       <html>
@@ -97,7 +97,7 @@ const sendOTPEmail = async (to, otp, firstName = 'Resident') => {
           </div>
           
           <div class="content">
-            <h2 style="color: #1e40af; margin-top: 0;">Hello, ${firstName}! 👋</h2>
+<h2 style="color: #1e40af; margin-top: 0;">Hello, ${firstName}!</h2>
             
             <p>Thank you for registering with the Barangay Portal. To complete your registration, please verify your email address using the One-Time Password (OTP) below:</p>
             
@@ -107,7 +107,7 @@ const sendOTPEmail = async (to, otp, firstName = 'Resident') => {
             </div>
             
             <div class="warning">
-              <strong>⏰ Important:</strong> This OTP will expire in <strong>10 minutes</strong>. Please enter it soon to verify your account.
+              <strong>Important:</strong> This OTP will expire in <strong>10 minutes</strong>. Please enter it soon to verify your account.
             </div>
             
             <h3 style="color: #374151; font-size: 16px;">Next Steps:</h3>
@@ -142,10 +142,10 @@ const sendOTPEmail = async (to, otp, firstName = 'Resident') => {
 
   try {
     const info = await transporter.sendMail(mailOptions)
-    console.log('✅ OTP email sent:', info.messageId)
+    console.log('OTP email sent:', info.messageId)
     return { success: true, messageId: info.messageId }
   } catch (error) {
-    console.error('❌ Failed to send OTP email:', error)
+    console.error('Failed to send OTP email:', error)
     return { success: false, error: error.message }
   }
 }
@@ -161,15 +161,15 @@ const sendApprovalEmail = async (to, firstName, isApproved) => {
     },
     to,
     subject: isApproved 
-      ? '✅ Account Approved - Barangay Portal' 
-      : '❌ Account Not Approved - Barangay Portal',
+      ? 'Account Approved - Barangay Portal' 
+      : 'Account Not Approved - Barangay Portal',
     html: isApproved ? `
       <!DOCTYPE html>
       <html>
       <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
         <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
           <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-            <h1 style="margin: 0;">🎉 Account Approved!</h1>
+            <h1 style="margin: 0;">Account Approved</h1>
           </div>
           <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <h2 style="color: #059669;">Hello, ${firstName}!</h2>

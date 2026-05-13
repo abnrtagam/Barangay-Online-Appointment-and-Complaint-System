@@ -14,7 +14,7 @@ export default function LandingPage() {
     <div style={{ minHeight: '100vh', background: 'var(--gray-50)' }}>
       {/* Hero */}
       <header style={{
-        background: 'linear-gradient(135deg, var(--primary-900) 0%, var(--primary-700) 60%, var(--primary-500) 100%)',
+        background: 'var(--primary-700)',
         color: 'white', padding: '0 24px',
       }}>
         <div style={{
@@ -39,10 +39,10 @@ export default function LandingPage() {
           <div style={{
             display: 'inline-flex', alignItems: 'center', gap: 8,
             background: 'rgba(255,255,255,.12)', borderRadius: 'var(--radius-full)',
-            padding: '6px 18px', marginBottom: 24, fontSize: '.82rem',
+            padding: '8px 20px', marginBottom: 24, fontSize: '.82rem',
             fontFamily: 'var(--font-heading)', fontWeight: 600,
           }}>
-            🏛️ Official Barangay Online Services
+            Official Barangay Online Services
           </div>
           <h1 style={{
             fontFamily: 'var(--font-heading)', fontWeight: 800,
@@ -50,10 +50,10 @@ export default function LandingPage() {
             lineHeight: 1.15, marginBottom: 20,
           }}>
             Serve Your Community<br />
-            <span style={{ color: 'var(--primary-300)' }}>Smarter & Faster</span>
+            <span style={{ color: 'var(--primary-200)' }}>Smarter & Faster</span>
           </h1>
           <p style={{ fontSize: '1.1rem', color: 'var(--primary-200)', maxWidth: 560, margin: '0 auto 40px', lineHeight: 1.7 }}>
-            File complaints, book appointments, and stay connected with your barangay — all in one secure online portal.
+            File complaints, book appointments, and stay connected with your barangay. Access secure government services in one trusted portal.
           </p>
           <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/register" className="btn btn-lg" style={{ background: 'white', color: 'var(--primary-700)', fontFamily: 'var(--font-heading)' }}>

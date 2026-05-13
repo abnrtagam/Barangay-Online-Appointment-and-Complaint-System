@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import axios from 'axios'
 import { StatusBadge, Modal } from '../components/DashboardCard'
 import { FiEye, FiPlus, FiFilter } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 export default function ComplaintHistory() {
   const [complaints, setComplaints] = useState([])
@@ -91,7 +92,7 @@ export default function ComplaintHistory() {
                     <td style={{ color: 'var(--gray-400)', fontSize: '.8rem' }}>{i + 1}</td>
                     <td style={{ fontWeight: 600, fontFamily: 'var(--font-heading)' }}>{c.subject}</td>
                     <td>{c.category_name}</td>
-                    <td>{new Date(c.created_at).toLocaleDateString('en-PH', { year: 'numeric', month: 'short', day: 'numeric' })}</td>
+                    <td>{formatDate(c.created_at, { year: 'numeric', month: 'short', day: 'numeric' })}</td>
                     <td><StatusBadge status={c.status}/></td>
                     <td style={{ color: 'var(--gray-500)', fontSize: '.85rem', maxWidth: 180 }}>
                       {c.admin_remarks || <span style={{ color: 'var(--gray-300)' }}>—</span>}
@@ -124,7 +125,7 @@ export default function ComplaintHistory() {
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Category</span>
               <span>{selected.category_name}</span>
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Filed</span>
-              <span>{new Date(selected.created_at).toLocaleString()}</span>
+              <span>{formatDate(selected.created_at, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
             </div>
             <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 4 }}>{selected.subject}</div>
             <div style={{ color: 'var(--gray-600)', marginBottom: 16, whiteSpace: 'pre-wrap' }}>{selected.details}</div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
-import { FiCalendar, FiClock, FiSend } from 'react-icons/fi'
+import { FiCalendar, FiCheck, FiClock, FiSend } from 'react-icons/fi'
 
 const TIME_SLOTS = [
   '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM',
@@ -148,13 +148,13 @@ export default function BookAppointment() {
                             padding: '9px 6px', borderRadius: 'var(--radius-md)',
                             border: selected ? '2px solid var(--primary-600)' : '1.5px solid var(--gray-200)',
                             background: taken ? 'var(--gray-100)' : selected ? 'var(--primary-50)' : 'white',
-                            color: taken ? 'var(--gray-300)' : selected ? 'var(--primary-700)' : 'var(--gray-700)',
+                            color: taken ? 'var(--gray-400)' : selected ? 'var(--primary-700)' : 'var(--gray-700)',
                             fontFamily: 'var(--font-heading)', fontWeight: selected ? 700 : 500,
                             fontSize: '.82rem', cursor: taken ? 'not-allowed' : 'pointer',
                             transition: 'var(--transition)',
                           }}
                         >
-                          {slot} {taken ? '✗' : ''}
+                          {slot}
                         </button>
                       )
                     })}
@@ -171,7 +171,7 @@ export default function BookAppointment() {
                   value={form.purpose} 
                   onChange={handleChange}
                 >
-                  <option value="">— Select purpose —</option>
+                  <option value="">Select purpose</option>
                   {PURPOSE_OPTIONS.map(option => (
                     <option key={option} value={option}>{option}</option>
                   ))}
@@ -227,7 +227,8 @@ export default function BookAppointment() {
               <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 14, fontSize: '.95rem' }}>What to Bring</h3>
               {['Valid government ID', 'Proof of residency', 'Supporting documents (if needed)', 'Completed forms (if applicable)'].map(item => (
                 <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', fontSize: '.88rem', color: 'var(--gray-600)' }}>
-                  <span style={{ color: 'var(--success)', fontWeight: 700 }}>✓</span> {item}
+                  <FiCheck size={14} color='var(--success)' />
+                  <span>{item}</span>
                 </div>
               ))}
             </div>

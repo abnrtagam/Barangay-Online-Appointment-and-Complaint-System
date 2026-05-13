@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { DashboardCard, AlertMessage } from '../components/DashboardCard'
 import { FiCheck, FiX, FiEye, FiClock, FiUser, FiMail, FiPhone, FiMapPin, FiFileText, FiRefreshCw } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 export default function AccountVerifications() {
   const [accounts, setAccounts] = useState([])
@@ -185,25 +186,6 @@ export default function AccountVerifications() {
     }
   }
 
-  const formatDate = (dateString) => {
-    if (!dateString) return 'N/A'
-    try {
-      const date = new Date(dateString)
-      // Check if date is valid
-      if (isNaN(date.getTime())) return 'Invalid Date'
-      
-      return date.toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    } catch (err) {
-      return 'Invalid Date'
-    }
-  }
-
   const getStatusBadge = (status) => {
     const styles = {
       pending: { bg: 'var(--amber-100)', color: 'var(--amber-700)', icon: FiClock },
@@ -253,7 +235,7 @@ export default function AccountVerifications() {
             title="Pending"
             value={stats.pending}
             icon={FiClock}
-            color="amber"
+            color="warning"
           />
           <DashboardCard
             title="Approved"
@@ -303,7 +285,7 @@ export default function AccountVerifications() {
                       <strong>Reason:</strong> {req.reason}
                     </p>
                     <p style={{ margin: '4px 0 0', fontSize: '0.85rem', color: 'var(--gray-500)' }}>
-                      Requested: {formatDate(req.requested_at)}
+                      Requested: {formatDate(req.requested_at, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </p>
                   </div>
                   <button
@@ -387,9 +369,13 @@ export default function AccountVerifications() {
                       <td>{formatDate(account.created_at)}</td>
                       <td>
                         {account.email_verified ? (
-                          <span style={{ color: 'var(--green-600)', fontSize: '0.85rem' }}>✓ Verified</span>
+                          <span style={{ color: 'var(--green-600)', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                            <FiCheck size={14} /> Verified
+                          </span>
                         ) : (
-                          <span style={{ color: 'var(--amber-600)', fontSize: '0.85rem' }}>⏳ Pending</span>
+                          <span style={{ color: 'var(--amber-600)', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                            <FiClock size={14} /> Pending
+                          </span>
                         )}
                       </td>
                       <td>{getStatusBadge(account.status)}</td>
@@ -502,7 +488,7 @@ export default function AccountVerifications() {
                   <div>
                     <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--gray-600)' }}>Email Verification</p>
                     <p style={{ margin: '8px 0 0', fontWeight: '600' }}>
-                      {selectedAccount.email_verified ? '✓ Verified' : '⏳ Not Verified'}
+                      {selectedAccount.email_verified ? 'Verified' : 'Not Verified'}
                     </p>
                   </div>
                 </div>

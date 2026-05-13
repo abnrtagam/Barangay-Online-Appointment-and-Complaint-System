@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { DashboardCard, StatusBadge, AlertMessage } from '../components/DashboardCard'
 import { FiAlertCircle, FiCalendar, FiClock, FiCheckCircle, FiArrowRight } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 const parseLocalStorageJSON = value => {
   try {
@@ -63,18 +64,18 @@ export default function ResidentDashboard() {
       {error && <AlertMessage type="error" message={error} onClose={() => setError(null)} />}
       {/* Welcome */}
       <div style={{
-        background: 'linear-gradient(135deg, var(--primary-700), var(--primary-500))',
+        background: 'var(--primary-700)',
         borderRadius: 'var(--radius-xl)', padding: '28px 32px', marginBottom: 28,
         color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center',
       }}>
         <div>
-          <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.6rem', marginBottom: 6 }}>
-            Welcome back, {user.first_name || 'Resident'}! 👋
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '1.6rem', marginBottom: 6, color: 'var(--white)' }}>
+            Welcome back, {user.first_name || 'Resident'}
           </h1>
-          <p style={{ color: 'var(--primary-100)', fontSize: '.95rem' }}>Here's an overview of your barangay service requests.</p>
+          <p style={{ color: 'var(--primary-100)', fontSize: '.95rem' }}>Here is your current barangay service overview.</p>
         </div>
         <div style={{ display: 'flex', gap: 10, flexShrink: 0 }}>
-          <Link to="/resident/complaints/submit" className="btn btn-sm" style={{ background: 'white', color: 'var(--primary-700)' }}>
+          <Link to="/resident/complaints/submit" className="btn btn-secondary btn-sm" style={{ background: 'white', color: 'var(--primary-700)' }}>
             File Complaint
           </Link>
           <Link to="/resident/appointments/book" className="btn btn-sm" style={{ background: 'rgba(255,255,255,.15)', color: 'white', border: '1.5px solid rgba(255,255,255,.3)' }}>
@@ -86,9 +87,9 @@ export default function ResidentDashboard() {
       {/* Stats */}
       <div className="grid-4 mb-3">
         <DashboardCard title="Total Complaints"      value={stats.totalComplaints}      icon={<FiAlertCircle/>} color="blue" />
-        <DashboardCard title="Pending Complaints"    value={stats.pendingComplaints}    icon={<FiClock/>}       color="orange" />
-        <DashboardCard title="Total Appointments"    value={stats.totalAppointments}    icon={<FiCalendar/>}    color="purple" />
-        <DashboardCard title="Upcoming Appointments" value={stats.upcomingAppointments} icon={<FiCheckCircle/>} color="green" />
+        <DashboardCard title="Pending Complaints"    value={stats.pendingComplaints}    icon={<FiClock/>}       color="warning" />
+        <DashboardCard title="Total Appointments"    value={stats.totalAppointments}    icon={<FiCalendar/>}    color="info" />
+        <DashboardCard title="Upcoming Appointments" value={stats.upcomingAppointments} icon={<FiCheckCircle/>} color="success" />
       </div>
 
       {/* Recent */}
@@ -109,7 +110,7 @@ export default function ResidentDashboard() {
                 }}>
                   <div>
                     <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 600, fontSize: '.9rem', marginBottom: 2 }}>{c.subject}</div>
-                    <div style={{ fontSize: '.78rem', color: 'var(--gray-400)' }}>{c.category_name || c.category?.name || 'Unknown category'} · {new Date(c.created_at).toLocaleDateString()}</div>
+                    <div style={{ fontSize: '.78rem', color: 'var(--gray-400)' }}>{c.category_name || c.category?.name || 'Unknown category'} · {formatDate(c.created_at)}</div>
                   </div>
                   <StatusBadge status={c.status} />
                 </div>

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { Modal, AlertMessage } from '../components/DashboardCard'
 import { FiPlus, FiEdit2, FiTrash2 } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 const INIT_FORM = { title: '', content: '', priority: 'Normal' }
 
@@ -67,7 +68,7 @@ export default function ManageAnnouncements() {
                 <div style={{ flex: 1 }}>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 6 }}>
                     <span style={{ fontSize: '.75rem', fontFamily: 'var(--font-heading)', fontWeight: 700, color: 'var(--gray-400)' }}>
-                      {new Date(a.created_at).toLocaleString()} · {a.priority} Priority
+                      {formatDate(a.created_at)} · {a.priority} Priority
                     </span>
                   </div>
                   <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '1rem', marginBottom: 6 }}>{a.title}</div>

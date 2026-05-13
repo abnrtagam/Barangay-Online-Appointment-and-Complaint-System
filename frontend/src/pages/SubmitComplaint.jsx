@@ -87,7 +87,7 @@ export default function SubmitComplaint() {
               <div className="form-group">
                 <label className="form-label">Complaint Category *</label>
                 <select className="form-control" name="category_id" value={form.category_id} onChange={handleChange}>
-                  <option value="">— Select category —</option>
+                  <option value="">Select category</option>
                   {categories.map(c => (
                     <option key={c.id} value={c.id}>{c.name}</option>
                   ))}
@@ -139,7 +139,7 @@ export default function SubmitComplaint() {
                     {file ? file.name : 'Click to upload file'}
                   </span>
                   <span style={{ fontSize: '.78rem', color: 'var(--gray-400)' }}>
-                    JPG, PNG, PDF, DOCX — max 5MB
+                    JPG, PNG, PDF, DOCX (maximum 5MB)
                   </span>
                   <input type="file" hidden accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" onChange={handleFile}/>
                 </label>
@@ -166,7 +166,7 @@ export default function SubmitComplaint() {
                 fontSize: '.84rem', color: 'var(--primary-800)', marginBottom: 20,
                 lineHeight: 1.6,
               }}>
-                📋 <strong>Note:</strong> Your complaint will be reviewed by barangay officials.
+                <strong>Note:</strong> Your complaint will be reviewed by barangay officials.
                 You will be notified of any status updates. Please ensure all information is accurate.
               </div>
 
