@@ -8,6 +8,8 @@ const role   = require('../middleware/roleMiddleware')
 router.use(auth, role('resident'))
 router.get('/dashboard-stats', rCtrl.getDashboardStats)
 router.get('/complaints',      cCtrl.getMyComplaints)
+router.get('/complaints/:id',  cCtrl.getMyComplaintById)
 router.get('/appointments',    aCtrl.getMyAppointments)
+router.get('/appointments/:id', aCtrl.getMyAppointmentById)
 
 module.exports = router
