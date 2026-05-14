@@ -170,6 +170,131 @@ a:hover { color: var(--primary-700); }
   font-weight: 500;
 }
 
+/* Status Timeline Styles */
+.timeline-container {
+  padding: 24px;
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+}
+
+.timeline-header {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--gray-950);
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.timeline-step {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  position: relative;
+}
+
+.timeline-step:last-child .timeline-connector {
+  display: none;
+}
+
+.timeline-connector {
+  position: absolute;
+  left: 19px;
+  top: 40px;
+  width: 2px;
+  height: calc(100% + 24px);
+  background: var(--gray-200);
+}
+
+.timeline-indicator {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
+}
+
+.timeline-indicator.completed {
+  background: var(--success-100);
+  border: 2px solid var(--success-500);
+  color: var(--success-500);
+}
+
+.timeline-indicator.current {
+  background: var(--primary-100);
+  border: 2px solid var(--primary-500);
+  color: var(--primary-500);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+.timeline-indicator.pending {
+  background: var(--gray-100);
+  border: 2px solid var(--gray-300);
+  color: var(--gray-400);
+  opacity: 0.6;
+}
+
+.timeline-content {
+  flex: 1;
+  padding-top: 4px;
+}
+
+.timeline-status {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 4px;
+}
+
+.timeline-timestamp {
+  font-size: 0.85rem;
+  color: var(--gray-600);
+}
+
+.timeline-notes {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: var(--gray-50);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--gray-700);
+  border-left: 3px solid var(--gray-300);
+}
+
+@media (max-width: 640px) {
+  .timeline-container {
+    padding: 16px;
+  }
+
+  .timeline-indicator {
+    width: 36px;
+    height: 36px;
+    font-size: 1rem;
+  }
+
+  .timeline-status {
+    font-size: 0.9rem;
+  }
+
+  .timeline-timestamp {
+    font-size: 0.8rem;
+  }
+
+  .timeline-notes {
+    font-size: 0.8rem;
+    padding: 8px 10px;
+  }
+}
+
 .surface-panel {
   background: var(--gray-100);
   border: var(--border-muted);
