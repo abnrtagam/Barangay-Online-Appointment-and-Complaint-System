@@ -1,8 +1,8 @@
 import React from 'react'
-import { FiCheckCircle, FiClock, FiAlertCircle } from 'react-icons/fi'
+import { FiCheckCircle, FiClock } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
 
-export default function StatusTimeline({ history, type = 'complaint' }) {
+export default function StatusTimeline({ history }) {
   if (!history || history.length === 0) {
     return (
       <div style={{ padding: '20px', textAlign: 'center', color: 'var(--gray-400)' }}>
@@ -11,36 +11,18 @@ export default function StatusTimeline({ history, type = 'complaint' }) {
     )
   }
 
-  // Define all possible statuses for complaints and appointments
-  const statusSequence = {
-    complaint: ['Pending', 'Approved', 'Scheduled', 'Resolved', 'Rejected'],
-    appointment: ['Pending', 'Approved', 'Completed', 'Rejected', 'Cancelled'],
-  }
-
-  const sequence = statusSequence[type] || statusSequence.complaint
-
-  // Build timeline steps from history
-  const steps = history.map((h, idx) => ({
-    id: h.id,
-    status: h.new_status,
-    oldStatus: h.old_status,
-    timestamp: h.changed_at,
-    notes: h.notes,
-    isCompleted: true,
-  }))
-
-  // Get the current/last status
-  const currentStatus = history.length > 0 ? history[history.length - 1].new_status : 'Pending'
-
-  // Determine step status
-  const getStepStatus = (stepStatus) => {
-    const stepIndex = sequence.indexOf(stepStatus)
-    const currentIndex = sequence.indexOf(currentStatus)
-    
-    if (stepIndex < currentIndex) return 'completed'
-    if (stepIndex === currentIndex) return 'current'
-    return 'pending'
-  }
+  // Build timeline steps from actual history records
+  const steps = history.map((h, idx) => {
+    const isLast = idx === history.length - 1
+    return {
+      id: h.id,
+      status: h.new_status,
+      oldStatus: h.old_status,
+      timestamp: h.changed_at,
+      notes: h.notes,
+      stepStatus: isLast ? 'current' : 'completed',
+    }
+  })
 
   const getStepColor = (status) => {
     switch (status) {
@@ -48,8 +30,6 @@ export default function StatusTimeline({ history, type = 'complaint' }) {
         return { bg: 'var(--success-100)', border: 'var(--success-500)', text: 'var(--success-700)', icon: 'var(--success-500)' }
       case 'current':
         return { bg: 'var(--primary-100)', border: 'var(--primary-500)', text: 'var(--primary-700)', icon: 'var(--primary-500)' }
-      case 'pending':
-        return { bg: 'var(--gray-100)', border: 'var(--gray-300)', text: 'var(--gray-500)', icon: 'var(--gray-400)' }
       default:
         return { bg: 'var(--gray-100)', border: 'var(--gray-300)', text: 'var(--gray-500)', icon: 'var(--gray-400)' }
     }
@@ -71,13 +51,11 @@ export default function StatusTimeline({ history, type = 'complaint' }) {
         />
 
         {/* Timeline steps */}
-        {sequence.map((statusName, idx) => {
-          const stepStatus = getStepStatus(statusName)
-          const stepData = history.find(h => h.new_status === statusName)
-          const colors = getStepColor(stepStatus)
+        {steps.map((step, idx) => {
+          const colors = getStepColor(step.stepStatus)
 
           return (
-            <div key={idx} style={{ display: 'flex', gap: '16px', position: 'relative', zIndex: 1 }}>
+            <div key={step.id} style={{ display: 'flex', gap: '16px', position: 'relative', zIndex: 1 }}>
               {/* Circle indicator */}
               <div
                 style={{
@@ -94,12 +72,10 @@ export default function StatusTimeline({ history, type = 'complaint' }) {
                   fontSize: '1.2rem',
                 }}
               >
-                {stepStatus === 'completed' ? (
+                {step.stepStatus === 'completed' ? (
                   <FiCheckCircle size={20} />
-                ) : stepStatus === 'current' ? (
-                  <FiClock size={20} />
                 ) : (
-                  <FiAlertCircle size={20} style={{ opacity: 0.5 }} />
+                  <FiClock size={20} />
                 )}
               </div>
 
@@ -114,39 +90,31 @@ export default function StatusTimeline({ history, type = 'complaint' }) {
                     marginBottom: '4px',
                   }}
                 >
-                  {statusName}
+                  {step.status}
                 </div>
 
-                {stepData ? (
-                  <>
-                    <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
-                      {formatDate(stepData.changed_at, {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit',
-                      })}
-                    </div>
-                    {stepData.notes && (
-                      <div
-                        style={{
-                          marginTop: '8px',
-                          padding: '10px 12px',
-                          background: 'var(--gray-50)',
-                          borderRadius: 'var(--radius-md)',
-                          fontSize: '0.85rem',
-                          color: 'var(--gray-700)',
-                          borderLeft: `3px solid ${colors.border}`,
-                        }}
-                      >
-                        {stepData.notes}
-                      </div>
-                    )}
-                  </>
-                ) : (
-                  <div style={{ fontSize: '0.85rem', color: 'var(--gray-400)' }}>
-                    Not yet reached
+                <div style={{ fontSize: '0.85rem', color: 'var(--gray-600)' }}>
+                  {formatDate(step.timestamp, {
+                    year: 'numeric',
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
+                </div>
+                {step.notes && (
+                  <div
+                    style={{
+                      marginTop: '8px',
+                      padding: '10px 12px',
+                      background: 'var(--gray-50)',
+                      borderRadius: 'var(--radius-md)',
+                      fontSize: '0.85rem',
+                      color: 'var(--gray-700)',
+                      borderLeft: `3px solid ${colors.border}`,
+                    }}
+                  >
+                    {step.notes}
                   </div>
                 )}
               </div>
