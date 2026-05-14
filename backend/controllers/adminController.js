@@ -91,7 +91,10 @@ exports.updateComplaintStatus = async (req, res) => {
     if (!complaintRow) return res.status(404).json({ message: 'Complaint not found.' })
 
     if (complaintRow.status === 'Resolved') {
-      return res.status(400).json({ message: 'This complaint has already been resolved and is locked from further updates.' })
+      return res.status(400).json({
+        success: false,
+        message: 'This complaint has already been resolved and is locked from further updates.'
+      })
     }
 
     const [result] = await db.query(
@@ -181,7 +184,10 @@ exports.updateAppointmentStatus = async (req, res) => {
     if (!appointmentRow) return res.status(404).json({ message: 'Appointment not found.' })
 
     if (appointmentRow.status === 'Completed') {
-      return res.status(400).json({ message: 'This appointment has already been completed and is locked from further updates.' })
+      return res.status(400).json({
+        success: false,
+        message: 'This appointment has already been completed and is locked from further updates.'
+      })
     }
 
     const [result] = await db.query(
