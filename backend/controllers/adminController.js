@@ -80,11 +80,38 @@ exports.updateComplaintStatus = async (req, res) => {
     return res.status(422).json({ message: 'Invalid status value.' })
   }
   try {
+    const [[complaintRow]] = await db.query(
+      `SELECT c.subject, u.email, u.first_name
+       FROM complaints c
+       JOIN residents r ON c.resident_id = r.id
+       JOIN users u ON r.user_id = u.id
+       WHERE c.id = ?`,
+      [id]
+    )
+    if (!complaintRow) return res.status(404).json({ message: 'Complaint not found.' })
+
     const [result] = await db.query(
       'UPDATE complaints SET status = ?, admin_remarks = ?, updated_at = NOW() WHERE id = ?',
       [status, admin_remarks || null, id]
     )
     if (!result.affectedRows) return res.status(404).json({ message: 'Complaint not found.' })
+
+    try {
+      const emailService = require('../services/emailService')
+      const emailResult = await emailService.sendComplaintStatusEmail(
+        complaintRow.email,
+        complaintRow.first_name,
+        complaintRow.subject,
+        status,
+        admin_remarks || ''
+      )
+      if (!emailResult.success) {
+        console.error('Complaint notification email failed:', emailResult.error)
+      }
+    } catch (notifyError) {
+      console.error('Failed to send complaint status notification:', notifyError)
+    }
+
     res.json({ message: 'Complaint updated successfully.' })
   } catch (err) {
     console.error(err)
@@ -132,13 +159,42 @@ exports.updateAppointmentStatus = async (req, res) => {
     return res.status(422).json({ message: 'Invalid status.' })
   }
   try {
+    const [[appointmentRow]] = await db.query(
+      `SELECT a.appointment_date, a.time_slot, a.purpose, u.email, u.first_name
+       FROM appointments a
+       JOIN residents r ON a.resident_id = r.id
+       JOIN users u ON r.user_id = u.id
+       WHERE a.id = ?`,
+      [id]
+    )
+    if (!appointmentRow) return res.status(404).json({ message: 'Appointment not found.' })
+
     const [result] = await db.query(
       'UPDATE appointments SET status = ?, admin_remarks = ?, updated_at = NOW() WHERE id = ?',
       [status, admin_remarks || null, id]
     )
     if (!result.affectedRows) return res.status(404).json({ message: 'Appointment not found.' })
+
+    try {
+      const emailService = require('../services/emailService')
+      const emailResult = await emailService.sendAppointmentStatusEmail(
+        appointmentRow.email,
+        appointmentRow.first_name,
+        appointmentRow.appointment_date,
+        appointmentRow.time_slot,
+        status,
+        admin_remarks || ''
+      )
+      if (!emailResult.success) {
+        console.error('Appointment notification email failed:', emailResult.error)
+      }
+    } catch (notifyError) {
+      console.error('Failed to send appointment status notification:', notifyError)
+    }
+
     res.json({ message: 'Appointment updated.' })
   } catch (err) {
+    console.error(err)
     res.status(500).json({ message: 'Update failed.' })
   }
 }

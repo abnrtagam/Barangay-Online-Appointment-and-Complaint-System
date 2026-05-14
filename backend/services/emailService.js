@@ -226,6 +226,91 @@ const sendApprovalEmail = async (to, firstName, isApproved) => {
 }
 
 /**
+ * Send complaint status update email
+ */
+const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'your complaint', status = '', adminRemarks = '') => {
+  const mailOptions = {
+    from: {
+      name: 'Barangay Portal',
+      address: process.env.GMAIL_USER,
+    },
+    to,
+    subject: `Complaint status updated: ${status}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+            <h1 style="margin: 0; font-size: 24px;">Complaint Status Update</h1>
+          </div>
+          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <h2 style="color: #1d4ed8;">Hello, ${firstName}</h2>
+            <p>Your complaint <strong>"${subject}"</strong> has been updated to <strong>${status}</strong>.</p>
+            ${adminRemarks ? `<p><strong>Admin note:</strong> ${adminRemarks}</p>` : ''}
+            <p>If you have questions, please log in to the barangay portal to view the full details.</p>
+            <div style="margin-top: 20px; padding: 18px; background: #eff6ff; border-radius: 12px;">
+              <p style="margin: 0; color: #1d4ed8;">Thank you for using the Barangay Complaint System.</p>
+            </div>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Complaint status email sent:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Failed to send complaint status email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+/**
+ * Send appointment status update email
+ */
+const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmentDate = '', timeSlot = '', status = '', adminRemarks = '') => {
+  const mailOptions = {
+    from: {
+      name: 'Barangay Portal',
+      address: process.env.GMAIL_USER,
+    },
+    to,
+    subject: `Appointment status updated: ${status}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
+          <div style="background: linear-gradient(135deg, #15803d, #22c55e); color: white; padding: 25px; border-radius: 12px; text-align: center;">
+            <h1 style="margin: 0; font-size: 24px;">Appointment Update</h1>
+          </div>
+          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+            <h2 style="color: #15803d;">Hello, ${firstName}</h2>
+            <p>Your appointment scheduled for <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been updated to <strong>${status}</strong>.</p>
+            ${adminRemarks ? `<p><strong>Admin note:</strong> ${adminRemarks}</p>` : ''}
+            <p>Please check the portal for the latest details and any follow-up instructions.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Appointment status email sent:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Failed to send appointment status email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+/**
  * Send password reset OTP email
  * @param {string} to - Recipient email address
  * @param {string} otp - 6-digit OTP code for password reset
@@ -331,5 +416,7 @@ module.exports = {
   verifyConnection,
   sendOTPEmail,
   sendApprovalEmail,
+  sendComplaintStatusEmail,
+  sendAppointmentStatusEmail,
   sendPasswordResetOTPEmail,
 }
