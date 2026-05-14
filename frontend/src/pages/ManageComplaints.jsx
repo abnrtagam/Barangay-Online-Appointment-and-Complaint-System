@@ -38,17 +38,18 @@ export default function ManageComplaints() {
   }
 
   const handleUpdate = async () => {
-    if (!newStatus) return
+    if (!newStatus || !selected) return
     setSubmitting(true)
     try {
       await axios.patch(`/api/admin/complaints/${selected.id}/status`, {
         status: newStatus, admin_remarks: remarks,
       }, { headers: { Authorization: `Bearer ${token}` } })
-      setAlert({ type: 'success', message: 'Complaint updated successfully.' })
+      setAlert({ type: 'success', title: 'Complaint updated', message: 'The complaint status has been updated successfully.' })
       setSelected(null)
       load()
-    } catch {
-      setAlert({ type: 'error', message: 'Update failed.' })
+    } catch (error) {
+      const message = error?.response?.data?.message || 'Unable to update complaint. Please try again.'
+      setAlert({ type: 'error', title: 'Update blocked', message })
     } finally {
       setSubmitting(false)
     }
@@ -158,8 +159,12 @@ export default function ManageComplaints() {
         footer={
           <>
             <button className="btn btn-secondary" onClick={() => setSelected(null)}>Cancel</button>
-            <button className="btn btn-primary" onClick={handleUpdate} disabled={submitting}>
-              {submitting ? 'Saving...' : 'Save Changes'}
+            <button
+              className="btn btn-primary"
+              onClick={handleUpdate}
+              disabled={submitting || selected?.status === 'Resolved'}
+            >
+              {selected?.status === 'Resolved' ? 'Finalized' : submitting ? 'Saving...' : 'Save Changes'}
             </button>
           </>
         }
@@ -175,15 +180,34 @@ export default function ManageComplaints() {
             <div style={{ background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', padding: '12px 14px', marginBottom: 18, fontSize: '.88rem', color: 'var(--gray-700)', whiteSpace: 'pre-wrap' }}>
               {selected.details}
             </div>
+            <div style={{ marginBottom: 16, padding: 12, borderRadius: 'var(--radius-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)', color: 'var(--gray-700)' }}>
+              {selected.status === 'Resolved'
+                ? 'This complaint has been resolved and is locked from further status updates.'
+                : 'You can update the status and remarks for this complaint.'}
+            </div>
             <div className="form-group">
               <label className="form-label">Update Status</label>
-              <select className="form-control" value={newStatus} onChange={e => setNewStatus(e.target.value)}>
+              <select
+                className="form-control"
+                value={newStatus}
+                onChange={e => setNewStatus(e.target.value)}
+                disabled={selected.status === 'Resolved'}
+                style={selected.status === 'Resolved' ? { background: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
+              >
                 {STATUS_OPTS.filter(Boolean).map(s => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
             <div className="form-group">
               <label className="form-label">Admin Remarks</label>
-              <textarea className="form-control" rows={3} value={remarks} onChange={e => setRemarks(e.target.value)} placeholder="Add remarks for the resident..."/>
+              <textarea
+                className="form-control"
+                rows={3}
+                value={remarks}
+                onChange={e => setRemarks(e.target.value)}
+                placeholder="Add remarks for the resident..."
+                disabled={selected.status === 'Resolved'}
+                style={selected.status === 'Resolved' ? { background: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
+              />
             </div>
           </div>
         )}

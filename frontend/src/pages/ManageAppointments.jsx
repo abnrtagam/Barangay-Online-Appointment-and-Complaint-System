@@ -31,14 +31,18 @@ export default function ManageAppointments() {
   const openModal = (a) => { setSelected(a); setNewStatus(a.status); setRemarks(a.admin_remarks || '') }
 
   const handleUpdate = async () => {
+    if (!selected) return
     try {
       await axios.patch(`/api/admin/appointments/${selected.id}/status`,
         { status: newStatus, admin_remarks: remarks },
         { headers: { Authorization: `Bearer ${token}` } }
       )
-      setAlert({ type: 'success', message: 'Appointment updated.' })
+      setAlert({ type: 'success', title: 'Appointment updated', message: 'The appointment status has been updated successfully.' })
       setSelected(null); load()
-    } catch { setAlert({ type: 'error', message: 'Update failed.' }) }
+    } catch (error) {
+      const message = error?.response?.data?.message || 'Unable to update appointment. Please try again.'
+      setAlert({ type: 'error', title: 'Update blocked', message })
+    }
   }
 
   const quick = async (id, status) => {
@@ -108,7 +112,12 @@ export default function ManageAppointments() {
         )}
       </div>
       <Modal open={!!selected} onClose={() => setSelected(null)} title="Manage Appointment"
-        footer={<><button className="btn btn-secondary" onClick={() => setSelected(null)}>Cancel</button><button className="btn btn-primary" onClick={handleUpdate}>Save</button></>}
+        footer={<>
+          <button className="btn btn-secondary" onClick={() => setSelected(null)}>Cancel</button>
+          <button className="btn btn-primary" onClick={handleUpdate} disabled={selected?.status === 'Completed'}>
+            {selected?.status === 'Completed' ? 'Finalized' : 'Save'}
+          </button>
+        </>}
       >
         {selected && (
           <div>
@@ -117,15 +126,33 @@ export default function ManageAppointments() {
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Date & Time</span><span>{selected.appointment_date} — {selected.time_slot}</span>
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Purpose</span><span>{selected.purpose}</span>
             </div>
+            <div style={{ marginBottom: 16, padding: 12, borderRadius: 'var(--radius-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)', color: 'var(--gray-700)' }}>
+              {selected.status === 'Completed'
+                ? 'This appointment has been completed and is locked from further status changes.'
+                : 'You can update the appointment status and remarks below.'}
+            </div>
             <div className="form-group">
               <label className="form-label">Update Status</label>
-              <select className="form-control" value={newStatus} onChange={e => setNewStatus(e.target.value)}>
+              <select
+                className="form-control"
+                value={newStatus}
+                onChange={e => setNewStatus(e.target.value)}
+                disabled={selected.status === 'Completed'}
+                style={selected.status === 'Completed' ? { background: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
+              >
                 {APPT_STATUSES.map(s => <option key={s}>{s}</option>)}
               </select>
             </div>
             <div className="form-group">
               <label className="form-label">Remarks</label>
-              <textarea className="form-control" rows={3} value={remarks} onChange={e => setRemarks(e.target.value)}/>
+              <textarea
+                className="form-control"
+                rows={3}
+                value={remarks}
+                onChange={e => setRemarks(e.target.value)}
+                disabled={selected.status === 'Completed'}
+                style={selected.status === 'Completed' ? { background: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
+              />
             </div>
           </div>
         )}

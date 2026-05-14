@@ -81,7 +81,7 @@ export function StatusBadge({ status }) {
   return <span className={`badge badge-${slug}`}>{normalized}</span>
 }
 
-export function AlertMessage({ type = 'info', message, onClose }) {
+export function AlertMessage({ type = 'info', title, message, onClose }) {
   if (!message) return null
   const cfg = {
     success: { bg: 'var(--success-100)', border: 'var(--success-700)', color: 'var(--success-700)' },
@@ -98,16 +98,18 @@ export function AlertMessage({ type = 'info', message, onClose }) {
       border: `1px solid ${cfg.border}`,
       color: cfg.color,
       borderRadius: 'var(--radius-md)',
-      padding: '14px 18px',
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
+      padding: '16px 18px',
+      display: 'grid',
+      gridTemplateColumns: '1fr auto',
+      gap: 10,
+      alignItems: 'start',
       marginBottom: 18,
-      fontSize: 'var(--text-sm)',
       fontFamily: 'var(--font-heading)',
-      fontWeight: 600,
-    }}>
-      <span>{message}</span>
+    }} role="alert">
+      <div>
+        {title && <div style={{ fontWeight: 700, marginBottom: 4 }}>{title}</div>}
+        <div style={{ fontWeight: 500, lineHeight: 1.5 }}>{message}</div>
+      </div>
       {onClose && (
         <button onClick={onClose} style={{
           border: 'none', background: 'none', cursor: 'pointer',

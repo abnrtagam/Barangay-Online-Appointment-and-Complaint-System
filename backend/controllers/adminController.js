@@ -81,7 +81,7 @@ exports.updateComplaintStatus = async (req, res) => {
   }
   try {
     const [[complaintRow]] = await db.query(
-      `SELECT c.subject, u.email, u.first_name
+      `SELECT c.status, c.subject, u.email, u.first_name
        FROM complaints c
        JOIN residents r ON c.resident_id = r.id
        JOIN users u ON r.user_id = u.id
@@ -89,6 +89,10 @@ exports.updateComplaintStatus = async (req, res) => {
       [id]
     )
     if (!complaintRow) return res.status(404).json({ message: 'Complaint not found.' })
+
+    if (complaintRow.status === 'Resolved') {
+      return res.status(400).json({ message: 'This complaint has already been resolved and is locked from further updates.' })
+    }
 
     const [result] = await db.query(
       'UPDATE complaints SET status = ?, admin_remarks = ?, updated_at = NOW() WHERE id = ?',
@@ -100,7 +104,7 @@ exports.updateComplaintStatus = async (req, res) => {
     await db.query(
       `INSERT INTO complaint_status_history (complaint_id, old_status, new_status, changed_by, notes, changed_at)
        VALUES (?, ?, ?, ?, ?, NOW())`,
-      [id, complaintRow.current_status, status, adminId, admin_remarks || null]
+      [id, complaintRow.status, status, adminId, admin_remarks || null]
     )
 
     try {
@@ -122,7 +126,7 @@ exports.updateComplaintStatus = async (req, res) => {
     res.json({ message: 'Complaint updated successfully.' })
   } catch (err) {
     console.error(err)
-    res.status(500).json({ message: 'Update failed.' })
+    res.status(500).json({ message: 'Unable to update the complaint at this time. Please try again later.' })
   }
 }
 
@@ -177,7 +181,7 @@ exports.updateAppointmentStatus = async (req, res) => {
     if (!appointmentRow) return res.status(404).json({ message: 'Appointment not found.' })
 
     if (appointmentRow.status === 'Completed') {
-      return res.status(400).json({ message: 'Completed appointments cannot be updated.' })
+      return res.status(400).json({ message: 'This appointment has already been completed and is locked from further updates.' })
     }
 
     const [result] = await db.query(
@@ -213,7 +217,7 @@ exports.updateAppointmentStatus = async (req, res) => {
     res.json({ message: 'Appointment updated.' })
   } catch (err) {
     console.error(err)
-    res.status(500).json({ message: 'Update failed.' })
+    res.status(500).json({ message: 'Unable to update the appointment at this time. Please try again later.' })
   }
 }
 
