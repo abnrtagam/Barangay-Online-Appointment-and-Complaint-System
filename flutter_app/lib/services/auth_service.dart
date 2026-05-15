@@ -1,4 +1,4 @@
-import 'package:barangay_mobile/models/auth_response_model.dart';
+import '../models/auth_response_model.dart';
 import 'api_service.dart';
 import 'storage_service.dart';
 import '../constants/api_constants.dart';
@@ -257,6 +257,39 @@ class AuthService {
         return {
           'success': false,
           'message': response['message'] ?? 'Password reset failed',
+        };
+      }
+    } catch (e) {
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
+    }
+  }
+
+  // Request account reactivation (suspended users)
+  static Future<Map<String, dynamic>> requestReactivation({
+    required String email,
+    required String reason,
+  }) async {
+    try {
+      final response = await ApiService.post(
+        ApiConstants.reactivate,
+        {
+          'email': email,
+          'reason': reason,
+        },
+      );
+
+      if (response['success']) {
+        return {
+          'success': true,
+          'message': response['data']['message'] ?? 'Request submitted',
+        };
+      } else {
+        return {
+          'success': false,
+          'message': response['message'] ?? 'Failed to submit request',
         };
       }
     } catch (e) {

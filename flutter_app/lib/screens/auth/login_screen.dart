@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
 import '../../constants/app_colors.dart';
 import 'register_screen.dart';
+import 'otp_verification_screen.dart';
+import 'reactivation_request_screen.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -33,26 +35,59 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    final success = await context.read<AuthProvider>().login(
+    final result = await context.read<AuthProvider>().login(
           _emailController.text,
           _passwordController.text,
         );
 
-    if (success && mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Login successful!'),
-          backgroundColor: AppColors.success,
-        ),
-      );
-    } else if (mounted) {
-      final errorMsg = context.read<AuthProvider>().errorMessage;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(errorMsg ?? 'Login failed'),
-          backgroundColor: AppColors.danger,
-        ),
-      );
+    if (mounted) {
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Login successful!'),
+            backgroundColor: AppColors.success,
+          ),
+        );
+      } else {
+        final status = result['status'];
+        final requiresOtp = result['requiresOtp'];
+
+        if (status == 'suspended') {
+          Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => ReactivationRequestScreen(email: _emailController.text))
+          );
+        } else if (requiresOtp == true) {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => OtpVerificationScreen(email: _emailController.text))
+          );
+        } else {
+          showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('LOGIN FAILED'),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(result['message'] ?? 'Unknown error occurred'),
+                  const SizedBox(height: 16),
+                  const Text('Diagnostic Info:', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  Text('Status: ${result['status']}', style: const TextStyle(fontSize: 12)),
+                  Text('Success: ${result['success']}', style: const TextStyle(fontSize: 12)),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text('OK'),
+                ),
+              ],
+            ),
+          );
+        }
+      }
     }
   }
 

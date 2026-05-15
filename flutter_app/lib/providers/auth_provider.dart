@@ -28,6 +28,9 @@ class AuthProvider with ChangeNotifier {
 
   // Initialize provider - restore login if token exists
   Future<void> initializeAuth() async {
+    // Don't overwrite if already logged in (e.g. from a recent login call)
+    if (_isLoggedIn) return;
+
     _isLoading = true;
     notifyListeners();
 
@@ -35,13 +38,18 @@ class AuthProvider with ChangeNotifier {
       final token = await StorageService.getToken();
       final userJson = await StorageService.getUserInfo();
 
-      if (token != null && userJson != null) {
+      if (token != null && userJson != null && token.isNotEmpty) {
+        final userData = jsonDecode(userJson);
+        final user = User.fromJson(userData);
+        
         _token = token;
-        _user = User.fromJson(jsonDecode(userJson));
+        _user = user;
         _isLoggedIn = true;
       }
     } catch (e) {
       _errorMessage = 'Error loading auth: $e';
+      // If error occurs, clear everything to be safe
+      await logout();
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -49,7 +57,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Login method
-  Future<bool> login(String email, String password) async {
+  Future<Map<String, dynamic>> login(String email, String password) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -60,24 +68,26 @@ class AuthProvider with ChangeNotifier {
         password: password,
       );
 
-      if (result['success']) {
+      if (result['success'] && result['user'] != null && result['token'] != null) {
         _user = result['user'];
         _token = result['token'];
         _isLoggedIn = true;
         _isLoading = false;
         notifyListeners();
-        return true;
+        return result;
       } else {
         _errorMessage = result['message'] ?? 'Login failed';
+        _isLoggedIn = false;
         _isLoading = false;
         notifyListeners();
-        return false;
+        return result;
       }
     } catch (e) {
       _errorMessage = 'Error: $e';
+      _isLoggedIn = false;
       _isLoading = false;
       notifyListeners();
-      return false;
+      return {'success': false, 'message': 'Error: $e'};
     }
   }
 
@@ -151,6 +161,25 @@ class AuthProvider with ChangeNotifier {
 
     try {
       final result = await AuthService.resendOtp(email: email);
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _errorMessage = 'Error: $e';
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
+  // Request reactivation
+  Future<Map<String, dynamic>> requestReactivation({required String email, required String reason}) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await AuthService.requestReactivation(email: email, reason: reason);
       _isLoading = false;
       notifyListeners();
       return result;
