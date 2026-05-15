@@ -39,6 +39,10 @@ dependencies:
   image_picker: ^1.0.0
   flutter_spinkit: ^5.2.0
   fluttertoast: ^8.2.0
+  firebase_core: ^3.0.0
+  firebase_messaging: ^15.0.0
+  flutter_local_notifications: ^17.0.0
+  shimmer: ^3.0.0 # Preparing for Phase 3.2 (UI Polish)
 
 dev_dependencies:
   flutter_test:

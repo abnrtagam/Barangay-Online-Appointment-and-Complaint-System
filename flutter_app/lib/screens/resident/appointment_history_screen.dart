@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/appointment_provider.dart';
+import '../../constants/app_colors.dart';
 import '../../widgets/status_badge.dart';
-import '../../widgets/empty_state.dart';
-import '../../models/appointment_model.dart';
+import '../../widgets/shimmer_loading.dart';
 import 'appointment_detail_screen.dart';
 import 'book_appointment_screen.dart';
 import 'package:intl/intl.dart';
@@ -21,30 +21,29 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
   @override
   void initState() {
     super.initState();
-    context.read<AppointmentProvider>().fetchAppointments();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AppointmentProvider>().fetchAppointments();
+    });
   }
 
-  List<Appointment> _getFiltered(List<Appointment> list) {
-    if (_filterStatus == 'All') return list;
-    return list.where((a) => a.status == _filterStatus).toList();
+  List<dynamic> _getFilteredAppointments(List<dynamic> appointments) {
+    if (_filterStatus == 'All') return appointments;
+    return appointments.where((a) => a.status == _filterStatus).toList();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppColors.gray50,
       appBar: AppBar(
-        title: const Text('My Appointments'),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF2D3748),
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
+        title: const Text('MY APPOINTMENTS'),
       ),
       body: Column(
         children: [
+          // Filter chips
           Container(
-            color: Colors.white,
-            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            color: AppColors.white,
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
             child: SingleChildScrollView(
               scrollDirection: Axis.horizontal,
               child: Row(
@@ -52,44 +51,57 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
                     .map((status) => Padding(
                           padding: const EdgeInsets.only(right: 8),
                           child: FilterChip(
-                            label: Text(status),
+                            label: Text(status.toUpperCase(), style: const TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                             selected: _filterStatus == status,
-                            onSelected: (sel) => setState(() => _filterStatus = status),
-                            selectedColor: const Color(0xFF8B5CF6).withValues(alpha: 0.15),
-                            checkmarkColor: const Color(0xFF8B5CF6),
-                            labelStyle: TextStyle(
-                              color: _filterStatus == status ? const Color(0xFF8B5CF6) : Colors.grey[600],
-                              fontWeight: _filterStatus == status ? FontWeight.w600 : FontWeight.normal,
-                              fontSize: 13,
-                            ),
+                            onSelected: (selected) {
+                              setState(() => _filterStatus = status);
+                            },
+                            backgroundColor: AppColors.gray50,
+                            selectedColor: AppColors.primary100,
+                            checkmarkColor: AppColors.primary700,
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
                           ),
                         ))
                     .toList(),
               ),
             ),
           ),
+          
           Expanded(
             child: Consumer<AppointmentProvider>(
               builder: (context, provider, _) {
-                if (provider.isLoading) return const Center(child: CircularProgressIndicator());
+                if (provider.isLoading && provider.appointments.isEmpty) {
+                  return ListView.builder(
+                    padding: const EdgeInsets.all(20),
+                    itemCount: 5,
+                    itemBuilder: (context, index) => const ShimmerCard(),
+                  );
+                }
 
-                final filtered = _getFiltered(provider.appointments);
-                if (filtered.isEmpty) {
-                  return EmptyState(
-                    icon: Icons.calendar_today_rounded,
-                    title: _filterStatus == 'All' ? 'No appointments yet' : 'No $_filterStatus appointments',
-                    subtitle: _filterStatus == 'All' ? 'Book your first appointment to get started' : 'No appointments with this status',
-                    actionLabel: _filterStatus == 'All' ? 'Book Appointment' : null,
-                    onAction: _filterStatus == 'All' ? () => Navigator.push(context, MaterialPageRoute(builder: (_) => const BookAppointmentScreen())) : null,
+                final appointments = _getFilteredAppointments(provider.appointments);
+
+                if (appointments.isEmpty) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(Icons.calendar_today_outlined, size: 64, color: AppColors.gray300),
+                        const SizedBox(height: 16),
+                        Text('No appointments found', style: TextStyle(color: AppColors.gray500, fontSize: 16)),
+                      ],
+                    ),
                   );
                 }
 
                 return RefreshIndicator(
                   onRefresh: () => provider.fetchAppointments(),
                   child: ListView.builder(
-                    padding: const EdgeInsets.all(16),
-                    itemCount: filtered.length,
-                    itemBuilder: (context, index) => _buildCard(filtered[index]),
+                    padding: const EdgeInsets.all(20),
+                    itemCount: appointments.length,
+                    itemBuilder: (context, index) {
+                      final appointment = appointments[index];
+                      return _buildAppointmentCard(context, appointment);
+                    },
                   ),
                 );
               },
@@ -98,54 +110,70 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          Navigator.push(context, MaterialPageRoute(builder: (_) => const BookAppointmentScreen())).then((_) {
-            context.read<AppointmentProvider>().fetchAppointments();
-          });
-        },
-        backgroundColor: const Color(0xFF8B5CF6),
-        foregroundColor: Colors.white,
+        onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const BookAppointmentScreen())),
+        label: const Text('BOOK APPOINTMENT', style: TextStyle(fontWeight: FontWeight.w800, fontSize: 12, letterSpacing: 1)),
         icon: const Icon(Icons.add_rounded),
-        label: const Text('Book Now'),
       ),
     );
   }
 
-  Widget _buildCard(Appointment appt) {
-    return GestureDetector(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => AppointmentDetailScreen(appointment: appt))),
-      child: Container(
-        margin: const EdgeInsets.only(bottom: 12),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(children: [
-              Expanded(child: Text(appt.purpose, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: Color(0xFF2D3748)), maxLines: 1, overflow: TextOverflow.ellipsis)),
-              StatusBadge(status: appt.status),
-            ]),
-            const SizedBox(height: 10),
-            Row(children: [
-              Icon(Icons.calendar_today_rounded, size: 14, color: Colors.grey[400]),
-              const SizedBox(width: 6),
-              Text(appt.appointmentDate, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-              const SizedBox(width: 16),
-              Icon(Icons.access_time_rounded, size: 14, color: Colors.grey[400]),
-              const SizedBox(width: 6),
-              Text(appt.timeSlot, style: TextStyle(fontSize: 13, color: Colors.grey[600])),
-            ]),
-            const SizedBox(height: 8),
-            Row(children: [
-              Text(DateFormat('MMM d, y').format(appt.createdAt), style: TextStyle(fontSize: 12, color: Colors.grey[400])),
-              const Spacer(),
-              Icon(Icons.chevron_right_rounded, size: 20, color: Colors.grey[400]),
-            ]),
-          ],
+  Widget _buildAppointmentCard(BuildContext context, dynamic appointment) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.04), blurRadius: 10, offset: const Offset(0, 4))],
+      ),
+      child: InkWell(
+        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => AppointmentDetailScreen(appointment: appointment))),
+        borderRadius: BorderRadius.circular(16),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  StatusBadge(status: appointment.status),
+                  Text(
+                    DateFormat('MMM dd, yyyy').format(appointment.appointmentDate),
+                    style: const TextStyle(color: AppColors.primary700, fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
+              Text(
+                appointment.purpose,
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.primary900),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  const Icon(Icons.access_time_rounded, size: 14, color: AppColors.gray500),
+                  const SizedBox(width: 4),
+                  Text(
+                    appointment.timeSlot,
+                    style: const TextStyle(color: AppColors.gray600, fontSize: 13),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              const Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Text(
+                    'View Details',
+                    style: TextStyle(color: AppColors.primary600, fontWeight: FontWeight.bold, fontSize: 12),
+                  ),
+                  Icon(Icons.chevron_right_rounded, size: 16, color: AppColors.primary600),
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

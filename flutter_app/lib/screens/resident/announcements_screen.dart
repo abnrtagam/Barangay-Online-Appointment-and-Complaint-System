@@ -41,7 +41,7 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
             return const EmptyState(
               icon: Icons.campaign_outlined,
               title: 'No Announcements',
-              subtitle: 'There are no announcements from the barangay yet. Check back later.',
+              message: 'There are no announcements from the barangay yet. Check back later.',
             );
           }
 

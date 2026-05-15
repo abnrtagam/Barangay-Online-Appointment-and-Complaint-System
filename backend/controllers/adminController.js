@@ -1,4 +1,5 @@
 const db = require('../config/db')
+const NotificationService = require('../services/notificationService')
 
 // ── Dashboard Stats ─────────────────────────────────────────
 exports.getStats = async (req, res) => {
@@ -81,7 +82,7 @@ exports.updateComplaintStatus = async (req, res) => {
   }
   try {
     const [[complaintRow]] = await db.query(
-      `SELECT c.status, c.subject, u.email, u.first_name
+      `SELECT c.status, c.subject, u.id AS user_id, u.email, u.first_name
        FROM complaints c
        JOIN residents r ON c.resident_id = r.id
        JOIN users u ON r.user_id = u.id
@@ -125,6 +126,18 @@ exports.updateComplaintStatus = async (req, res) => {
       }
     } catch (notifyError) {
       console.error('Failed to send complaint status notification:', notifyError)
+    }
+
+    // Push Notification
+    try {
+      await NotificationService.sendNotification(
+        complaintRow.user_id || complaintRow.id, // Ensure we have the user_id
+        'Complaint Update',
+        `Your complaint "${complaintRow.subject}" is now ${status}.`,
+        { type: 'complaint', id: id.toString() }
+      );
+    } catch (fcmError) {
+      console.error('FCM Notification failed:', fcmError);
     }
 
     res.json({ message: 'Complaint updated successfully.' })
@@ -175,7 +188,7 @@ exports.updateAppointmentStatus = async (req, res) => {
   }
   try {
     const [[appointmentRow]] = await db.query(
-      `SELECT a.status, a.appointment_date, a.time_slot, a.purpose, u.email, u.first_name
+      `SELECT a.status, a.appointment_date, a.time_slot, a.purpose, u.id AS user_id, u.email, u.first_name
        FROM appointments a
        JOIN residents r ON a.resident_id = r.id
        JOIN users u ON r.user_id = u.id
@@ -220,6 +233,18 @@ exports.updateAppointmentStatus = async (req, res) => {
       }
     } catch (notifyError) {
       console.error('Failed to send appointment status notification:', notifyError)
+    }
+
+    // Push Notification
+    try {
+      await NotificationService.sendNotification(
+        appointmentRow.user_id,
+        'Appointment Update',
+        `Your appointment on ${appointmentRow.appointment_date} is now ${status}.`,
+        { type: 'appointment', id: id.toString() }
+      );
+    } catch (fcmError) {
+      console.error('FCM Notification failed:', fcmError);
     }
 
     res.json({ message: 'Appointment updated.' })

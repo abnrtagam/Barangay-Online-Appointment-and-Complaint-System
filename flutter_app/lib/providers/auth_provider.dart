@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart';
 import '../models/user_model.dart';
 import '../services/auth_service.dart';
 import '../services/storage_service.dart';
+import '../services/notification_service.dart';
 import 'dart:convert';
 
 // AuthProvider is like a bulletin board that remembers who's logged in
@@ -28,28 +30,53 @@ class AuthProvider with ChangeNotifier {
 
   // Initialize provider - restore login if token exists
   Future<void> initializeAuth() async {
-    // Don't overwrite if already logged in (e.g. from a recent login call)
+    // 1. Defensive Check: If already logged in (from a recent login call), stop.
     if (_isLoggedIn) return;
 
+    print('DEBUG: initializeAuth started. Current isLoggedIn: $_isLoggedIn');
     _isLoading = true;
     notifyListeners();
 
     try {
+      // 2. Initialize Firebase (Async and non-blocking)
+      try {
+        await Firebase.initializeApp();
+        await NotificationService.initialize();
+      } catch (fbError) {
+        print("Firebase Initialization Error (Non-fatal): $fbError");
+      }
+
+      // 3. Restore Session
       final token = await StorageService.getToken();
       final userJson = await StorageService.getUserInfo();
 
+      if (_isLoggedIn) {
+        print('DEBUG: initializeAuth exiting early - user already logged in.');
+        return;
+      }
+
       if (token != null && userJson != null && token.isNotEmpty) {
+        print('DEBUG: initializeAuth found saved session. Logging in...');
         final userData = jsonDecode(userJson);
         final user = User.fromJson(userData);
         
         _token = token;
         _user = user;
         _isLoggedIn = true;
+        
+        // Register for notifications in background
+        _registerFcmToken();
+      } else {
+        print('DEBUG: initializeAuth found no saved session.');
       }
     } catch (e) {
-      _errorMessage = 'Error loading auth: $e';
-      // If error occurs, clear everything to be safe
-      await logout();
+      print('Auth Initialization Error: $e');
+      // If error occurs, only clear if we aren't already logged in
+      if (!_isLoggedIn) {
+        _token = null;
+        _user = null;
+        _isLoggedIn = false;
+      }
     } finally {
       _isLoading = false;
       notifyListeners();
@@ -58,6 +85,7 @@ class AuthProvider with ChangeNotifier {
 
   // Login method
   Future<Map<String, dynamic>> login(String email, String password) async {
+    print('DEBUG: login started for $email');
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -73,7 +101,17 @@ class AuthProvider with ChangeNotifier {
         _token = result['token'];
         _isLoggedIn = true;
         _isLoading = false;
+        
+        // PERSIST SESSION
+        await StorageService.saveToken(_token!);
+        await StorageService.saveUserInfo(jsonEncode(_user!.toJson()));
+        
+        print('DEBUG: login success for ${_user?.email}. isLoggedIn: $_isLoggedIn');
         notifyListeners();
+        
+        // Register for notifications
+        _registerFcmToken();
+        
         return result;
       } else {
         _errorMessage = result['message'] ?? 'Login failed';
@@ -207,6 +245,22 @@ class AuthProvider with ChangeNotifier {
     } finally {
       _isLoading = false;
       notifyListeners();
+    }
+  }
+
+  // Register FCM Token with backend
+  Future<void> _registerFcmToken() async {
+    if (!_isLoggedIn || _token == null) return;
+    
+    try {
+      final fcmToken = await NotificationService.getToken();
+      if (fcmToken != null) {
+        print('Registering FCM Token: $fcmToken');
+        await AuthService.updateFcmToken(fcmToken);
+      }
+    } catch (e) {
+      print('Failed to register FCM token: $e');
+      // We don't fail the login if notification registration fails
     }
   }
 

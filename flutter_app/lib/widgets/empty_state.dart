@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
-/// Empty state widget shown when a list has no items.
-/// Displays an icon, title, subtitle, and optional action button.
 class EmptyState extends StatelessWidget {
   final IconData icon;
   final String title;
-  final String subtitle;
+  final String message;
   final String? actionLabel;
   final VoidCallback? onAction;
 
@@ -13,70 +12,62 @@ class EmptyState extends StatelessWidget {
     super.key,
     required this.icon,
     required this.title,
-    required this.subtitle,
+    required this.message,
     this.actionLabel,
     this.onAction,
   });
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(32),
+        padding: const EdgeInsets.all(40),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.primary.withValues(alpha: 0.08),
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                icon,
-                size: 56,
-                color: theme.colorScheme.primary.withValues(alpha: 0.5),
-              ),
+          Container(
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: AppColors.gray50,
+              shape: BoxShape.circle,
             ),
-            const SizedBox(height: 24),
-            Text(
-              title,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w700,
-                color: Color(0xFF2D3748),
-              ),
-              textAlign: TextAlign.center,
+            child: Icon(icon, size: 64, color: AppColors.gray300),
+          ),
+          const SizedBox(height: 24),
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+              color: AppColors.primary900,
+              fontFamily: 'Plus Jakarta Sans',
             ),
-            const SizedBox(height: 8),
-            Text(
-              subtitle,
-              style: TextStyle(
-                fontSize: 14,
-                color: Colors.grey[500],
-                height: 1.4,
-              ),
-              textAlign: TextAlign.center,
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            message,
+            style: const TextStyle(
+              fontSize: 14,
+              color: AppColors.gray500,
+              fontFamily: 'DM Sans',
+              height: 1.5,
             ),
-            if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: 24),
-              ElevatedButton.icon(
-                onPressed: onAction,
-                icon: const Icon(Icons.add_rounded, size: 20),
-                label: Text(actionLabel!),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
+            textAlign: TextAlign.center,
+          ),
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: 32),
+            ElevatedButton(
+              onPressed: onAction,
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
               ),
-            ],
+              child: Text(actionLabel!.toUpperCase()),
+            ),
           ],
-        ),
+        ],
       ),
-    );
+    ));
   }
 }

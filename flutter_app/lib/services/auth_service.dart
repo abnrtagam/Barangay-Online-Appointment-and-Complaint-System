@@ -304,4 +304,18 @@ class AuthService {
   static Future<void> logout() async {
     await StorageService.clearAll();
   }
+
+  // Update FCM Token for push notifications
+  static Future<Map<String, dynamic>> updateFcmToken(String token) async {
+    try {
+      final response = await ApiService.post(
+        '${ApiConstants.baseUrl}/auth/update-fcm-token',
+        {'fcm_token': token},
+      );
+      return response;
+    } catch (e) {
+      print('AuthService Error updating FCM token: $e');
+      return {'success': false, 'message': e.toString()};
+    }
+  }
 }

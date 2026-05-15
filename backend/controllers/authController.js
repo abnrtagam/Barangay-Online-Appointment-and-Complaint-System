@@ -581,4 +581,25 @@ exports.requestReactivation = async (req, res) => {
   }
 }
 
+// POST /api/auth/update-fcm-token
+exports.updateFcmToken = async (req, res) => {
+  const { fcm_token } = req.body
+  const userId = req.user.id // From authMiddleware
+
+  if (!fcm_token) {
+    return res.status(422).json({ message: 'FCM token is required.' })
+  }
+
+  try {
+    // Ensure fcm_token column exists (Robustness)
+    await db.query(`ALTER TABLE users ADD COLUMN IF NOT EXISTS fcm_token VARCHAR(255) DEFAULT NULL`)
+    
+    await db.query('UPDATE users SET fcm_token = ? WHERE id = ?', [fcm_token, userId])
+    res.json({ message: 'FCM token updated successfully.' })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to update FCM token.' })
+  }
+}
+
 module.exports = exports
