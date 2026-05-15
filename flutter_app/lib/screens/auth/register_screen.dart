@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/auth_provider.dart';
-import 'verify_otp_screen.dart';
+import '../../constants/app_colors.dart';
+import 'otp_verification_screen.dart';
 
 class RegisterScreen extends StatefulWidget {
   const RegisterScreen({super.key});
@@ -29,147 +30,95 @@ class _RegisterScreenState extends State<RegisterScreen> {
     super.dispose();
   }
 
-  void _handleRegister(BuildContext context) async {
-    context.read<AuthProvider>().clearError();
-
-    if (_firstNameController.text.isEmpty ||
-        _lastNameController.text.isEmpty ||
-        _emailController.text.isEmpty ||
-        _phoneController.text.isEmpty ||
-        _addressController.text.isEmpty ||
-        _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in all fields')),
-      );
+  void _handleRegister() async {
+    if (_firstNameController.text.isEmpty || _lastNameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty || _addressController.text.isEmpty || _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill in all fields')));
       return;
     }
 
     final result = await context.read<AuthProvider>().register(
-          firstName: _firstNameController.text,
-          lastName: _lastNameController.text,
-          email: _emailController.text,
-          phone: _phoneController.text,
-          address: _addressController.text,
-          password: _passwordController.text,
-        );
+      firstName: _firstNameController.text,
+      lastName: _lastNameController.text,
+      email: _emailController.text,
+      phone: _phoneController.text,
+      address: _addressController.text,
+      password: _passwordController.text,
+    );
 
-    if (result['success'] && mounted) {
-      // Navigate to OTP verification
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => VerifyOtpScreen(
-            email: _emailController.text,
-          ),
-        ),
-      );
-    } else if (mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(result['message'] ?? 'Registration failed')),
-      );
+    if (mounted) {
+      if (result['success']) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message']), backgroundColor: AppColors.success));
+        if (result['requiresOtp'] == true) {
+          Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => OtpVerificationScreen(email: _emailController.text)));
+        } else {
+          Navigator.pop(context);
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(result['message'] ?? 'Registration failed'), backgroundColor: AppColors.danger));
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create Account'),
-      ),
-      backgroundColor: Colors.grey[50],
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              TextField(
-                controller: _firstNameController,
-                decoration: InputDecoration(
-                  labelText: 'First Name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _lastNameController,
-                decoration: InputDecoration(
-                  labelText: 'Last Name',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-                keyboardType: TextInputType.emailAddress,
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _phoneController,
-                decoration: InputDecoration(
-                  labelText: 'Phone',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _addressController,
-                decoration: InputDecoration(
-                  labelText: 'Address',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextField(
-                controller: _passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 24),
-              Consumer<AuthProvider>(
-                builder: (context, authProvider, _) {
-                  return ElevatedButton(
-                    onPressed: authProvider.isLoading
-                        ? null
-                        : () => _handleRegister(context),
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 12),
-                    ),
-                    child: authProvider.isLoading
-                        ? const SizedBox(
-                            height: 20,
-                            width: 20,
-                            child: CircularProgressIndicator(
-                              strokeWidth: 2,
-                            ),
-                          )
-                        : const Text('Register'),
-                  );
-                },
-              ),
-            ],
-          ),
+      backgroundColor: AppColors.white,
+      appBar: AppBar(title: const Text('CREATE ACCOUNT')),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Text('Personal Information', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.primary900, fontFamily: 'Plus Jakarta Sans')),
+            const SizedBox(height: 4),
+            const Text('Please provide your real information for verification.', style: TextStyle(fontSize: 13, color: AppColors.gray500, fontFamily: 'DM Sans')),
+            const SizedBox(height: 24),
+
+            _inputLabel('FIRST NAME'),
+            TextField(controller: _firstNameController, decoration: const InputDecoration(hintText: 'e.g. Juan')),
+            const SizedBox(height: 16),
+
+            _inputLabel('LAST NAME'),
+            TextField(controller: _lastNameController, decoration: const InputDecoration(hintText: 'e.g. Dela Cruz')),
+            const SizedBox(height: 16),
+
+            _inputLabel('EMAIL ADDRESS'),
+            TextField(controller: _emailController, decoration: const InputDecoration(hintText: 'e.g. juan@example.com'), keyboardType: TextInputType.emailAddress),
+            const SizedBox(height: 16),
+
+            _inputLabel('PHONE NUMBER'),
+            TextField(controller: _phoneController, decoration: const InputDecoration(hintText: 'e.g. 09123456789'), keyboardType: TextInputType.phone),
+            const SizedBox(height: 16),
+
+            _inputLabel('HOME ADDRESS'),
+            TextField(controller: _addressController, decoration: const InputDecoration(hintText: 'e.g. Phase 1, Blk 2, Lot 3')),
+            const SizedBox(height: 16),
+
+            _inputLabel('ACCOUNT PASSWORD'),
+            TextField(controller: _passwordController, obscureText: true, decoration: const InputDecoration(hintText: 'At least 5 characters')),
+            const SizedBox(height: 32),
+
+            Consumer<AuthProvider>(
+              builder: (context, auth, _) {
+                return ElevatedButton(
+                  onPressed: auth.isLoading ? null : _handleRegister,
+                  child: auth.isLoading
+                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                      : const Text('CREATE RESIDENT ACCOUNT'),
+                );
+              },
+            ),
+            const SizedBox(height: 24),
+          ],
         ),
       ),
+    );
+  }
+
+  Widget _inputLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.gray700, letterSpacing: 1)),
     );
   }
 }
