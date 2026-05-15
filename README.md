@@ -92,7 +92,7 @@ Empowering residents with on-the-go access to essential services.
 ---
 
 ## 📸 Screen Preview (Coming Soon)
-*(Add your screenshots here to make your GitHub profile stand out!)*
+
 
 ---
 
