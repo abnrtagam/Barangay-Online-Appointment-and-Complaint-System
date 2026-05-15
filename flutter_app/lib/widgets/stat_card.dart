@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
+import '../constants/app_colors.dart';
 
-/// A dashboard statistics card with icon, value, and label.
-/// Used on the resident dashboard to show counts like total complaints, pending, etc.
 class StatCard extends StatelessWidget {
   final IconData icon;
   final String value;
@@ -25,19 +24,16 @@ class StatCard extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(16),
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.gray200, width: 1),
           boxShadow: [
             BoxShadow(
-              color: color.withValues(alpha: 0.15),
-              blurRadius: 12,
+              color: AppColors.gray950.withValues(alpha: 0.06),
+              blurRadius: 10,
               offset: const Offset(0, 4),
             ),
           ],
-          border: Border.all(
-            color: color.withValues(alpha: 0.2),
-            width: 1,
-          ),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -45,28 +41,28 @@ class StatCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.12),
-                borderRadius: BorderRadius.circular(10),
+                color: color.withValues(alpha: 0.1),
+                borderRadius: BorderRadius.circular(8),
               ),
-              child: Icon(icon, color: color, size: 24),
+              child: Icon(icon, color: color, size: 20),
             ),
-            const SizedBox(height: 12),
+            const Spacer(),
             Text(
               value,
-              style: TextStyle(
-                fontSize: 28,
+              style: const TextStyle(
+                fontSize: 24,
                 fontWeight: FontWeight.w800,
-                color: color,
-                height: 1,
+                color: AppColors.gray900,
+                fontFamily: 'Plus Jakarta Sans',
               ),
             ),
-            const SizedBox(height: 4),
             Text(
               label,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 12,
-                fontWeight: FontWeight.w500,
-                color: Colors.grey[600],
+                fontWeight: FontWeight.w600,
+                color: AppColors.gray500,
+                fontFamily: 'DM Sans',
               ),
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
