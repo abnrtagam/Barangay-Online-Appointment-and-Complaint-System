@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
-import { FiUpload, FiX, FiSend } from 'react-icons/fi'
+import { FiUpload, FiX, FiSend, FiClock, FiAlertCircle } from 'react-icons/fi'
 
 const INIT = { category_id: '', subject: '', details: '' }
 
@@ -85,7 +85,7 @@ export default function SubmitComplaint() {
         </div>
       </div>
 
-      <div style={{ maxWidth: 680 }}>
+      <div className="grid-2" style={{ alignItems: 'start' }}>
         <div className="card" style={{ border: 'none', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
           <div className="card-header">
             <span className="card-title">Complaint Details</span>
@@ -170,15 +170,24 @@ export default function SubmitComplaint() {
                 )}
               </div>
 
-              {/* Notice */}
               <div style={{
-                background: 'var(--primary-50)', border: '1px solid var(--primary-200)',
-                borderRadius: 'var(--radius-md)', padding: '14px 16px',
-                fontSize: '.84rem', color: 'var(--primary-800)', marginBottom: 20,
-                lineHeight: 1.6,
+                display: 'flex',
+                alignItems: 'start',
+                gap: '10px',
+                padding: '12px',
+                background: 'var(--info-50)',
+                borderRadius: '8px',
+                border: '1px solid var(--info-200)',
+                color: 'var(--info-700)',
+                fontSize: '0.78rem',
+                lineHeight: 1.4,
+                marginBottom: '20px'
               }}>
-                <strong>Note:</strong> Your complaint will be reviewed by barangay officials.
-                You will be notified of any status updates. Please ensure all information is accurate.
+                <FiClock size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
+                <span>
+                  <strong>Note:</strong> Your complaint will be reviewed by barangay officials.
+                  You will be notified of any status updates via the history page.
+                </span>
               </div>
 
               <div style={{ display: 'flex', gap: 12 }}>
@@ -190,6 +199,54 @@ export default function SubmitComplaint() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+
+        {/* Info Panel */}
+        <div>
+          <div className="card" style={{ marginBottom: 16, border: 'none', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
+            <div className="card-body">
+              <h3 style={{ 
+                fontFamily: 'var(--font-heading)', 
+                fontWeight: 700, 
+                marginBottom: 16, 
+                fontSize: '.95rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: 'var(--primary-700)'
+              }}>
+                <FiUpload /> Submission Guidelines
+              </h3>
+              {[
+                'Provide accurate dates and times.',
+                'Mention specific locations or landmarks.',
+                'Include names of people involved if known.',
+                'Attach clear photos or documents as evidence.',
+                'State facts clearly and objectively.'
+              ].map(item => (
+                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', fontSize: '.88rem', color: 'var(--gray-600)', borderBottom: '1px solid var(--gray-50)' }}>
+                  <span style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--primary-400)' }} />
+                  <span>{item}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          
+          <div className="card" style={{ border: 'none', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
+            <div className="card-body" style={{ padding: '20px' }}>
+              <div style={{ display: 'flex', gap: 12, alignItems: 'start' }}>
+                <div style={{ width: 40, height: 40, borderRadius: '10px', background: 'var(--warning-100)', color: 'var(--warning-700)', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+                  <FiAlertCircle size={20} />
+                </div>
+                <div>
+                  <h4 style={{ margin: '0 0 4px 0', fontSize: '.88rem', fontWeight: 700 }}>Data Privacy</h4>
+                  <p style={{ margin: 0, fontSize: '.8rem', color: 'var(--gray-500)', lineHeight: 1.5 }}>
+                    All submitted information is treated with strict confidentiality under the Data Privacy Act.
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>

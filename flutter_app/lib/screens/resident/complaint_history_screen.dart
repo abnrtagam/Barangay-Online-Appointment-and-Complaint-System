@@ -39,37 +39,43 @@ class _ComplaintHistoryScreenState extends State<ComplaintHistoryScreen> {
         children: [
           // Dynamic Header Banner
           Container(
-            padding: const EdgeInsets.fromLTRB(24, 64, 24, 24),
-            decoration: const BoxDecoration(
+            width: double.infinity,
+            decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [AppColors.primary900, AppColors.primary700],
+                colors: [AppColors.primary900, AppColors.primary600],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     const Text(
                       'My Complaints',
-                      style: TextStyle(fontSize: 28, fontWeight: FontWeight.w900, color: AppColors.white, fontFamily: 'Plus Jakarta Sans'),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        fontFamily: 'Plus Jakarta Sans',
+                        letterSpacing: -0.5,
+                      ),
                     ),
-                    Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(color: Colors.white.withValues(alpha: 0.15), shape: BoxShape.circle),
-                      child: const Icon(Icons.assignment_late_outlined, color: AppColors.white),
+                    const SizedBox(height: 6),
+                    const Text(
+                      'Track and manage your filed reports.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                const Text(
-                  'Track and manage your filed reports.',
-                  style: TextStyle(fontSize: 14, color: AppColors.primary100, fontFamily: 'DM Sans'),
-                ),
-              ],
+              ),
             ),
           ),
 
@@ -158,72 +164,126 @@ class _ComplaintHistoryScreenState extends State<ComplaintHistoryScreen> {
     );
   }
 
+  Color _getStatusColor(String status) {
+    switch (status.toLowerCase()) {
+      case 'pending': return AppColors.warning;
+      case 'approved':
+      case 'scheduled': return AppColors.primary600;
+      case 'resolved':
+      case 'completed': return AppColors.success;
+      case 'rejected':
+      case 'cancelled': return AppColors.danger;
+      default: return AppColors.gray400;
+    }
+  }
+
   Widget _buildComplaintCard(BuildContext context, dynamic complaint) {
+    final Color statusColor = _getStatusColor(complaint.status);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(16),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 10, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
-      child: InkWell(
-        onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => ComplaintDetailScreen(complaint: complaint))),
+      child: ClipRRect(
         borderRadius: BorderRadius.circular(16),
-        child: Padding(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  StatusBadge(status: complaint.status),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(color: AppColors.gray50, borderRadius: BorderRadius.circular(8)),
-                    child: Text(
-                      DateFormat('MMM dd, yyyy').format(complaint.createdAt),
-                      style: const TextStyle(color: AppColors.gray600, fontWeight: FontWeight.w800, fontSize: 11),
+        child: InkWell(
+          onTap: () => Navigator.push(
+            context, 
+            MaterialPageRoute(builder: (context) => ComplaintDetailScreen(complaint: complaint))
+          ),
+          child: IntrinsicHeight(
+            child: Row(
+              children: [
+                // Status Strip
+                Container(
+                  width: 4,
+                  color: statusColor,
+                ),
+                
+                // Content
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            StatusBadge(status: complaint.status, fontSize: 10),
+                            Text(
+                              DateFormat('MMM dd, yyyy').format(complaint.createdAt),
+                              style: const TextStyle(
+                                fontSize: 11,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.gray400,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          complaint.subject,
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.primary900,
+                            fontFamily: 'Plus Jakarta Sans',
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 6),
+                        Text(
+                          complaint.details,
+                          style: const TextStyle(
+                            color: AppColors.gray600, 
+                            fontSize: 13, 
+                            height: 1.4,
+                            fontFamily: 'DM Sans',
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const Padding(
+                          padding: EdgeInsets.symmetric(vertical: 12),
+                          child: Divider(color: AppColors.gray100, height: 1),
+                        ),
+                        Row(
+                          children: [
+                            Icon(Icons.category_outlined, size: 14, color: AppColors.primary400),
+                            const SizedBox(width: 6),
+                            Text(
+                              complaint.categoryName ?? 'General',
+                              style: const TextStyle(
+                                color: AppColors.primary700, 
+                                fontSize: 12, 
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Text(
-                complaint.subject,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800, color: AppColors.primary900, fontFamily: 'Plus Jakarta Sans'),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(height: 8),
-              Text(
-                complaint.details,
-                style: const TextStyle(color: AppColors.gray600, fontSize: 13, height: 1.5),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Divider(color: AppColors.gray100, thickness: 1.5),
-              ),
-              Row(
-                children: [
-                  const Icon(Icons.category_rounded, size: 16, color: AppColors.primary400),
-                  const SizedBox(width: 6),
-                  Text(
-                    complaint.categoryName ?? 'General',
-                    style: const TextStyle(color: AppColors.primary700, fontSize: 12, fontWeight: FontWeight.w700),
-                  ),
-                  const Spacer(),
-                  const Text(
-                    'View Details',
-                    style: TextStyle(color: AppColors.primary600, fontWeight: FontWeight.w800, fontSize: 12, letterSpacing: 0.5),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(Icons.arrow_forward_rounded, size: 16, color: AppColors.primary600),
-                ],
-              ),
-            ],
+                ),
+                
+                // Arrow
+                const Padding(
+                  padding: EdgeInsets.only(right: 12),
+                  child: Icon(Icons.arrow_forward_ios_rounded, size: 14, color: AppColors.gray300),
+                ),
+              ],
+            ),
           ),
         ),
       ),

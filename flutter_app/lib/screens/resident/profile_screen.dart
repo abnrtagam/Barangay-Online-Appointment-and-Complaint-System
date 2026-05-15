@@ -24,7 +24,13 @@ class ProfileScreen extends StatelessWidget {
             backgroundColor: AppColors.primary900,
             flexibleSpace: FlexibleSpaceBar(
               background: Container(
-                color: AppColors.primary900,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [AppColors.primary900, AppColors.primary600],
+                    begin: Alignment.topCenter,
+                    end: Alignment.bottomCenter,
+                  ),
+                ),
                 child: SafeArea(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -37,7 +43,7 @@ class ProfileScreen extends StatelessWidget {
                         ),
                         child: CircleAvatar(
                           radius: 44,
-                          backgroundColor: AppColors.primary100,
+                          backgroundColor: AppColors.white,
                           child: Text(
                             user?.firstName.isNotEmpty == true ? user!.firstName[0].toUpperCase() : '?',
                             style: const TextStyle(color: AppColors.primary700, fontSize: 32, fontWeight: FontWeight.w800, fontFamily: 'Plus Jakarta Sans'),

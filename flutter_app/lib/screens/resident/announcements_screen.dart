@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../providers/announcement_provider.dart';
 import '../../widgets/empty_state.dart';
 import '../../models/announcement_model.dart';
+import '../../constants/app_colors.dart';
 import 'package:intl/intl.dart';
 
 class AnnouncementsScreen extends StatefulWidget {
@@ -22,40 +23,79 @@ class _AnnouncementsScreenState extends State<AnnouncementsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
-      appBar: AppBar(
-        title: const Text('Announcements'),
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFF2D3748),
-        elevation: 0,
-        surfaceTintColor: Colors.transparent,
-        automaticallyImplyLeading: false,
-      ),
-      body: Consumer<AnnouncementProvider>(
-        builder: (context, provider, _) {
-          if (provider.isLoading) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      backgroundColor: AppColors.gray50,
+      body: Column(
+        children: [
+          // Premium Header
+          Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [AppColors.primary900, AppColors.primary600],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            child: SafeArea(
+              bottom: false,
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(24, 24, 24, 32),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Announcements',
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                        fontFamily: 'Plus Jakarta Sans',
+                        letterSpacing: -0.5,
+                      ),
+                    ),
+                    SizedBox(height: 6),
+                    Text(
+                      'Latest updates from the barangay office.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.white70,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: Consumer<AnnouncementProvider>(
+              builder: (context, provider, _) {
+                if (provider.isLoading) {
+                  return const Center(child: CircularProgressIndicator());
+                }
 
-          if (provider.announcements.isEmpty) {
-            return const EmptyState(
-              icon: Icons.campaign_outlined,
-              title: 'No Announcements',
-              message: 'There are no announcements from the barangay yet. Check back later.',
-            );
-          }
+                if (provider.announcements.isEmpty) {
+                  return const EmptyState(
+                    icon: Icons.campaign_outlined,
+                    title: 'No Announcements',
+                    message: 'There are no announcements from the barangay yet. Check back later.',
+                  );
+                }
 
-          return RefreshIndicator(
-            onRefresh: () => provider.fetchAnnouncements(),
-            child: ListView.builder(
-              padding: const EdgeInsets.all(16),
-              itemCount: provider.announcements.length,
-              itemBuilder: (context, index) {
-                return _buildCard(provider.announcements[index]);
+                return RefreshIndicator(
+                  onRefresh: () => provider.fetchAnnouncements(),
+                  child: ListView.builder(
+                    padding: const EdgeInsets.all(16),
+                    itemCount: provider.announcements.length,
+                    itemBuilder: (context, index) {
+                      return _buildCard(provider.announcements[index]);
+                    },
+                  ),
+                );
               },
             ),
-          );
-        },
+          ),
+        ],
       ),
     );
   }

@@ -17,6 +17,17 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   final _notesController = TextEditingController();
   DateTime? _selectedDate;
   String? _selectedSlot;
+  String? _selectedPurpose;
+
+  final List<String> _purposeOptions = [
+    'Complaint Follow-up',
+    'Barangay Clearance',
+    'Certificate Request',
+    'Mediation',
+    'Community Concern',
+    'Appointment with Barangay Official',
+    'Other'
+  ];
 
   final List<String> _timeSlots = [
     '8:00 AM - 9:00 AM',
@@ -74,9 +85,17 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
   }
 
   void _handleBook() async {
-    if (_selectedDate == null || _selectedSlot == null || _purposeController.text.isEmpty) {
+    if (_selectedDate == null || _selectedSlot == null || _selectedPurpose == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please fill in date, time slot, and purpose')),
+        const SnackBar(content: Text('Please select date, time slot, and purpose')),
+      );
+      return;
+    }
+
+    final finalPurpose = _selectedPurpose == 'Other' ? _purposeController.text : _selectedPurpose;
+    if (finalPurpose == null || finalPurpose.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please specify your purpose')),
       );
       return;
     }
@@ -85,7 +104,7 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
     final result = await context.read<AppointmentProvider>().bookAppointment(
       appointmentDate: dateStr,
       timeSlot: _selectedSlot!,
-      purpose: _purposeController.text,
+      purpose: finalPurpose,
       notes: _notesController.text.isNotEmpty ? _notesController.text : null,
     );
 
@@ -101,6 +120,76 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
         );
       }
     }
+  }
+
+  void _showPurposePicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.6,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.gray200, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            const Text('PURPOSE OF VISIT', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: AppColors.gray500)),
+            const SizedBox(height: 10),
+            const Divider(),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                itemCount: _purposeOptions.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 4),
+                itemBuilder: (context, index) {
+                  final purpose = _purposeOptions[index];
+                  final isSelected = _selectedPurpose == purpose;
+                  return InkWell(
+                    onTap: () {
+                      setState(() => _selectedPurpose = purpose);
+                      Navigator.pop(context);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.primary50 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Icon(
+                            isSelected ? Icons.check_circle_rounded : Icons.circle_outlined, 
+                            size: 20, 
+                            color: isSelected ? AppColors.primary600 : AppColors.gray300
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              purpose,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                color: isSelected ? AppColors.primary900 : AppColors.gray700,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override
@@ -205,19 +294,50 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                             const SizedBox(height: 24),
                           ],
 
-                          _inputLabel('PURPOSE OF VISIT'),
-                          TextField(
-                            controller: _purposeController,
-                            decoration: InputDecoration(
-                              hintText: 'e.g. Requesting Clearance...',
-                              prefixIcon: const Icon(Icons.assignment_outlined, size: 20, color: AppColors.primary600),
-                              filled: true,
-                              fillColor: AppColors.gray50,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                              contentPadding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                          ),
-                          const SizedBox(height: 20),
+                           _inputLabel('PURPOSE OF VISIT'),
+                           InkWell(
+                             onTap: () => _showPurposePicker(context),
+                             borderRadius: BorderRadius.circular(12),
+                             child: Container(
+                               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                               decoration: BoxDecoration(
+                                 color: AppColors.gray50,
+                                 borderRadius: BorderRadius.circular(12),
+                               ),
+                               child: Row(
+                                 children: [
+                                   const Icon(Icons.assignment_outlined, size: 20, color: AppColors.primary600),
+                                   const SizedBox(width: 12),
+                                   Expanded(
+                                     child: Text(
+                                       _selectedPurpose ?? 'Select purpose',
+                                       style: TextStyle(
+                                         fontSize: 15,
+                                         fontWeight: _selectedPurpose == null ? FontWeight.w500 : FontWeight.w700,
+                                         color: _selectedPurpose == null ? AppColors.gray400 : AppColors.primary900,
+                                         fontFamily: 'DM Sans',
+                                       ),
+                                     ),
+                                   ),
+                                   const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.gray400),
+                                 ],
+                               ),
+                             ),
+                           ),
+                           if (_selectedPurpose == 'Other') ...[
+                             const SizedBox(height: 16),
+                             TextField(
+                               controller: _purposeController,
+                               decoration: InputDecoration(
+                                 hintText: 'Specify your purpose...',
+                                 filled: true,
+                                 fillColor: AppColors.gray50,
+                                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
+                                 contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                               ),
+                             ),
+                           ],
+                           const SizedBox(height: 20),
 
                           _inputLabel('ADDITIONAL NOTES (OPTIONAL)'),
                           TextField(
@@ -245,6 +365,61 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
                             ),
                             child: const Text('CONFIRM APPOINTMENT', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1)),
                           ),
+                          const SizedBox(height: 24),
+
+                          // Note
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary50,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.primary200),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.info_outline_rounded, size: 20, color: AppColors.primary700),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text('NOTE:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.primary800, letterSpacing: 0.5)),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Your request will be reviewed by the staff. Check history for updates.',
+                                        style: TextStyle(fontSize: 13, color: AppColors.primary700, height: 1.4),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Office Hours
+                          _infoCard(
+                            title: 'OFFICE HOURS',
+                            icon: Icons.access_time_rounded,
+                            children: [
+                              _infoRow('Monday – Friday', '8:00 AM – 5:00 PM'),
+                              _infoRow('Saturday & Sunday', 'Closed'),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // What to Bring
+                          _infoCard(
+                            title: 'WHAT TO BRING',
+                            icon: Icons.assignment_turned_in_outlined,
+                            children: [
+                              _infoCheckItem('Valid government ID'),
+                              _infoCheckItem('Proof of residency'),
+                              _infoCheckItem('Supporting documents'),
+                            ],
+                          ),
+                          const SizedBox(height: 40),
                         ],
                       ),
                     ),
@@ -255,6 +430,58 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
           ),
         );
       },
+    );
+  }
+
+  Widget _infoCard({required String title, required IconData icon, required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.gray100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: AppColors.primary600),
+              const SizedBox(width: 8),
+              Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.primary900, letterSpacing: 1)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(label, style: const TextStyle(fontSize: 13, color: AppColors.gray600, fontWeight: FontWeight.w500)),
+          Text(value, style: const TextStyle(fontSize: 13, color: AppColors.gray900, fontWeight: FontWeight.w700)),
+        ],
+      ),
+    );
+  }
+
+  Widget _infoCheckItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          const Icon(Icons.check_circle_outline_rounded, size: 16, color: AppColors.success),
+          const SizedBox(width: 8),
+          Text(text, style: const TextStyle(fontSize: 13, color: AppColors.gray600, fontWeight: FontWeight.w500)),
+        ],
+      ),
     );
   }
 

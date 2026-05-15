@@ -210,6 +210,52 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
+  // Request password reset OTP
+  Future<Map<String, dynamic>> forgotPassword({required String email}) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await AuthService.forgotPassword(email: email);
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _errorMessage = 'Error: $e';
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
+  // Reset password with OTP
+  Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String otpCode,
+    required String newPassword,
+  }) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await AuthService.resetPassword(
+        email: email,
+        otpCode: otpCode,
+        newPassword: newPassword,
+      );
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _errorMessage = 'Error: $e';
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
   // Request reactivation
   Future<Map<String, dynamic>> requestReactivation({required String email, required String reason}) async {
     _isLoading = true;

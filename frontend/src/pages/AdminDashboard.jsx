@@ -113,34 +113,99 @@ export default function AdminDashboard() {
         </div>
       </div>
 
-      {/* Section Label */}
+      {/* Resident Statistics */}
       <p style={{
         fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em',
-        textTransform: 'uppercase', color: '#94a3b8', margin: '0 0 14px 2px',
+        textTransform: 'uppercase', color: '#2563eb', margin: '0 0 14px 2px',
+        display: 'flex', alignItems: 'center', gap: '8px'
       }}>
-        Performance Overview
+        <FiUsers size={14} /> Registered Residents
       </p>
-
-      {/* Stats Row 1 */}
-      <div className="grid-4 mb-3">
-        <DashboardCard title="Total Residents"    value={stats.totalResidents    || 0} icon={<FiUsers />}       color="blue"    sub="Registered accounts" />
-        <DashboardCard title="Total Complaints"   value={stats.totalComplaints   || 0} icon={<FiAlertCircle />} color="red"     sub="All time" />
-        <DashboardCard title="Pending Complaints" value={stats.pendingComplaints || 0} icon={<FiClock />}       color="warning" sub="Needs attention" />
-        <DashboardCard title="Total Appointments" value={stats.totalAppointments || 0} icon={<FiCalendar />}    color="info"    sub="All time" />
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '16px', marginBottom: '28px' }}>
+        <DashboardCard 
+          title="Total Residents"    
+          value={stats.totalResidents || 0} 
+          icon={<FiUsers />}       
+          color="blue"    
+          sub="Verified accounts in the system" 
+        />
       </div>
 
-      {/* Stats Row 2 */}
+      {/* Complaints Section */}
+      <p style={{
+        fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#dc2626', margin: '0 0 14px 2px',
+        display: 'flex', alignItems: 'center', gap: '8px'
+      }}>
+        <FiAlertCircle size={14} /> Complaints Management
+      </p>
       <div className="grid-4 mb-3">
-        <DashboardCard title="Approved"     value={stats.approvedComplaints    || 0} icon={<FiCheckCircle />} color="green"   sub="Complaints" />
-        <DashboardCard title="Resolved"     value={stats.resolvedComplaints    || 0} icon={<FiCheckCircle />} color="success" sub="Complaints" />
-        <DashboardCard title="Pending Appt" value={stats.pendingAppointments   || 0} icon={<FiClock />}       color="warning" sub="Appointments" />
-        <DashboardCard title="Completed"    value={stats.completedAppointments || 0} icon={<FiCalendar />}    color="green"   sub="Appointments" />
+        <DashboardCard 
+          title="Total"   
+          value={stats.totalComplaints || 0} 
+          icon={<FiAlertCircle />} 
+          color="red"     
+          sub="Lifetime reports" 
+        />
+        <DashboardCard 
+          title="Pending" 
+          value={stats.pendingComplaints || 0} 
+          icon={<FiClock />}       
+          color="warning" 
+          sub="Action required" 
+        />
+        <DashboardCard 
+          title="Approved"     
+          value={stats.approvedComplaints || 0} 
+          icon={<FiCheckCircle />} 
+          color="blue"   
+          sub="Validated" 
+        />
+        <DashboardCard 
+          title="Resolved"     
+          value={stats.resolvedComplaints || 0} 
+          icon={<FiCheckCircle />} 
+          color="green" 
+          sub="Closed" 
+        />
+      </div>
+
+      {/* Appointments Section */}
+      <p style={{
+        fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em',
+        textTransform: 'uppercase', color: '#0891b2', margin: '8px 0 14px 2px',
+        display: 'flex', alignItems: 'center', gap: '8px'
+      }}>
+        <FiCalendar size={14} /> Appointment Scheduling
+      </p>
+      <div className="grid-3 mb-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '16px' }}>
+        <DashboardCard 
+          title="Total" 
+          value={stats.totalAppointments || 0} 
+          icon={<FiCalendar />}    
+          color="info"    
+          sub="Visit requests" 
+        />
+        <DashboardCard 
+          title="Pending" 
+          value={stats.pendingAppointments || 0} 
+          icon={<FiClock />}       
+          color="warning" 
+          sub="Awaiting approval" 
+        />
+        <DashboardCard 
+          title="Completed"    
+          value={stats.completedAppointments || 0} 
+          icon={<FiCalendar />}    
+          color="green"   
+          sub="Finished" 
+        />
       </div>
 
       {/* Section Label */}
       <p style={{
         fontSize: '0.72rem', fontWeight: 700, letterSpacing: '0.1em',
-        textTransform: 'uppercase', color: '#94a3b8', margin: '8px 0 14px 2px',
+        textTransform: 'uppercase', color: '#94a3b8', margin: '24px 0 14px 2px',
       }}>
         Recent Activity
       </p>

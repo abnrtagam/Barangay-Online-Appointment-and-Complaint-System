@@ -143,9 +143,21 @@ export default function BookAppointment() {
                 )}
               </div>
 
-              {form.appointment_date && !selectedIsWeekend && (
-                <div className="form-group">
-                  <label className="form-label"><FiClock style={{ marginRight: 6, verticalAlign: 'middle' }}/>Time Slot *</label>
+              <div className="form-group">
+                <label className="form-label"><FiClock style={{ marginRight: 6, verticalAlign: 'middle' }}/>Time Slot *</label>
+                {!form.appointment_date || selectedIsWeekend ? (
+                  <div style={{
+                    padding: '24px',
+                    textAlign: 'center',
+                    background: '#f8fafc',
+                    borderRadius: 'var(--radius-md)',
+                    border: '1.5px dashed var(--gray-200)',
+                    color: '#94a3b8',
+                    fontSize: '0.85rem'
+                  }}>
+                    {selectedIsWeekend ? 'No slots available on weekends' : 'Please select a preferred date first'}
+                  </div>
+                ) : (
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
                     {TIME_SLOTS.map(slot => {
                       const taken = takenSlots.includes(slot)
@@ -170,9 +182,9 @@ export default function BookAppointment() {
                       )
                     })}
                   </div>
-                  {errors.time_slot && <div className="form-error">{errors.time_slot}</div>}
-                </div>
-              )}
+                )}
+                {errors.time_slot && <div className="form-error">{errors.time_slot}</div>}
+              </div>
 
               <div className="form-group">
                 <label className="form-label">Purpose of Visit *</label>
@@ -210,11 +222,30 @@ export default function BookAppointment() {
                   rows={3} placeholder="Any additional information for the barangay staff..."/>
               </div>
 
-              <div style={{ display: 'flex', gap: 12 }}>
+              <div style={{ display: 'flex', gap: 12, marginBottom: '16px' }}>
                 <button type="button" className="btn btn-secondary" onClick={() => navigate(-1)}>Cancel</button>
                 <button type="submit" className="btn btn-primary" disabled={loading || selectedIsWeekend} style={{ flex: 1 }}>
                   <FiSend/> {loading ? 'Booking...' : 'Book Appointment'}
                 </button>
+              </div>
+
+              <div style={{
+                display: 'flex',
+                alignItems: 'start',
+                gap: '10px',
+                padding: '12px',
+                background: 'var(--info-50)',
+                borderRadius: '8px',
+                border: '1px solid var(--info-200)',
+                color: 'var(--info-700)',
+                fontSize: '0.78rem',
+                lineHeight: 1.4
+              }}>
+                <FiClock size={16} style={{ marginTop: '2px', flexShrink: 0 }} />
+                <span>
+                  <strong>Note:</strong> Your request will be reviewed by the barangay staff. 
+                  Please check your history for the status of your appointment.
+                </span>
               </div>
             </form>
           </div>
@@ -224,9 +255,20 @@ export default function BookAppointment() {
         <div>
           <div className="card" style={{ marginBottom: 16, border: 'none', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
             <div className="card-body">
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 14, fontSize: '.95rem' }}>Office Hours</h3>
-              {[['Monday – Friday', '8:00 AM – 12:00 PM, 1:00 PM – 5:00 PM'], ['Saturday & Sunday', 'Closed']].map(([day, time]) => (
-                <div key={day} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px 0', borderBottom: '1px solid var(--gray-100)', fontSize: '.88rem' }}>
+              <h3 style={{ 
+                fontFamily: 'var(--font-heading)', 
+                fontWeight: 700, 
+                marginBottom: 16, 
+                fontSize: '.95rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: 'var(--primary-700)'
+              }}>
+                <FiClock /> Office Hours
+              </h3>
+              {[['Monday – Friday', '8:00 AM – 5:00 PM'], ['Saturday & Sunday', 'Closed']].map(([day, time]) => (
+                <div key={day} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid var(--gray-100)', fontSize: '.88rem' }}>
                   <span style={{ color: 'var(--gray-600)' }}>{day}</span>
                   <span style={{ fontWeight: 600, color: 'var(--gray-800)' }}>{time}</span>
                 </div>
@@ -235,9 +277,20 @@ export default function BookAppointment() {
           </div>
           <div className="card" style={{ border: 'none', borderRadius: '16px', boxShadow: '0 4px 20px rgba(0,0,0,0.03)', overflow: 'hidden' }}>
             <div className="card-body">
-              <h3 style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 14, fontSize: '.95rem' }}>What to Bring</h3>
-              {['Valid government ID', 'Proof of residency', 'Supporting documents (if needed)', 'Completed forms (if applicable)'].map(item => (
-                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0', fontSize: '.88rem', color: 'var(--gray-600)' }}>
+              <h3 style={{ 
+                fontFamily: 'var(--font-heading)', 
+                fontWeight: 700, 
+                marginBottom: 16, 
+                fontSize: '.95rem',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                color: 'var(--primary-700)'
+              }}>
+                <FiCheck /> What to Bring
+              </h3>
+              {['Valid government ID', 'Proof of residency', 'Supporting documents', 'Completed forms'].map(item => (
+                <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', fontSize: '.88rem', color: 'var(--gray-600)' }}>
                   <FiCheck size={14} color='var(--success)' />
                   <span>{item}</span>
                 </div>

@@ -130,18 +130,38 @@ class _SubmitComplaintScreenState extends State<SubmitComplaintScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           _inputLabel('COMPLAINT CATEGORY'),
-                          DropdownButtonFormField<ComplaintCategory>(
-                            decoration: InputDecoration(
-                              hintText: 'Select category',
-                              prefixIcon: const Icon(Icons.category_outlined, size: 20, color: AppColors.primary600),
-                              filled: true,
-                              fillColor: AppColors.gray50,
-                              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12), borderSide: BorderSide.none),
-                              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+                          InkWell(
+                            onTap: () => _showCategoryPicker(context, provider.categories),
+                            borderRadius: BorderRadius.circular(12),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                              decoration: BoxDecoration(
+                                color: AppColors.gray50,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Row(
+                                children: [
+                                  Icon(
+                                    _getCategoryIcon(_selectedCategory?.name ?? ''), 
+                                    size: 20, 
+                                    color: AppColors.primary600
+                                  ),
+                                  const SizedBox(width: 12),
+                                  Expanded(
+                                    child: Text(
+                                      _selectedCategory?.name ?? 'Select category',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: _selectedCategory == null ? FontWeight.w500 : FontWeight.w700,
+                                        color: _selectedCategory == null ? AppColors.gray400 : AppColors.primary900,
+                                        fontFamily: 'DM Sans',
+                                      ),
+                                    ),
+                                  ),
+                                  const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.gray400),
+                                ],
+                              ),
                             ),
-                            items: provider.categories.map((cat) => DropdownMenuItem(value: cat, child: Text(cat.name))).toList(),
-                            onChanged: (val) => setState(() => _selectedCategory = val),
-                            value: _selectedCategory,
                           ),
                           const SizedBox(height: 20),
 
@@ -226,6 +246,82 @@ class _SubmitComplaintScreenState extends State<SubmitComplaintScreen> {
                             ),
                             child: const Text('SUBMIT OFFICIAL REPORT', style: TextStyle(fontWeight: FontWeight.w800, letterSpacing: 1)),
                           ),
+                          const SizedBox(height: 24),
+
+                          // Note
+                          Container(
+                            padding: const EdgeInsets.all(16),
+                            decoration: BoxDecoration(
+                              color: AppColors.primary50,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(color: AppColors.primary200),
+                            ),
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Icon(Icons.info_outline_rounded, size: 20, color: AppColors.primary700),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: const [
+                                      Text('NOTE:', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w900, color: AppColors.primary800, letterSpacing: 0.5)),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        'Your report will be reviewed by officials. You will be notified of updates.',
+                                        style: TextStyle(fontSize: 13, color: AppColors.primary700, height: 1.4),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          // Guidelines
+                          _infoCard(
+                            title: 'SUBMISSION GUIDELINES',
+                            icon: Icons.lightbulb_outline_rounded,
+                            children: [
+                              _infoBulletItem('Provide accurate dates and times.'),
+                              _infoBulletItem('Mention specific locations.'),
+                              _infoBulletItem('Attach clear photos as evidence.'),
+                              _infoBulletItem('State facts clearly and objectively.'),
+                            ],
+                          ),
+                          const SizedBox(height: 16),
+
+                          // Privacy Card
+                          Container(
+                            padding: const EdgeInsets.all(20),
+                            decoration: BoxDecoration(
+                              color: AppColors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(color: AppColors.gray100),
+                            ),
+                            child: Row(
+                              children: [
+                                Container(
+                                  width: 40, height: 40,
+                                  decoration: BoxDecoration(color: AppColors.warningBg, borderRadius: BorderRadius.circular(10)),
+                                  child: const Icon(Icons.privacy_tip_outlined, color: AppColors.warningText, size: 20),
+                                ),
+                                const SizedBox(width: 16),
+                                const Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text('DATA PRIVACY', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.primary900)),
+                                      SizedBox(height: 2),
+                                      Text('Your information is kept confidential.', style: TextStyle(fontSize: 12, color: AppColors.gray500)),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(height: 40),
                         ],
                       ),
                     ),
@@ -236,6 +332,140 @@ class _SubmitComplaintScreenState extends State<SubmitComplaintScreen> {
           ),
         );
       },
+    );
+  }
+
+  IconData _getCategoryIcon(String name) {
+    switch (name.toLowerCase()) {
+      case 'flooding': return Icons.water_drop_outlined;
+      case 'garbage / sanitation': return Icons.delete_outline_rounded;
+      case 'noise complaint': return Icons.volume_up_outlined;
+      case 'illegal construction': return Icons.construction_rounded;
+      case 'animal nuisance': return Icons.pets_rounded;
+      case 'domestic dispute': return Icons.family_restroom_rounded;
+      case 'public safety': return Icons.security_rounded;
+      case 'street / road issues': return Icons.add_road_rounded;
+      case 'business / vendor issue': return Icons.storefront_rounded;
+      default: return Icons.category_outlined;
+    }
+  }
+
+  void _showCategoryPicker(BuildContext context, List<ComplaintCategory> categories) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: Colors.transparent,
+      isScrollControlled: true,
+      builder: (context) => Container(
+        height: MediaQuery.of(context).size.height * 0.7,
+        decoration: const BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+        ),
+        child: Column(
+          children: [
+            const SizedBox(height: 12),
+            Container(width: 40, height: 4, decoration: BoxDecoration(color: AppColors.gray200, borderRadius: BorderRadius.circular(2))),
+            const SizedBox(height: 20),
+            const Text('SELECT CATEGORY', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w900, letterSpacing: 1.2, color: AppColors.gray500)),
+            const SizedBox(height: 10),
+            const Divider(),
+            Expanded(
+              child: ListView.separated(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                itemCount: categories.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 4),
+                itemBuilder: (context, index) {
+                  final cat = categories[index];
+                  final isSelected = _selectedCategory?.id == cat.id;
+                  return InkWell(
+                    onTap: () {
+                      setState(() => _selectedCategory = cat);
+                      Navigator.pop(context);
+                    },
+                    borderRadius: BorderRadius.circular(12),
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                      decoration: BoxDecoration(
+                        color: isSelected ? AppColors.primary50 : Colors.transparent,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: isSelected ? AppColors.white : AppColors.gray50,
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Icon(
+                              _getCategoryIcon(cat.name), 
+                              size: 20, 
+                              color: isSelected ? AppColors.primary600 : AppColors.gray600
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Text(
+                              cat.name,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
+                                color: isSelected ? AppColors.primary900 : AppColors.gray700,
+                              ),
+                            ),
+                          ),
+                          if (isSelected)
+                            const Icon(Icons.check_circle_rounded, color: AppColors.primary600, size: 20),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _infoCard({required String title, required IconData icon, required List<Widget> children}) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(20),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: AppColors.gray100),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Icon(icon, size: 18, color: AppColors.primary600),
+              const SizedBox(width: 8),
+              Text(title, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w900, color: AppColors.primary900, letterSpacing: 1)),
+            ],
+          ),
+          const SizedBox(height: 16),
+          ...children,
+        ],
+      ),
+    );
+  }
+
+  Widget _infoBulletItem(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 10),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(margin: const EdgeInsets.only(top: 6), width: 6, height: 6, decoration: const BoxDecoration(color: AppColors.primary400, shape: BoxShape.circle)),
+          const SizedBox(width: 12),
+          Expanded(child: Text(text, style: const TextStyle(fontSize: 13, color: AppColors.gray600, height: 1.4))),
+        ],
+      ),
     );
   }
 
