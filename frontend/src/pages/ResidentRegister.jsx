@@ -13,9 +13,13 @@ export default function ResidentRegister() {
   const [alert, setAlert] = useState(null)
   const [documents, setDocuments] = useState([])
   const [form, setForm] = useState({
-    first_name: '', last_name: '', email: '', 
-    phone: '', address: '', password: '', password_confirmation: ''
+    first_name: '', last_name: '', dob: '', 
+    email: '', phone: '', address: '', zone: '',
+    gov_id_type: '', gov_id_number: '',
+    password: '', password_confirmation: ''
   })
+
+
   const [errors, setErrors] = useState({})
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
@@ -128,7 +132,7 @@ export default function ResidentRegister() {
                 <label className="form-label">First Name *</label>
                 <div style={{ position: 'relative' }}>
                   <FiUser style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
-                  <input className="form-control" name="first_name" value={form.first_name} onChange={handleChange} placeholder="Juan" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12 }}/>
+                  <input className="form-control" name="first_name" value={form.first_name} onChange={handleChange} placeholder="Juan" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
                 </div>
                 {errors.first_name && <div className="form-error">{errors.first_name}</div>}
               </div>
@@ -136,17 +140,51 @@ export default function ResidentRegister() {
                 <label className="form-label">Last Name *</label>
                 <div style={{ position: 'relative' }}>
                   <FiUser style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
-                  <input className="form-control" name="last_name" value={form.last_name} onChange={handleChange} placeholder="Dela Cruz" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12 }}/>
+                  <input className="form-control" name="last_name" value={form.last_name} onChange={handleChange} placeholder="Dela Cruz" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
                 </div>
                 {errors.last_name && <div className="form-error">{errors.last_name}</div>}
               </div>
             </div>
 
+            <div className="grid-2">
+              <div className="form-group">
+                <label className="form-label">Date of Birth *</label>
+                <input type="date" className="form-control" name="dob" value={form.dob} onChange={handleChange} style={{ background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '14px', fontSize: '0.9rem' }}/>
+                {errors.dob && <div className="form-error">{errors.dob}</div>}
+              </div>
+              <div className="form-group">
+                <label className="form-label">Government ID Type *</label>
+                <select className="form-select" name="gov_id_type" value={form.gov_id_type} onChange={handleChange} style={{ background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '40px', fontSize: '0.9rem' }}>
+
+
+                  <option value="">Select ID Type</option>
+                  <option value="SSS">SSS</option>
+                  <option value="UMID">UMID</option>
+                  <option value="Driver's License">Driver's License</option>
+                  <option value="Passport">Passport</option>
+                  <option value="PhilHealth">PhilHealth</option>
+                  <option value="National ID">National ID</option>
+                </select>
+                {errors.gov_id_type && <div className="form-error">{errors.gov_id_type}</div>}
+              </div>
+            </div>
+
+
+            <div className="form-group">
+              <label className="form-label">Government ID Number *</label>
+              <div style={{ position: 'relative' }}>
+                <FiShield style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
+                <input className="form-control" name="gov_id_number" value={form.gov_id_number} onChange={handleChange} placeholder="ID Number" style={{ paddingLeft: 44, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
+              </div>
+              {errors.gov_id_number && <div className="form-error">{errors.gov_id_number}</div>}
+            </div>
+
+
             <div className="form-group">
               <label className="form-label">Email Address *</label>
               <div style={{ position: 'relative' }}>
                 <FiMail style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
-                <input className="form-control" name="email" type="email" value={form.email} onChange={handleChange} placeholder="juan@email.com" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12 }}/>
+                <input className="form-control" name="email" type="email" value={form.email} onChange={handleChange} placeholder="juan@email.com" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
               </div>
               {errors.email && <div className="form-error">{errors.email}</div>}
             </div>
@@ -155,7 +193,7 @@ export default function ResidentRegister() {
               <label className="form-label">Phone Number *</label>
               <div style={{ position: 'relative' }}>
                 <FiPhone style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
-                <input className="form-control" name="phone" value={form.phone} onChange={handleChange} placeholder="09XXXXXXXXX" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12 }}/>
+                <input className="form-control" name="phone" value={form.phone} onChange={handleChange} placeholder="09XXXXXXXXX" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
               </div>
               {errors.phone && <div className="form-error">{errors.phone}</div>}
             </div>
@@ -169,12 +207,35 @@ export default function ResidentRegister() {
               {errors.address && <div className="form-error">{errors.address}</div>}
             </div>
 
+            <div className="form-group">
+              <label className="form-label">Barangay Zone *</label>
+              <div style={{ position: 'relative' }}>
+                <select 
+                  className="form-select" 
+                  name="zone" 
+                  value={form.zone} 
+                  onChange={handleChange} 
+                  style={{ background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '40px', fontSize: '0.9rem' }}
+
+
+
+                >
+                  <option value="">Select your Zone</option>
+                  {[...Array(12)].map((_, i) => (
+                    <option key={i+1} value={`Zone ${i+1}`}>Zone {i+1}</option>
+                  ))}
+                </select>
+              </div>
+              {errors.zone && <div className="form-error">{errors.zone}</div>}
+            </div>
+
+
             <div className="grid-2">
               <div className="form-group">
                 <label className="form-label">Password *</label>
                 <div style={{ position: 'relative' }}>
                   <FiLock style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
-                  <input className="form-control" name="password" type="password" value={form.password} onChange={handleChange} placeholder="••••••••" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12 }}/>
+                  <input className="form-control" name="password" type="password" value={form.password} onChange={handleChange} placeholder="••••••••" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
                 </div>
                 {errors.password && <div className="form-error">{errors.password}</div>}
               </div>
@@ -182,7 +243,7 @@ export default function ResidentRegister() {
                 <label className="form-label">Confirm Password *</label>
                 <div style={{ position: 'relative' }}>
                   <FiLock style={{ position: 'absolute', left: 14, top: 13, color: 'var(--gray-400)' }} />
-                  <input className="form-control" name="password_confirmation" type="password" value={form.password_confirmation} onChange={handleChange} placeholder="••••••••" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12 }}/>
+                  <input className="form-control" name="password_confirmation" type="password" value={form.password_confirmation} onChange={handleChange} placeholder="••••••••" style={{ paddingLeft: 40, background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', fontSize: '0.9rem' }}/>
                 </div>
                 {errors.password_confirmation && <div className="form-error">{errors.password_confirmation}</div>}
               </div>

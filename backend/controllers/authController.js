@@ -67,12 +67,13 @@ const checkRateLimit = async (ipAddress, email) => {
 
 // POST /api/auth/register
 exports.register = async (req, res) => {
-  const { first_name, last_name, email, phone, address, password } = req.body
+  const { first_name, last_name, dob, email, phone, address, zone, gov_id_type, gov_id_number, password } = req.body
   
   // Validation
-  if (!first_name || !last_name || !email || !phone || !address || !password) {
+  if (!first_name || !last_name || !dob || !email || !phone || !address || !zone || !gov_id_type || !gov_id_number || !password) {
     return res.status(422).json({ message: 'All fields are required.' })
   }
+
 
   // Email format validation
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -123,9 +124,9 @@ exports.register = async (req, res) => {
 
     // Create user account (status: pending, email_verified: false)
     const [result] = await db.query(
-      `INSERT INTO users (first_name, last_name, email, phone, address, password, role, status, email_verified, verification_documents) 
-       VALUES (?,?,?,?,?,?,?,?,?,?)`,
-      [first_name, last_name, email, phone, address, hash, 'resident', 'pending', false, documentPaths]
+      `INSERT INTO users (first_name, last_name, dob, email, phone, address, zone, gov_id_type, gov_id_number, password, role, status, email_verified, verification_documents) 
+       VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)`,
+      [first_name, last_name, dob, email, phone, address, zone, gov_id_type, gov_id_number, hash, 'resident', 'pending', false, documentPaths]
     )
 
     const userId = result.insertId

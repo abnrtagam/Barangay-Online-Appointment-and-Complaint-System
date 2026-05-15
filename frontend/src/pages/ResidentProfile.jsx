@@ -3,8 +3,9 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 import { 
   FiUser, FiMail, FiPhone, FiMapPin, FiShield, 
-  FiFileText, FiCamera, FiEdit2, FiCheckCircle, FiSave, FiX, FiLock, FiEye, FiEyeOff
+  FiFileText, FiCamera, FiEdit2, FiCheckCircle, FiSave, FiX, FiLock, FiEye, FiEyeOff, FiCalendar, FiCreditCard
 } from 'react-icons/fi'
+import { formatDate } from '../utils/date'
 
 export default function ResidentProfile() {
   const [user, setUser] = useState(null)
@@ -16,8 +17,11 @@ export default function ResidentProfile() {
   const [form, setForm] = useState({
     first_name: '',
     last_name: '',
+    dob: '',
     phone: '',
-    address: ''
+    address: '',
+    gov_id_type: '',
+    gov_id_number: ''
   })
 
   const [securityForm, setSecurityForm] = useState({
@@ -39,8 +43,11 @@ export default function ResidentProfile() {
         setForm({
           first_name: parsed.first_name || '',
           last_name: parsed.last_name || '',
+          dob: parsed.dob ? parsed.dob.split('T')[0] : '',
           phone: parsed.phone || '',
-          address: parsed.address || ''
+          address: parsed.address || '',
+          gov_id_type: parsed.gov_id_type || '',
+          gov_id_number: parsed.gov_id_number || ''
         })
       }
     } catch (err) {
@@ -53,8 +60,11 @@ export default function ResidentProfile() {
       setForm({
         first_name: user.first_name || '',
         last_name: user.last_name || '',
+        dob: user.dob ? user.dob.split('T')[0] : '',
         phone: user.phone || '',
-        address: user.address || ''
+        address: user.address || '',
+        gov_id_type: user.gov_id_type || '',
+        gov_id_number: user.gov_id_number || ''
       })
     }
     setIsEditing(!isEditing)
@@ -117,6 +127,8 @@ export default function ResidentProfile() {
     )
   }
 
+  const isApproved = user.status === 'approved'
+
   return (
     <div style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
       {/* Profile Header Card */}
@@ -166,15 +178,17 @@ export default function ResidentProfile() {
                   {user.first_name} {user.last_name}
                 </h1>
                 <div style={{ 
-                  background: 'rgba(34, 197, 94, 0.1)', color: '#16a34a',
+                  background: isApproved ? 'rgba(34, 197, 94, 0.1)' : 'rgba(245, 158, 11, 0.1)', 
+                  color: isApproved ? '#16a34a' : '#d97706',
                   padding: '4px 12px', borderRadius: 20, fontSize: '0.75rem', 
                   fontWeight: 700, display: 'flex', alignItems: 'center', gap: 4
                 }}>
-                  <FiCheckCircle size={12} /> Verified Resident
+                  {isApproved ? <FiCheckCircle size={12} /> : <FiLock size={12} />}
+                  {isApproved ? 'Verified Resident' : 'Pending Verification'}
                 </div>
               </div>
               <p style={{ margin: '4px 0 0', color: 'var(--gray-500)', fontWeight: 500 }}>
-                {user.email}
+                {user.email} • {user.zone || 'No Zone'}
               </p>
             </div>
             <div style={{ marginBottom: 8 }}>
@@ -242,9 +256,15 @@ export default function ResidentProfile() {
         <div>
           {activeTab === 'info' && (
             <div className="card" style={{ padding: 32, borderRadius: 20, border: 'none', boxShadow: '0 4px 20px rgba(0,0,0,0.02)', background: 'white' }}>
-              <h2 style={{ fontSize: '1.2rem', fontWeight: 800, marginBottom: 24, color: 'var(--gray-900)' }}>Personal Information</h2>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+                <h2 style={{ fontSize: '1.2rem', fontWeight: 800, margin: 0, color: 'var(--gray-900)' }}>Personal Information</h2>
+                {isApproved && <span style={{ fontSize: '0.75rem', color: 'var(--primary-600)', fontWeight: 700, background: 'var(--primary-50)', padding: '4px 10px', borderRadius: 8, display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <FiLock size={12}/> Verified fields are locked
+                </span>}
+              </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+                {/* First Name */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>First Name</label>
                   {!isEditing ? (
@@ -255,11 +275,13 @@ export default function ResidentProfile() {
                     <input 
                       className="form-control"
                       value={form.first_name}
+                      disabled={isApproved}
                       onChange={(e) => setForm({...form, first_name: e.target.value})}
-                      style={{ borderRadius: 12 }}
+                      style={{ borderRadius: 12, opacity: isApproved ? 0.7 : 1 }}
                     />
                   )}
                 </div>
+                {/* Last Name */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Last Name</label>
                   {!isEditing ? (
@@ -270,18 +292,38 @@ export default function ResidentProfile() {
                     <input 
                       className="form-control"
                       value={form.last_name}
+                      disabled={isApproved}
                       onChange={(e) => setForm({...form, last_name: e.target.value})}
-                      style={{ borderRadius: 12 }}
+                      style={{ borderRadius: 12, opacity: isApproved ? 0.7 : 1 }}
                     />
                   )}
                 </div>
+                {/* Date of Birth */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Date of Birth</label>
+                  {!isEditing ? (
+                    <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--gray-800)', padding: '12px 16px', background: 'var(--gray-50)', borderRadius: 12, border: '1px solid var(--gray-100)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <FiCalendar size={16} color="var(--gray-400)" /> {user.dob ? formatDate(user.dob) : 'Not specified'}
+                    </div>
+                  ) : (
+                    <input 
+                      type="date"
+                      className="form-control"
+                      value={form.dob}
+                      disabled={isApproved}
+                      onChange={(e) => setForm({...form, dob: e.target.value})}
+                      style={{ borderRadius: 12, opacity: isApproved ? 0.7 : 1 }}
+                    />
+                  )}
+                </div>
+                {/* Email (Always locked) */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Email Address</label>
                   <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--gray-400)', padding: '12px 16px', background: 'var(--gray-50)', borderRadius: 12, border: '1px solid var(--gray-100)', display: 'flex', alignItems: 'center', gap: 10 }}>
                     <FiMail size={16} color="var(--gray-400)" /> {user.email}
                   </div>
-                  {isEditing && <p style={{ fontSize: '0.75rem', color: 'var(--gray-400)', marginTop: 4 }}>Email cannot be changed.</p>}
                 </div>
+                {/* Phone Number */}
                 <div>
                   <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Phone Number</label>
                   {!isEditing ? (
@@ -295,6 +337,38 @@ export default function ResidentProfile() {
                       onChange={(e) => setForm({...form, phone: e.target.value})}
                       style={{ borderRadius: 12 }}
                     />
+                  )}
+                </div>
+                {/* Gov ID */}
+                <div>
+                  <label style={{ display: 'block', fontSize: '0.75rem', fontWeight: 700, color: 'var(--gray-400)', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 8 }}>Government ID</label>
+                  {!isEditing ? (
+                    <div style={{ fontSize: '1rem', fontWeight: 600, color: 'var(--gray-800)', padding: '12px 16px', background: 'var(--gray-50)', borderRadius: 12, border: '1px solid var(--gray-100)', display: 'flex', alignItems: 'center', gap: 10 }}>
+                      <FiCreditCard size={16} color="var(--gray-400)" /> {user.gov_id_type ? `${user.gov_id_type}: ${user.gov_id_number}` : 'No ID provided'}
+                    </div>
+                  ) : (
+                    <div style={{ display: 'flex', gap: 8 }}>
+                      <select 
+                        className="form-select" 
+                        value={form.gov_id_type} 
+                        disabled={isApproved}
+                        onChange={(e) => setForm({...form, gov_id_type: e.target.value})}
+                        style={{ borderRadius: 12, opacity: isApproved ? 0.7 : 1, width: '40%' }}
+                      >
+                        <option value="">ID Type</option>
+                        {["SSS", "UMID", "Driver's License", "Passport", "PhilHealth", "National ID"].map(id => (
+                          <option key={id} value={id}>{id}</option>
+                        ))}
+                      </select>
+                      <input 
+                        className="form-control"
+                        value={form.gov_id_number}
+                        disabled={isApproved}
+                        onChange={(e) => setForm({...form, gov_id_number: e.target.value})}
+                        style={{ borderRadius: 12, opacity: isApproved ? 0.7 : 1, flex: 1 }}
+                        placeholder="ID Number"
+                      />
+                    </div>
                   )}
                 </div>
               </div>
