@@ -8,20 +8,30 @@ class AppointmentService {
     try {
       final response = await ApiService.get(ApiConstants.appointments);
       if (response['success']) {
-        final data = response['data'];
+        final data = response['data']['data'];
         List<Appointment> appointments = [];
-
         if (data is List) {
           appointments = data.map((a) => Appointment.fromJson(a)).toList();
-        } else if (data is Map && data['appointments'] != null) {
-          appointments = (data['appointments'] as List)
-              .map((a) => Appointment.fromJson(a))
-              .toList();
         }
-
         return {'success': true, 'appointments': appointments};
       } else {
         return {'success': false, 'message': response['message'] ?? 'Failed to fetch appointments'};
+      }
+    } catch (e) {
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
+  // Get taken slots for a specific date
+  static Future<Map<String, dynamic>> getTakenSlots(String date) async {
+    try {
+      // Backend route is /api/appointments/taken-slots?date=YYYY-MM-DD
+      final response = await ApiService.get('${ApiConstants.appointments}/taken-slots?date=$date');
+      if (response['success']) {
+        final List<dynamic> data = response['data'];
+        return {'success': true, 'slots': data.cast<String>()};
+      } else {
+        return {'success': false, 'message': response['message'] ?? 'Failed to fetch slots'};
       }
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};
@@ -36,17 +46,15 @@ class AppointmentService {
     String? notes,
   }) async {
     try {
-      final body = <String, dynamic>{
-        'appointment_date': appointmentDate,
-        'time_slot': timeSlot,
-        'purpose': purpose,
-      };
-
-      if (notes != null && notes.isNotEmpty) {
-        body['notes'] = notes;
-      }
-
-      final response = await ApiService.post(ApiConstants.appointmentBook, body);
+      final response = await ApiService.post(
+        ApiConstants.appointments,
+        {
+          'appointment_date': appointmentDate,
+          'time_slot': timeSlot,
+          'purpose': purpose,
+          'notes': notes,
+        },
+      );
 
       if (response['success']) {
         return {
@@ -58,32 +66,6 @@ class AppointmentService {
           'success': false,
           'message': response['message'] ?? 'Failed to book appointment',
         };
-      }
-    } catch (e) {
-      return {'success': false, 'message': 'Error: $e'};
-    }
-  }
-
-  // Get taken time slots for a specific date
-  static Future<Map<String, dynamic>> getTakenSlots(String date) async {
-    try {
-      final response = await ApiService.get(
-        '${ApiConstants.appointmentSlots}?date=$date',
-      );
-
-      if (response['success']) {
-        final data = response['data'];
-        List<String> takenSlots = [];
-
-        if (data is List) {
-          takenSlots = data.map((s) => s.toString()).toList();
-        } else if (data is Map && data['taken_slots'] != null) {
-          takenSlots = (data['taken_slots'] as List).map((s) => s.toString()).toList();
-        }
-
-        return {'success': true, 'takenSlots': takenSlots};
-      } else {
-        return {'success': false, 'message': response['message'] ?? 'Failed to fetch slots'};
       }
     } catch (e) {
       return {'success': false, 'message': 'Error: $e'};

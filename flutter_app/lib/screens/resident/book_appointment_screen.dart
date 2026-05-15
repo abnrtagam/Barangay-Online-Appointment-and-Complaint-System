@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../providers/appointment_provider.dart';
 import '../../widgets/loading_overlay.dart';
+import '../../constants/app_colors.dart';
 import 'package:intl/intl.dart';
 
 class BookAppointmentScreen extends StatefulWidget {
@@ -42,14 +43,29 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       initialDate: now.add(const Duration(days: 1)),
       firstDate: now,
       lastDate: now.add(const Duration(days: 90)),
+      builder: (context, child) {
+        return Theme(
+          data: Theme.of(context).copyWith(
+            colorScheme: const ColorScheme.light(
+              primary: AppColors.primary600,
+              onPrimary: Colors.white,
+              onSurface: AppColors.primary900,
+            ),
+          ),
+          child: child!,
+        );
+      },
     );
 
     if (picked != null) {
+      if (picked.weekday == DateTime.saturday || picked.weekday == DateTime.sunday) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Appointments are only available on weekdays.')));
+        return;
+      }
       setState(() {
         _selectedDate = picked;
-        _selectedSlot = null; // Reset slot when date changes
+        _selectedSlot = null;
       });
-      // Fetch taken slots for this date
       final dateStr = DateFormat('yyyy-MM-dd').format(picked);
       if (mounted) {
         context.read<AppointmentProvider>().fetchTakenSlots(dateStr);
@@ -76,12 +92,12 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
     if (mounted) {
       if (result['success']) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Appointment booked successfully!'), backgroundColor: Color(0xFF10B981)),
+          const SnackBar(content: Text('Appointment booked successfully!'), backgroundColor: AppColors.success),
         );
         Navigator.pop(context);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(result['message'] ?? 'Failed to book')),
+          SnackBar(content: Text(result['message'] ?? 'Failed to book'), backgroundColor: AppColors.danger),
         );
       }
     }
@@ -93,120 +109,115 @@ class _BookAppointmentScreenState extends State<BookAppointmentScreen> {
       builder: (context, provider, _) {
         return LoadingOverlay(
           isLoading: provider.isSubmitting,
-          message: 'Booking appointment...',
+          message: 'PROCESSING BOOKING...',
           child: Scaffold(
-            backgroundColor: const Color(0xFFF5F7FA),
+            backgroundColor: AppColors.gray50,
             appBar: AppBar(
-              title: const Text('Book Appointment'),
-              backgroundColor: Colors.white,
-              foregroundColor: const Color(0xFF2D3748),
-              elevation: 0,
-              surfaceTintColor: Colors.transparent,
+              title: const Text('BOOK APPOINTMENT'),
             ),
             body: SingleChildScrollView(
-              padding: const EdgeInsets.all(16),
-              child: Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2))],
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const Text('Schedule an Appointment', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: Color(0xFF2D3748))),
-                    const SizedBox(height: 4),
-                    Text('Select a date and time slot for your visit.', style: TextStyle(fontSize: 13, color: Colors.grey[500])),
-                    const SizedBox(height: 24),
-
-                    // Date picker
-                    GestureDetector(
-                      onTap: _pickDate,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-                        decoration: BoxDecoration(
-                          border: Border.all(color: Colors.grey[300]!),
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Row(children: [
-                          Icon(Icons.calendar_today_rounded, color: Colors.grey[500], size: 20),
-                          const SizedBox(width: 12),
-                          Text(
-                            _selectedDate != null ? DateFormat('MMMM d, y (EEEE)').format(_selectedDate!) : 'Select Date',
-                            style: TextStyle(fontSize: 14, color: _selectedDate != null ? const Color(0xFF2D3748) : Colors.grey[400]),
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text('VISIT SCHEDULE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.gray500, letterSpacing: 1.2, fontFamily: 'Plus Jakarta Sans')),
+                  const SizedBox(height: 16),
+                  
+                  Container(
+                    padding: const EdgeInsets.all(24),
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.gray200, width: 1),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _inputLabel('SELECT DATE'),
+                        InkWell(
+                          onTap: _pickDate,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+                            decoration: BoxDecoration(
+                              border: Border.all(color: AppColors.gray300),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Row(children: [
+                              const Icon(Icons.calendar_month_rounded, color: AppColors.primary600, size: 20),
+                              const SizedBox(width: 12),
+                              Text(
+                                _selectedDate != null ? DateFormat('MMMM d, y (EEEE)').format(_selectedDate!) : 'Select a weekday',
+                                style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: _selectedDate != null ? AppColors.primary900 : AppColors.gray400),
+                              ),
+                            ]),
                           ),
-                        ]),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                        ),
+                        const SizedBox(height: 20),
 
-                    // Time slots
-                    if (_selectedDate != null) ...[
-                      const Text('Available Time Slots', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Color(0xFF2D3748))),
-                      const SizedBox(height: 8),
-                      Wrap(
-                        spacing: 8,
-                        runSpacing: 8,
-                        children: _timeSlots.map((slot) {
-                          final isTaken = provider.takenSlots.contains(slot);
-                          final isSelected = _selectedSlot == slot;
-                          return ChoiceChip(
-                            label: Text(slot, style: TextStyle(fontSize: 12, color: isTaken ? Colors.grey[400] : (isSelected ? Colors.white : const Color(0xFF2D3748)))),
-                            selected: isSelected,
-                            onSelected: isTaken ? null : (sel) => setState(() => _selectedSlot = sel ? slot : null),
-                            selectedColor: const Color(0xFF8B5CF6),
-                            disabledColor: Colors.grey[100],
-                            backgroundColor: Colors.grey[50],
-                          );
-                        }).toList(),
-                      ),
-                      const SizedBox(height: 16),
-                    ],
+                        if (_selectedDate != null) ...[
+                          _inputLabel('AVAILABLE TIME SLOTS'),
+                          const SizedBox(height: 8),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: _timeSlots.map((slot) {
+                              final isTaken = provider.takenSlots.contains(slot);
+                              final isSelected = _selectedSlot == slot;
+                              return ChoiceChip(
+                                label: Text(slot, style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: isTaken ? AppColors.gray400 : (isSelected ? Colors.white : AppColors.primary900))),
+                                selected: isSelected,
+                                onSelected: isTaken ? null : (sel) => setState(() => _selectedSlot = sel ? slot : null),
+                                selectedColor: AppColors.primary600,
+                                backgroundColor: AppColors.gray50,
+                                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8), side: BorderSide(color: isSelected ? AppColors.primary600 : AppColors.gray200)),
+                                showCheckmark: false,
+                              );
+                            }).toList(),
+                          ),
+                          const SizedBox(height: 24),
+                        ],
 
-                    // Purpose
-                    TextField(
-                      controller: _purposeController,
-                      decoration: InputDecoration(
-                        labelText: 'Purpose',
-                        prefixIcon: const Icon(Icons.assignment_outlined),
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
+                        _inputLabel('PURPOSE OF VISIT'),
+                        TextField(
+                          controller: _purposeController,
+                          decoration: const InputDecoration(
+                            hintText: 'e.g. Requesting Clearance, Certification',
+                            prefixIcon: Icon(Icons.assignment_outlined, size: 20),
+                          ),
+                        ),
+                        const SizedBox(height: 20),
 
-                    // Notes
-                    TextField(
-                      controller: _notesController,
-                      maxLines: 3,
-                      decoration: InputDecoration(
-                        labelText: 'Additional Notes (optional)',
-                        alignLabelWithHint: true,
-                        border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                        contentPadding: const EdgeInsets.all(16),
-                      ),
+                        _inputLabel('ADDITIONAL NOTES (OPTIONAL)'),
+                        TextField(
+                          controller: _notesController,
+                          maxLines: 3,
+                          decoration: const InputDecoration(
+                            hintText: 'Any other details the admin should know...',
+                            alignLabelWithHint: true,
+                          ),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 24),
-
-                    ElevatedButton(
-                      onPressed: provider.isSubmitting ? null : _handleBook,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: const Color(0xFF8B5CF6),
-                        foregroundColor: Colors.white,
-                        padding: const EdgeInsets.symmetric(vertical: 14),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        elevation: 0,
-                      ),
-                      child: const Text('Book Appointment', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
-                    ),
-                  ],
-                ),
+                  ),
+                  const SizedBox(height: 32),
+                  
+                  ElevatedButton(
+                    onPressed: provider.isSubmitting ? null : _handleBook,
+                    child: const Text('CONFIRM APPOINTMENT'),
+                  ),
+                ],
               ),
             ),
           ),
         );
       },
+    );
+  }
+
+  Widget _inputLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Text(text, style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800, color: AppColors.gray700, letterSpacing: 1)),
     );
   }
 }

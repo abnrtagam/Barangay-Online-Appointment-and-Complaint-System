@@ -48,7 +48,7 @@ class AppointmentProvider with ChangeNotifier {
     try {
       final result = await AppointmentService.getTakenSlots(date);
       if (result['success']) {
-        _takenSlots = result['takenSlots'] as List<String>;
+        _takenSlots = result['slots'] as List<String>;
       } else {
         _takenSlots = [];
       }
