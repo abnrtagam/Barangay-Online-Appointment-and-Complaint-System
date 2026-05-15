@@ -6,6 +6,7 @@ import '../../providers/appointment_provider.dart';
 import '../../providers/announcement_provider.dart';
 import '../../widgets/stat_card.dart';
 import '../../models/announcement_model.dart';
+import '../../constants/app_colors.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -39,77 +40,58 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final user = authProvider.user;
 
     return Scaffold(
-      backgroundColor: const Color(0xFFF5F7FA),
+      backgroundColor: AppColors.gray50,
       body: RefreshIndicator(
         onRefresh: _loadData,
         child: CustomScrollView(
           slivers: [
-            // App Bar with greeting
+            // Professional App Bar
             SliverAppBar(
-              expandedHeight: 140,
+              expandedHeight: 120,
               floating: false,
               pinned: true,
               automaticallyImplyLeading: false,
-              backgroundColor: const Color(0xFF1A56DB),
+              backgroundColor: AppColors.primary900,
+              surfaceTintColor: Colors.transparent,
               flexibleSpace: FlexibleSpaceBar(
                 background: Container(
-                  decoration: const BoxDecoration(
-                    gradient: LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [Color(0xFF1A56DB), Color(0xFF3B82F6)],
-                    ),
-                  ),
+                  color: AppColors.primary900,
                   child: SafeArea(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 0),
+                      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              CircleAvatar(
-                                radius: 22,
-                                backgroundColor: Colors.white.withValues(alpha: 0.2),
-                                child: Text(
-                                  user?.firstName.isNotEmpty == true
-                                      ? user!.firstName[0].toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.bold,
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'SERVICES PORTAL',
+                                    style: TextStyle(
+                                      color: AppColors.primary300,
+                                      fontSize: 10,
+                                      fontWeight: FontWeight.w800,
+                                      letterSpacing: 1.5,
+                                    ),
                                   ),
-                                ),
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      'Welcome back,',
-                                      style: TextStyle(
-                                        color: Colors.white.withValues(alpha: 0.8),
-                                        fontSize: 13,
-                                      ),
+                                  Text(
+                                    user?.fullName ?? 'Resident',
+                                    style: const TextStyle(
+                                      color: AppColors.white,
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.w700,
+                                      fontFamily: 'Plus Jakarta Sans',
                                     ),
-                                    Text(
-                                      user?.fullName ?? 'Resident',
-                                      style: const TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.w700,
-                                      ),
-                                      overflow: TextOverflow.ellipsis,
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
-                              IconButton(
-                                onPressed: () {},
-                                icon: const Icon(Icons.notifications_outlined,
-                                    color: Colors.white),
+                              CircleAvatar(
+                                radius: 20,
+                                backgroundColor: AppColors.white.withValues(alpha: 0.1),
+                                child: const Icon(Icons.notifications_none_rounded, color: AppColors.white, size: 20),
                               ),
                             ],
                           ),
@@ -121,86 +103,84 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ),
             ),
 
-            // Stats Grid
+            // Main Content
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 8),
+                padding: const EdgeInsets.all(20),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
-                      'Overview',
+                    Text(
+                      'SYSTEM OVERVIEW',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF2D3748),
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.gray500,
+                        letterSpacing: 1.2,
+                        fontFamily: 'Plus Jakarta Sans',
                       ),
                     ),
-                    const SizedBox(height: 12),
+                    const SizedBox(height: 16),
                     Consumer2<ComplaintProvider, AppointmentProvider>(
                       builder: (context, complaints, appointments, _) {
                         return GridView.count(
                           crossAxisCount: 2,
                           shrinkWrap: true,
                           physics: const NeverScrollableScrollPhysics(),
-                          mainAxisSpacing: 12,
-                          crossAxisSpacing: 12,
-                          childAspectRatio: 1.3,
+                          mainAxisSpacing: 16,
+                          crossAxisSpacing: 16,
+                          childAspectRatio: 1.4,
                           children: [
                             StatCard(
                               icon: Icons.description_outlined,
                               value: '${complaints.totalComplaints}',
                               label: 'Total Complaints',
-                              color: const Color(0xFF3B82F6),
+                              color: AppColors.primary600,
                             ),
                             StatCard(
-                              icon: Icons.hourglass_bottom_rounded,
+                              icon: Icons.hourglass_empty_rounded,
                               value: '${complaints.pendingComplaints}',
-                              label: 'Pending',
-                              color: const Color(0xFFF59E0B),
+                              label: 'Pending Actions',
+                              color: AppColors.warning,
                             ),
                             StatCard(
                               icon: Icons.calendar_today_rounded,
                               value: '${appointments.totalAppointments}',
-                              label: 'Appointments',
-                              color: const Color(0xFF8B5CF6),
+                              label: 'Scheduled Visits',
+                              color: AppColors.accentTeal,
                             ),
                             StatCard(
                               icon: Icons.check_circle_outline_rounded,
                               value: '${complaints.resolvedComplaints}',
-                              label: 'Resolved',
-                              color: const Color(0xFF10B981),
+                              label: 'Resolved Issues',
+                              color: AppColors.success,
                             ),
                           ],
                         );
                       },
                     ),
-                  ],
-                ),
-              ),
-            ),
 
-            // Recent Announcements
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'Recent Announcements',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Color(0xFF2D3748),
-                      ),
+                    const SizedBox(height: 32),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          'LATEST ANNOUNCEMENTS',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.gray500,
+                            letterSpacing: 1.2,
+                            fontFamily: 'Plus Jakarta Sans',
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () {},
+                          child: const Text('View All', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                        ),
+                      ],
                     ),
-                    TextButton(
-                      onPressed: () {
-                        // Navigate to announcements tab — handled by parent nav
-                      },
-                      child: const Text('See All'),
-                    ),
+                    const SizedBox(height: 12),
                   ],
                 ),
               ),
@@ -211,62 +191,30 @@ class _DashboardScreenState extends State<DashboardScreen> {
               builder: (context, announcementProvider, _) {
                 if (announcementProvider.isLoading) {
                   return const SliverToBoxAdapter(
-                    child: Center(
-                      child: Padding(
-                        padding: EdgeInsets.all(32),
-                        child: CircularProgressIndicator(),
-                      ),
-                    ),
+                    child: Center(child: CircularProgressIndicator()),
                   );
                 }
 
                 final announcements = announcementProvider.announcements;
-
                 if (announcements.isEmpty) {
-                  return SliverToBoxAdapter(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Container(
-                        padding: const EdgeInsets.all(24),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Column(
-                          children: [
-                            Icon(Icons.campaign_outlined,
-                                size: 40, color: Colors.grey[400]),
-                            const SizedBox(height: 8),
-                            Text(
-                              'No announcements yet',
-                              style: TextStyle(color: Colors.grey[500]),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
+                  return const SliverToBoxAdapter(
+                    child: Center(child: Text('No recent announcements')),
                   );
                 }
-
-                // Show max 3 recent announcements
-                final recentAnnouncements = announcements.take(3).toList();
 
                 return SliverList(
                   delegate: SliverChildBuilderDelegate(
                     (context, index) {
-                      final announcement = recentAnnouncements[index];
+                      final announcement = announcements[index];
                       return _buildAnnouncementCard(announcement);
                     },
-                    childCount: recentAnnouncements.length,
+                    childCount: announcements.length > 3 ? 3 : announcements.length,
                   ),
                 );
               },
             ),
 
-            // Bottom spacing
-            const SliverToBoxAdapter(
-              child: SizedBox(height: 100),
-            ),
+            const SliverToBoxAdapter(child: SizedBox(height: 100)),
           ],
         ),
       ),
@@ -274,35 +222,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget _buildAnnouncementCard(Announcement announcement) {
-    Color priorityColor;
-    switch (announcement.priority) {
-      case 'High':
-        priorityColor = const Color(0xFFEF4444);
-        break;
-      case 'Medium':
-        priorityColor = const Color(0xFFF59E0B);
-        break;
-      default:
-        priorityColor = const Color(0xFF10B981);
-    }
-
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(12),
-          border: Border(
-            left: BorderSide(color: priorityColor, width: 4),
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.04),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
-            ),
-          ],
+          color: AppColors.white,
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(color: AppColors.gray200, width: 1),
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -314,46 +241,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     announcement.title,
                     style: const TextStyle(
                       fontSize: 15,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF2D3748),
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.gray900,
+                      fontFamily: 'Plus Jakarta Sans',
                     ),
                   ),
                 ),
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                  decoration: BoxDecoration(
-                    color: priorityColor.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Text(
-                    announcement.priority,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                      color: priorityColor,
-                    ),
-                  ),
+                Text(
+                  announcement.daysAgo == 0 ? "TODAY" : "${announcement.daysAgo}D AGO",
+                  style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: AppColors.gray400),
                 ),
               ],
             ),
             const SizedBox(height: 8),
             Text(
               announcement.content,
-              style: TextStyle(
-                fontSize: 13,
-                color: Colors.grey[600],
-                height: 1.4,
-              ),
+              style: const TextStyle(fontSize: 13, color: AppColors.gray600, height: 1.5, fontFamily: 'DM Sans'),
               maxLines: 2,
               overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${announcement.daysAgo == 0 ? "Today" : "${announcement.daysAgo}d ago"}',
-              style: TextStyle(
-                fontSize: 11,
-                color: Colors.grey[400],
-              ),
             ),
           ],
         ),
