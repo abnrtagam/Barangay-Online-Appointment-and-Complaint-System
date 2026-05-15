@@ -104,17 +104,17 @@ class _LoginScreenState extends State<LoginScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Identity Header
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.primary50,
-                    shape: BoxShape.circle,
+                Center(
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    height: 140,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.account_balance_rounded, color: AppColors.primary800, size: 64),
                   ),
-                  child: const Icon(Icons.account_balance_rounded, color: AppColors.primary800, size: 48),
                 ),
                 const SizedBox(height: 24),
                 const Text(
-                  'BARANGAY PORTAL',
+                  'BARANGAY BULUA',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.w800,
@@ -126,9 +126,9 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'Access your resident services and manage\nyour account securely.',
+                  'Online Appointment and Complaint System',
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 13,
                     color: AppColors.gray500,
                     fontFamily: 'DM Sans',
                     height: 1.5,

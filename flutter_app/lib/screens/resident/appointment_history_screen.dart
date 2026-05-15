@@ -138,7 +138,7 @@ class _AppointmentHistoryScreenState extends State<AppointmentHistoryScreen> {
                 children: [
                   StatusBadge(status: appointment.status),
                   Text(
-                    DateFormat('MMM dd, yyyy').format(appointment.appointmentDate),
+                    DateFormat('MMM dd, yyyy').format(DateTime.parse(appointment.appointmentDate)),
                     style: const TextStyle(color: AppColors.primary700, fontWeight: FontWeight.bold, fontSize: 12),
                   ),
                 ],

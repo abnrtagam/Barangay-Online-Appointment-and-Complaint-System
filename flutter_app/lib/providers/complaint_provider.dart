@@ -31,9 +31,14 @@ class ComplaintProvider with ChangeNotifier {
     try {
       final result = await ComplaintService.getComplaints();
       if (result['success']) {
-        _complaints = result['complaints'] as List<Complaint>;
-        // Sort by most recent first
-        _complaints.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        final rawList = result['complaints'];
+        if (rawList is List) {
+          _complaints = List<Complaint>.from(rawList);
+          // Sort by most recent first
+          _complaints.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        } else {
+          _complaints = [];
+        }
       } else {
         _errorMessage = result['message'];
       }
@@ -50,7 +55,10 @@ class ComplaintProvider with ChangeNotifier {
     try {
       final result = await ComplaintService.getCategories();
       if (result['success']) {
-        _categories = result['categories'] as List<ComplaintCategory>;
+        final rawCats = result['categories'];
+        if (rawCats is List) {
+          _categories = List<ComplaintCategory>.from(rawCats);
+        }
       }
     } catch (e) {
       // Silently fail — categories are not critical for display

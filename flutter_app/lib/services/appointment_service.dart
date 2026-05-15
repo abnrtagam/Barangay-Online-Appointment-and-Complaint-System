@@ -26,7 +26,7 @@ class AppointmentService {
   static Future<Map<String, dynamic>> getTakenSlots(String date) async {
     try {
       // Backend route is /api/appointments/taken-slots?date=YYYY-MM-DD
-      final response = await ApiService.get('${ApiConstants.appointments}/taken-slots?date=$date');
+      final response = await ApiService.get('${ApiConstants.appointmentBook}/taken-slots?date=$date');
       if (response['success']) {
         final List<dynamic> data = response['data'];
         return {'success': true, 'slots': data.cast<String>()};
@@ -47,7 +47,7 @@ class AppointmentService {
   }) async {
     try {
       final response = await ApiService.post(
-        ApiConstants.appointments,
+        ApiConstants.appointmentBook,
         {
           'appointment_date': appointmentDate,
           'time_slot': timeSlot,

@@ -9,7 +9,7 @@ class ComplaintService {
     try {
       final response = await ApiService.get(ApiConstants.complaints);
       if (response['success']) {
-        final data = response['data'];
+        final data = response['data']['data'];
         List<Complaint> complaints = [];
 
         if (data is List) {
@@ -38,7 +38,7 @@ class ComplaintService {
   }) async {
     try {
       final response = await ApiService.post(
-        ApiConstants.complaints,
+        ApiConstants.complaintSubmit,
         {
           'category_id': categoryId.toString(),
           'subject': subject,

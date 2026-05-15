@@ -11,5 +11,6 @@ router.get('/complaints',      cCtrl.getMyComplaints)
 router.get('/complaints/:id',  cCtrl.getMyComplaintById)
 router.get('/appointments',    aCtrl.getMyAppointments)
 router.get('/appointments/:id', aCtrl.getMyAppointmentById)
+router.get('/notifications',    rCtrl.getNotifications)
 
 module.exports = router

@@ -15,6 +15,7 @@ class ApiConstants {
   static const String dashboardStats = '$baseUrl/residents/dashboard-stats';
   static const String complaints = '$baseUrl/residents/complaints';
   static const String appointments = '$baseUrl/residents/appointments';
+  static const String notifications = '$baseUrl/residents/notifications';
   static const String complaintSubmit = '$baseUrl/complaints';
   static const String appointmentBook = '$baseUrl/appointments';
   static const String appointmentSlots = '$baseUrl/appointments/taken-slots';

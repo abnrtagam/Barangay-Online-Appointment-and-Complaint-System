@@ -8,6 +8,7 @@ import '../../widgets/stat_card.dart';
 import '../../models/announcement_model.dart';
 import '../../constants/app_colors.dart';
 import 'announcement_history_screen.dart';
+import 'notification_center_screen.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -70,7 +71,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
                                   Text(
-                                    'SERVICES PORTAL',
+                                    'BARANGAY BULUA',
                                     style: TextStyle(
                                       color: AppColors.primary300,
                                       fontSize: 10,
@@ -89,10 +90,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                   ),
                                 ],
                               ),
-                              CircleAvatar(
-                                radius: 20,
-                                backgroundColor: AppColors.white.withValues(alpha: 0.1),
-                                child: const Icon(Icons.notifications_none_rounded, color: AppColors.white, size: 20),
+                              InkWell(
+                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationCenterScreen())),
+                                borderRadius: BorderRadius.circular(20),
+                                child: CircleAvatar(
+                                  radius: 20,
+                                  backgroundColor: AppColors.white.withValues(alpha: 0.1),
+                                  child: const Icon(Icons.notifications_none_rounded, color: AppColors.white, size: 20),
+                                ),
                               ),
                             ],
                           ),

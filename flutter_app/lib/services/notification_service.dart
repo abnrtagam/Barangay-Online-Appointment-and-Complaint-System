@@ -1,80 +1,81 @@
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
-import 'dart:io';
+import 'dart:convert';
+import 'api_service.dart';
+import '../constants/api_constants.dart';
 
 class NotificationService {
-  static final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  static final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  static final FirebaseMessaging _firebaseMessaging = FirebaseMessaging.instance;
+  static final FlutterLocalNotificationsPlugin _localNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   static Future<void> initialize() async {
-    // 1. Request Permissions (especially for iOS)
-    NotificationSettings settings = await _messaging.requestPermission(
+    // Request permission for iOS/Android
+    await _firebaseMessaging.requestPermission(
       alert: true,
       badge: true,
       sound: true,
     );
 
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted notification permission');
-    }
+    // Initialize local notifications for foreground display
+    const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+    const initSettings = InitializationSettings(android: androidSettings);
+    await _localNotificationsPlugin.initialize(initSettings);
 
-    // 2. Setup Local Notifications (for foreground alerts)
-    const AndroidInitializationSettings androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
-    const DarwinInitializationSettings iosSettings = DarwinInitializationSettings();
-    
-    const InitializationSettings initSettings = InitializationSettings(
-      android: androidSettings,
-      iOS: iosSettings,
-    );
-
-    await _localNotifications.initialize(initSettings);
-
-    // 3. Handle Background Messages
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-
-    // 4. Handle Foreground Messages
+    // Handle messages when app is in foreground
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
       _showLocalNotification(message);
     });
   }
 
-  // Background Handler (Must be top-level or static)
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    await Firebase.initializeApp();
-    print("Handling a background message: ${message.messageId}");
+  static Future<String?> getToken() async {
+    try {
+      return await _firebaseMessaging.getToken();
+    } catch (e) {
+      print('Failed to get FCM token: $e');
+      return null;
+    }
   }
 
-  // Show a popup notification while the app is open
   static Future<void> _showLocalNotification(RemoteMessage message) async {
-    final AndroidNotificationDetails androidDetails = AndroidNotificationDetails(
-      'barangay_alerts',
-      'Barangay Alerts',
-      channelDescription: 'Important updates from the barangay',
+    const androidDetails = AndroidNotificationDetails(
+      'barangay_channel',
+      'Barangay Notifications',
+      channelDescription: 'Notifications from Barangay Portal',
       importance: Importance.max,
       priority: Priority.high,
     );
+    const details = NotificationDetails(android: androidDetails);
 
-    final NotificationDetails details = NotificationDetails(
-      android: androidDetails,
-      iOS: const DarwinNotificationDetails(),
-    );
-
-    await _localNotifications.show(
+    await _localNotificationsPlugin.show(
       message.hashCode,
-      message.notification?.title ?? 'New Update',
-      message.notification?.body ?? 'You have a new update from the barangay.',
+      message.notification?.title,
+      message.notification?.body,
       details,
+      payload: jsonEncode(message.data),
     );
   }
 
-  // Get the unique FCM Token for this device
-  static Future<String?> getToken() async {
+  // Fetch notifications from the backend for the Notification Center
+  static Future<Map<String, dynamic>> getNotifications() async {
     try {
-      return await _messaging.getToken();
+      final response = await ApiService.get(ApiConstants.notifications);
+      if (response['success']) {
+        return {
+          'success': true,
+          'data': response['data'] ?? [],
+        };
+      } else {
+        return {
+          'success': false,
+          'message': response['message'] ?? 'Failed to fetch notifications',
+        };
+      }
     } catch (e) {
-      print('Error getting FCM token: $e');
-      return null;
+      return {
+        'success': false,
+        'message': 'Error: $e',
+      };
     }
   }
 }

@@ -30,8 +30,13 @@ class AppointmentProvider with ChangeNotifier {
     try {
       final result = await AppointmentService.getAppointments();
       if (result['success']) {
-        _appointments = result['appointments'] as List<Appointment>;
-        _appointments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        final rawList = result['appointments'];
+        if (rawList is List) {
+          _appointments = List<Appointment>.from(rawList);
+          _appointments.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+        } else {
+          _appointments = [];
+        }
       } else {
         _errorMessage = result['message'];
       }

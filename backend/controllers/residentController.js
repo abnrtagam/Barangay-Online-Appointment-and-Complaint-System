@@ -24,3 +24,18 @@ exports.getDashboardStats = async (req, res) => {
     res.status(500).json({ message: 'Failed to load stats.' })
   }
 }
+
+// GET /api/residents/notifications
+exports.getNotifications = async (req, res) => {
+  const user_id = req.user.id
+  try {
+    const [rows] = await db.query(
+      'SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC LIMIT 50',
+      [user_id]
+    )
+    res.json(rows)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch notifications.' })
+  }
+}

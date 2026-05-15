@@ -25,25 +25,17 @@ class SplashScreen extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 // Logo Container
-                Container(
-                  width: 120,
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    shape: BoxShape.circle,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
-                        blurRadius: 20,
-                        offset: const Offset(0, 10),
-                      )
-                    ],
+                Center(
+                  child: Image.asset(
+                    'assets/images/logo.png',
+                    height: 140,
+                    fit: BoxFit.contain,
+                    errorBuilder: (context, error, stackTrace) => const Icon(Icons.account_balance_rounded, size: 80, color: AppColors.white),
                   ),
-                  child: const Icon(Icons.account_balance_rounded, size: 60, color: AppColors.primary800),
                 ),
                 const SizedBox(height: 32),
                 const Text(
-                  'BARANGAY PORTAL',
+                  'BARANGAY BULUA',
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.w900,
@@ -51,16 +43,19 @@ class SplashScreen extends StatelessWidget {
                     letterSpacing: 2,
                     fontFamily: 'Plus Jakarta Sans',
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  'RESIDENT SERVICES PORTAL',
+                  'ONLINE APPOINTMENT &\nCOMPLAINT SYSTEM',
                   style: TextStyle(
                     fontSize: 12,
                     color: AppColors.primary100,
-                    letterSpacing: 4,
-                    fontWeight: FontWeight.w500,
+                    letterSpacing: 3,
+                    fontWeight: FontWeight.w600,
+                    height: 1.5,
                   ),
+                  textAlign: TextAlign.center,
                 ),
                 const SizedBox(height: 64),
                 const SizedBox(
