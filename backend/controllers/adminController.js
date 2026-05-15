@@ -256,17 +256,24 @@ exports.updateAppointmentStatus = async (req, res) => {
 
 // ── Residents ───────────────────────────────────────────────
 exports.getResidents = async (req, res) => {
-  const { search, limit = 50, page = 1 } = req.query
+  const { search, zone, limit = 50, page = 1 } = req.query
   let where = 'WHERE u.role = "resident"'
   const params = []
+  
   if (search) {
     where += ' AND (CONCAT(u.first_name," ",u.last_name) LIKE ? OR u.email LIKE ? OR u.phone LIKE ?)'
     params.push(`%${search}%`, `%${search}%`, `%${search}%`)
   }
+  
+  if (zone && zone !== 'All Zones') {
+    where += ' AND u.zone = ?'
+    params.push(zone)
+  }
+
   try {
     const offset = (parseInt(page) - 1) * parseInt(limit)
     const [rows] = await db.query(
-      `SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.address, u.created_at, r.id AS resident_id
+      `SELECT u.id, u.first_name, u.last_name, u.email, u.phone, u.address, u.zone, u.created_at, r.id AS resident_id
        FROM users u LEFT JOIN residents r ON u.id = r.user_id
        ${where} ORDER BY u.created_at DESC LIMIT ? OFFSET ?`,
       [...params, parseInt(limit), offset]
@@ -276,9 +283,27 @@ exports.getResidents = async (req, res) => {
     )
     res.json({ data: rows, total })
   } catch (err) {
+    console.error(err)
     res.status(500).json({ message: 'Failed to fetch residents.' })
   }
 }
+
+exports.getZoneStats = async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT zone, COUNT(*) as count 
+      FROM users 
+      WHERE role = 'resident' AND zone IS NOT NULL 
+      GROUP BY zone 
+      ORDER BY zone ASC
+    `)
+    res.json(rows)
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch zone stats.' })
+  }
+}
+
 
 // ── Reports ─────────────────────────────────────────────────
 exports.getReports = async (req, res) => {

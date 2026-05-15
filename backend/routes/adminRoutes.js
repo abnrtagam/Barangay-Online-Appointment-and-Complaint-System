@@ -19,6 +19,8 @@ router.patch('/appointments/:id/status',  ctrl.updateAppointmentStatus)
 
 // Residents
 router.get('/residents', ctrl.getResidents)
+router.get('/residents/zone-stats', ctrl.getZoneStats)
+
 
 // Announcements
 router.post('/announcements',       ann.create)
