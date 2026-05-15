@@ -38,16 +38,13 @@ export default function AdminLogin() {
       <div style={{ width: '100%', maxWidth: 440, position: 'relative', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: 40 }}>
           <div style={{
-            width: 80, height: 80, borderRadius: '20px', 
-            background: 'linear-gradient(135deg, #1e40af 0%, #2563eb 100%)',
+            width: 80, height: 80, borderRadius: '50%', 
+            background: 'white',
             display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px',
-            boxShadow: '0 10px 25px rgba(37, 99, 235, 0.25)',
+            boxShadow: '0 10px 25px rgba(0, 0, 0, 0.1)',
+            padding: 12
           }}>
-            <img src="/logo.png" alt="Barangay Logo" style={{ width: 50, height: 50, objectFit: 'contain' }} 
-                 onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'block'; }} />
-            <svg width="40" height="40" viewBox="0 0 32 32" fill="none" style={{ display: 'none' }}>
-               <path d="M16 4L4 11v2h24v-2L16 4zM6 14v10h4V14H6zm8 0v10h4V14h-4zm8 0v10h4V14h-4zM4 26h24v2H4v-2z" fill="white"/>
-            </svg>
+            <img src="/logo.png" alt="Barangay Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} />
           </div>
           <h1 style={{ fontFamily: 'var(--font-heading)', fontWeight: 800, fontSize: '2.2rem', marginBottom: 8, color: '#0f172a', letterSpacing: '-0.02em' }}>Admin Portal</h1>
           <p style={{ color: '#64748b', fontSize: '1rem', fontWeight: 500 }}>Authorized personnel login for Barangay Bulua</p>
