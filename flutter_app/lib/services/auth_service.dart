@@ -61,7 +61,7 @@ class AuthService {
         ApiConstants.verifyOtp,
         {
           'email': email,
-          'otp_code': otpCode,
+          'otp': otpCode,
         },
       );
 
@@ -239,8 +239,9 @@ class AuthService {
         ApiConstants.resetPassword,
         {
           'email': email,
-          'otp_code': otpCode,
-          'new_password': newPassword,
+          'otp': otpCode,
+          'newPassword': newPassword,
+          'confirmPassword': newPassword,
         },
       );
 
