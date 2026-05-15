@@ -80,59 +80,54 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-            colors: [Color(0xFF1A56DB), Color(0xFF3B82F6)],
-          ),
-        ),
-        child: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withValues(alpha: 0.15),
-                  shape: BoxShape.circle,
-                ),
-                child: const Icon(
-                  Icons.location_city_rounded,
-                  size: 56,
-                  color: Colors.white,
-                ),
+      backgroundColor: const Color(0xFF0C2461), // Primary 900
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.1),
+                shape: BoxShape.circle,
               ),
-              const SizedBox(height: 24),
-              const Text(
-                'Barangay System',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.w800,
-                  letterSpacing: -0.5,
-                ),
+              child: const Icon(
+                Icons.account_balance_rounded,
+                size: 64,
+                color: Colors.white,
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Complaint & Appointment System',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.8),
-                  fontSize: 14,
-                ),
+            ),
+            const SizedBox(height: 24),
+            const Text(
+              'BARANGAY PORTAL',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 1.5,
+                fontFamily: 'Plus Jakarta Sans',
               ),
-              const SizedBox(height: 40),
-              SizedBox(
-                width: 32,
-                height: 32,
-                child: CircularProgressIndicator(
-                  strokeWidth: 3,
-                  color: Colors.white.withValues(alpha: 0.8),
-                ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Digital Resident Services',
+              style: TextStyle(
+                color: Colors.white.withValues(alpha: 0.6),
+                fontSize: 14,
+                letterSpacing: 0.5,
+                fontFamily: 'DM Sans',
               ),
-            ],
-          ),
+            ),
+            const SizedBox(height: 48),
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
     );

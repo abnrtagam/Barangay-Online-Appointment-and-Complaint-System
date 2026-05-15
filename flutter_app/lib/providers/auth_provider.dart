@@ -119,7 +119,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   // Verify OTP
-  Future<bool> verifyOtp(String email, String otpCode) async {
+  Future<Map<String, dynamic>> verifyOtp({required String email, required String otpCode}) async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
@@ -131,19 +131,32 @@ class AuthProvider with ChangeNotifier {
       );
 
       _isLoading = false;
-      if (result['success']) {
-        notifyListeners();
-        return true;
-      } else {
-        _errorMessage = result['message'];
-        notifyListeners();
-        return false;
-      }
+      notifyListeners();
+      return result;
     } catch (e) {
       _errorMessage = 'Error: $e';
       _isLoading = false;
       notifyListeners();
-      return false;
+      return {'success': false, 'message': 'Error: $e'};
+    }
+  }
+
+  // Resend OTP
+  Future<Map<String, dynamic>> resendOtp({required String email}) async {
+    _isLoading = true;
+    _errorMessage = null;
+    notifyListeners();
+
+    try {
+      final result = await AuthService.resendOtp(email: email);
+      _isLoading = false;
+      notifyListeners();
+      return result;
+    } catch (e) {
+      _errorMessage = 'Error: $e';
+      _isLoading = false;
+      notifyListeners();
+      return {'success': false, 'message': 'Error: $e'};
     }
   }
 
