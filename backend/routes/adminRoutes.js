@@ -8,6 +8,8 @@ router.use(auth, role('admin'))
 
 // Dashboard
 router.get('/stats', ctrl.getStats)
+router.get('/daily-stats', ctrl.getDailyStats)
+
 
 // Complaints
 router.get('/complaints',              ctrl.getComplaints)

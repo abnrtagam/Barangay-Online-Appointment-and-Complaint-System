@@ -59,11 +59,14 @@ const db = require('./config/db')
       ['email_verified', 'BOOLEAN DEFAULT FALSE AFTER status'],
       ['verification_documents', 'TEXT DEFAULT NULL AFTER email_verified'],
       ['zone', 'VARCHAR(50) DEFAULT NULL AFTER address'],
+      ['created_at', 'TIMESTAMP DEFAULT CURRENT_TIMESTAMP'],
     ]
     for (const [col, definition] of userColumns) {
       try { await db.query(`ALTER TABLE users ADD COLUMN ${col} ${definition}`) }
       catch (e) { /* column already exists, skip */ }
     }
+    // Backfill users with missing created_at
+    await db.query('UPDATE users SET created_at = NOW() WHERE created_at IS NULL OR created_at = "0000-00-00 00:00:00"')
 
     // BACKFILL existing rows if they have NULL or zero created_at
     await db.query('UPDATE complaints SET created_at = NOW() WHERE created_at IS NULL OR created_at = "0000-00-00 00:00:00" OR created_at = ""')
