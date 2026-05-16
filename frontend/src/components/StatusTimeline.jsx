@@ -11,12 +11,12 @@ export default function StatusTimeline({ history }) {
     )
   }
 
-  const finalSuccessStatuses = ['Resolved', 'Completed']
+  const finalStatuses = ['Resolved', 'Completed', 'Cancelled', 'Rejected']
 
   // Build timeline steps from actual history records
   const steps = history.map((h, idx) => {
     const isLast = idx === history.length - 1
-    const isFinalSuccess = finalSuccessStatuses.includes(h.new_status)
+    const isFinal = finalStatuses.includes(h.new_status)
 
     return {
       id: h.id,
@@ -24,7 +24,7 @@ export default function StatusTimeline({ history }) {
       oldStatus: h.old_status,
       timestamp: h.changed_at,
       notes: h.notes,
-      stepStatus: isLast && !isFinalSuccess ? 'current' : 'completed',
+      stepStatus: isLast && !isFinal ? 'current' : 'completed',
     }
   })
 
