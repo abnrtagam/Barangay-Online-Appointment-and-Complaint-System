@@ -3,23 +3,6 @@
  * 
  * This service sends OTP verification emails to residents during registration.
  * Uses Gmail SMTP with App Password for secure, free email sending on localhost.
- * 
- * SETUP INSTRUCTIONS FOR BEGINNERS:
- * =================================
- * 
- * 1. Create a Gmail App Password:
- *    - Go to https://myaccount.google.com/security
- *    - Enable "2-Step Verification" if not already enabled
- *    - Go to https://myaccount.google.com/apppasswords
- *    - Select "Mail" and "Other (Custom name)"
- *    - Name it "Barangay System"
- *    - Copy the 16-character password (e.g., "abcd efgh ijkl mnop")
- * 
- * 2. Add to your .env file:
- *    GMAIL_USER=your.gmail@gmail.com
- *    GMAIL_APP_PASSWORD=abcdefghijklmnop  (no spaces!)
- * 
- * 3. That's it! No deployment needed. Works on localhost.
  */
 
 const nodemailer = require('nodemailer')
@@ -50,89 +33,64 @@ const verifyConnection = async () => {
 
 /**
  * Send OTP verification email
- * @param {string} to - Recipient email address
- * @param {string} otp - 6-digit OTP code
- * @param {string} firstName - User's first name for personalization
  */
 const sendOTPEmail = async (to, otp, firstName = 'Resident') => {
   const mailOptions = {
     from: {
-      name: 'Barangay Portal',
+      name: 'Barangay Bulua Portal',
       address: process.env.GMAIL_USER,
     },
     to,
-    subject: 'Email Verification - Barangay Portal',
+    subject: 'Email Verification - Barangay Bulua',
     html: `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
-          .logo { width: 60px; height: 60px; margin: 0 auto 15px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-          .content { background: #ffffff; padding: 40px 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          .otp-box { background: #eff6ff; border: 2px dashed #3b82f6; border-radius: 12px; padding: 25px; text-align: center; margin: 25px 0; }
-          .otp-code { font-size: 36px; font-weight: bold; color: #1e40af; letter-spacing: 8px; font-family: 'Courier New', monospace; }
-          .otp-label { color: #6b7280; font-size: 14px; margin-bottom: 10px; }
-          .warning { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 6px; font-size: 14px; }
-          .footer { text-align: center; color: #6b7280; font-size: 13px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
-          .btn { display: inline-block; background: #3b82f6; color: white; padding: 12px 30px; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
-          ul { padding-left: 20px; }
-          li { margin: 8px 0; }
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #1e40af; color: white; padding: 40px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: -0.02em; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .otp-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; text-align: center; margin: 32px 0; }
+          .otp-code { font-size: 42px; font-weight: 800; color: #1e40af; letter-spacing: 12px; margin: 12px 0; font-family: 'Monaco', monospace; }
+          .otp-label { font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
+          .guideline-box { background: #f1f5f9; border-radius: 8px; padding: 20px; margin-top: 24px; }
+          .guideline-title { font-weight: 700; font-size: 14px; color: #334155; margin-bottom: 8px; display: block; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">
-              <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
-                <path d="M16 4L4 11v2h24v-2L16 4zM6 14v10h4V14H6zm8 0v10h4V14h-4zm8 0v10h4V14h-4zM4 26h24v2H4v-2z" fill="white"/>
-              </svg>
-            </div>
-            <h1 style="margin: 0; font-size: 24px; font-weight: 700;">Email Verification</h1>
-            <p style="margin: 10px 0 0; opacity: 0.95; font-size: 15px;">Barangay Citizen Services Portal</p>
+            <div class="brand">Barangay Bulua</div>
+            <h1>Citizen Services Portal</h1>
           </div>
-          
           <div class="content">
-<h2 style="color: #1e40af; margin-top: 0;">Hello, ${firstName}!</h2>
+            <h2 style="font-size: 20px; font-weight: 700; margin-top: 0;">Verify Your Email</h2>
+            <p>Hello ${firstName},</p>
+            <p>Welcome to the Barangay Bulua digital portal! To ensure the security of your account and verify your residency, please enter the following One-Time Password (OTP) in the registration screen.</p>
             
-            <p>Thank you for registering with the Barangay Portal. To complete your registration, please verify your email address using the One-Time Password (OTP) below:</p>
-            
-            <div class="otp-box">
-              <div class="otp-label">YOUR VERIFICATION CODE</div>
+            <div class="otp-card">
+              <div class="otp-label">Verification Code</div>
               <div class="otp-code">${otp}</div>
             </div>
-            
-            <div class="warning">
-              <strong>Important:</strong> This OTP will expire in <strong>10 minutes</strong>. Please enter it soon to verify your account.
+
+            <div class="guideline-box">
+              <span class="guideline-title">Important Guidelines:</span>
+              <ul style="font-size: 13px; color: #475569; margin: 0; padding-left: 20px;">
+                <li>This code is valid for <strong>10 minutes</strong> only.</li>
+                <li>Never share your OTP with anyone, including Barangay staff.</li>
+                <li>After verification, your documents will be queued for administrative review.</li>
+              </ul>
             </div>
-            
-            <h3 style="color: #374151; font-size: 16px;">Next Steps:</h3>
-            <ul style="color: #4b5563;">
-              <li>Enter the OTP code in the verification page</li>
-              <li>Your account will be submitted for barangay administrator review</li>
-              <li>You will receive a notification once your account is approved</li>
-              <li>After approval, you can access all barangay services</li>
-            </ul>
-            
-            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin: 20px 0;">
-              <p style="margin: 0; font-size: 14px; color: #6b7280;">
-                <strong style="color: #374151;">Security Tip:</strong> Never share this OTP with anyone. Barangay staff will never ask for your OTP code.
-              </p>
-            </div>
-            
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              If you didn't request this verification, please ignore this email or contact the barangay office.
-            </p>
+
+            <p style="font-size: 13px; color: #64748b; margin-top: 24px;">If you did not initiate this registration, please ignore this email or contact our support team if you suspect unauthorized use of your email.</p>
           </div>
-          
           <div class="footer">
-            <p><strong>Barangay Citizen Services Portal</strong></p>
-            <p>This is an automated message. Please do not reply to this email.</p>
-            <p style="margin-top: 10px;">© ${new Date().getFullYear()} Barangay Portal. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
+            <p>Cagayan de Oro City, Philippines</p>
           </div>
         </div>
       </body>
@@ -156,59 +114,70 @@ const sendOTPEmail = async (to, otp, firstName = 'Resident') => {
 const sendApprovalEmail = async (to, firstName, isApproved) => {
   const mailOptions = {
     from: {
-      name: 'Barangay Portal',
+      name: 'Barangay Bulua Portal',
       address: process.env.GMAIL_USER,
     },
     to,
-    subject: isApproved 
-      ? 'Account Approved - Barangay Portal' 
-      : 'Account Not Approved - Barangay Portal',
-    html: isApproved ? `
+    subject: isApproved ? 'Account Approved - Barangay Bulua' : 'Account Update - Barangay Bulua',
+    html: `
       <!DOCTYPE html>
       <html>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #10b981, #059669); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-            <h1 style="margin: 0;">Account Approved</h1>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #1e40af; color: white; padding: 40px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 26px; font-weight: 800; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .status-badge { display: inline-block; padding: 6px 12px; border-radius: 20px; font-weight: 700; font-size: 12px; text-transform: uppercase; margin-bottom: 16px; 
+            background: ${isApproved ? '#ecfdf5' : '#f8fafc'}; color: ${isApproved ? '#059669' : '#1e40af'}; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
+          .button { display: inline-block; padding: 14px 32px; background: #1e40af; color: white; text-decoration: none; border-radius: 10px; font-weight: 700; margin-top: 24px; }
+          .info-item { display: flex; align-items: start; gap: 12px; margin-bottom: 12px; font-size: 14px; }
+          .check-icon { color: #1e40af; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="brand">Barangay Bulua</div>
+            <h1>Citizen Services Portal</h1>
           </div>
-          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h2 style="color: #059669;">Hello, ${firstName}!</h2>
-            <p>Great news! Your barangay account has been <strong>approved</strong> by the administrator.</p>
-            <p>You can now access all barangay services including:</p>
-            <ul>
-              <li>File complaints</li>
-              <li>Book appointments</li>
-              <li>View announcements</li>
-              <li>Track your requests</li>
-            </ul>
-            <div style="text-align: center; margin: 30px 0;">
-              <a href="http://localhost:3000/login" style="display: inline-block; background: #059669; color: white; padding: 14px 35px; text-decoration: none; border-radius: 8px; font-weight: 600;">Login Now</a>
-            </div>
-            <p style="color: #6b7280; font-size: 14px;">If you have any questions, please contact the barangay office.</p>
+          <div class="content">
+            <div class="status-badge">${isApproved ? 'Registration Approved' : 'Application Status Update'}</div>
+            <h2 style="font-size: 22px; font-weight: 800; margin-top: 0; color: #0f172a;">Hello ${firstName},</h2>
+            
+            ${isApproved ? `
+              <p>Great news! Your resident account has been officially <strong>approved</strong>. You are now part of our digital community and have full access to our online services.</p>
+              
+              <div style="background: #f8fafc; padding: 24px; border-radius: 12px; margin: 24px 0;">
+                <p style="margin: 0 0 12px; font-weight: 700; color: #334155;">What you can do now:</p>
+                <div class="info-item"><span class="check-icon">✓</span> <span>Book appointments for certificates and clearances</span></div>
+                <div class="info-item"><span class="check-icon">✓</span> <span>Submit and track complaints or concerns</span></div>
+                <div class="info-item"><span class="check-icon">✓</span> <span>Receive real-time barangay announcements</span></div>
+                <div class="info-item"><span class="check-icon">✓</span> <span>Manage your official resident profile</span></div>
+              </div>
+
+              <div style="text-align: center;">
+                <a href="http://localhost:3000/login" class="button">Login to Your Account</a>
+              </div>
+            ` : `
+              <p>Thank you for your interest in joining the Barangay Bulua portal. Unfortunately, your registration could not be approved at this time.</p>
+              
+              <div style="background: #f8fafc; padding: 24px; border-radius: 12px; margin: 24px 0; border: 1px solid #e2e8f0;">
+                <p style="margin: 0 0 12px; font-weight: 700; color: #1e293b;">Why was it rejected?</p>
+                <p style="margin: 0; font-size: 14px; color: #475569;">This usually happens due to incomplete or blurred residency documents, or details that don't match our official records.</p>
+              </div>
+
+              <p style="font-weight: 700; color: #1e293b;">Next Steps:</p>
+              <p>Please visit the Barangay Hall during office hours (8:00 AM - 5:00 PM) with your original valid ID and proof of residency. Our staff will assist you in manually verifying your account.</p>
+            `}
+            
+            <p style="margin-top: 32px; font-size: 14px; color: #64748b; border-top: 1px solid #f1f5f9; padding-top: 24px;">Thank you for your cooperation as we build a more efficient Barangay Bulua.</p>
           </div>
-        </div>
-      </body>
-      </html>
-    ` : `
-      <!DOCTYPE html>
-      <html>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center;">
-            <h1 style="margin: 0;">Account Status Update</h1>
-          </div>
-          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
-            <h2 style="color: #dc2626;">Hello, ${firstName}</h2>
-            <p>We regret to inform you that your barangay account registration could not be approved at this time.</p>
-            <p><strong>Possible reasons:</strong></p>
-            <ul>
-              <li>Incomplete or unclear verification documents</li>
-              <li>Address not within barangay jurisdiction</li>
-              <li>Duplicate account detected</li>
-              <li>Invalid identification documents</li>
-            </ul>
-            <p>Please visit the barangay office with valid identification and proof of residency for manual verification.</p>
-            <p style="color: #6b7280; font-size: 14px; margin-top: 20px;">For questions, contact the barangay office during office hours.</p>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -231,27 +200,62 @@ const sendApprovalEmail = async (to, firstName, isApproved) => {
 const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'your complaint', status = '', adminRemarks = '') => {
   const mailOptions = {
     from: {
-      name: 'Barangay Portal',
+      name: 'Barangay Bulua Portal',
       address: process.env.GMAIL_USER,
     },
     to,
-    subject: `Complaint status updated: ${status}`,
+    subject: `Update: Complaint Status - ${status}`,
     html: `
       <!DOCTYPE html>
       <html>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #2563eb, #3b82f6); color: white; padding: 25px; border-radius: 12px; text-align: center;">
-            <h1 style="margin: 0; font-size: 24px;">Complaint Status Update</h1>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #1e40af; color: white; padding: 32px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .info-card { background: #f8fafc; border-left: 4px solid #1e40af; padding: 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
+          .guideline-box { border: 1px dashed #cbd5e1; border-radius: 8px; padding: 20px; margin-top: 24px; font-size: 13px; color: #475569; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="brand">Barangay Bulua</div>
+            <h1>Complaint Status Update</h1>
           </div>
-          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <h2 style="color: #1d4ed8;">Hello, ${firstName}</h2>
-            <p>Your complaint <strong>"${subject}"</strong> has been updated to <strong>${status}</strong>.</p>
-            ${adminRemarks ? `<p><strong>Admin note:</strong> ${adminRemarks}</p>` : ''}
-            <p>If you have questions, please log in to the barangay portal to view the full details.</p>
-            <div style="margin-top: 20px; padding: 18px; background: #eff6ff; border-radius: 12px;">
-              <p style="margin: 0; color: #1d4ed8;">Thank you for using the Barangay Complaint System.</p>
+          <div class="content">
+            <p>Hello ${firstName},</p>
+            <p>We are writing to inform you that the status of your complaint regarding <strong>"${subject}"</strong> has been updated by the Barangay Administration.</p>
+            
+            <div class="info-card">
+              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Current Status</p>
+              <p style="margin: 4px 0 16px 0; font-size: 20px; font-weight: 800; color: #1e40af;">${status}</p>
+              
+              ${adminRemarks ? `
+                <p style="margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Admin Remarks</p>
+                <p style="margin: 4px 0 0 0; font-size: 15px; background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">${adminRemarks}</p>
+              ` : ''}
             </div>
+
+            <div class="guideline-box">
+              <p style="margin: 0 0 8px; font-weight: 700;">Guidelines:</p>
+              <ul style="margin: 0; padding-left: 20px;">
+                <li>You can track the full history of this complaint in your dashboard.</li>
+                <li>If the status is "Resolved" but you feel the issue persists, you may file a new report or visit the office.</li>
+                <li>Your safety and confidentiality are always protected.</li>
+              </ul>
+            </div>
+
+            <div style="text-align: center; margin-top: 32px;">
+              <a href="http://localhost:3000/complaints" style="display: inline-block; padding: 12px 24px; background: #1e40af; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Track in Dashboard</a>
+            </div>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -275,24 +279,59 @@ const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'y
 const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmentDate = '', timeSlot = '', status = '', adminRemarks = '') => {
   const mailOptions = {
     from: {
-      name: 'Barangay Portal',
+      name: 'Barangay Bulua Portal',
       address: process.env.GMAIL_USER,
     },
     to,
-    subject: `Appointment status updated: ${status}`,
+    subject: `Update: Appointment Status - ${status}`,
     html: `
       <!DOCTYPE html>
       <html>
-      <body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
-        <div style="max-width: 600px; margin: 0 auto; padding: 20px;">
-          <div style="background: linear-gradient(135deg, #15803d, #22c55e); color: white; padding: 25px; border-radius: 12px; text-align: center;">
-            <h1 style="margin: 0; font-size: 24px;">Appointment Update</h1>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #1e40af; color: white; padding: 32px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .info-card { background: #f8fafc; border-left: 4px solid #1e40af; padding: 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
+          .instruction-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-top: 24px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="brand">Barangay Bulua</div>
+            <h1>Appointment Status Update</h1>
           </div>
-          <div style="background: #ffffff; padding: 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
-            <h2 style="color: #15803d;">Hello, ${firstName}</h2>
-            <p>Your appointment scheduled for <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been updated to <strong>${status}</strong>.</p>
-            ${adminRemarks ? `<p><strong>Admin note:</strong> ${adminRemarks}</p>` : ''}
-            <p>Please check the portal for the latest details and any follow-up instructions.</p>
+          <div class="content">
+            <p>Hello ${firstName},</p>
+            <p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been updated.</p>
+            
+            <div class="info-card">
+              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">New Status</p>
+              <p style="margin: 4px 0 16px 0; font-size: 20px; font-weight: 800; color: #1e40af;">${status}</p>
+              
+              ${adminRemarks ? `
+                <p style="margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Admin Remarks</p>
+                <p style="margin: 4px 0 0 0; font-size: 15px; background: white; padding: 12px; border-radius: 6px; border: 1px solid #e2e8f0;">${adminRemarks}</p>
+              ` : ''}
+            </div>
+
+            <div class="instruction-box">
+              <p style="margin: 0 0 12px; font-weight: 800; color: #1e293b;">Guidelines for your Visit:</p>
+              <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #475569;">
+                <li>Please arrive at the Barangay Hall <strong>10 minutes</strong> before your scheduled time.</li>
+                <li>Bring a <strong>Valid Government ID</strong> and any supporting documents related to your request.</li>
+                <li>If the status is "Approved", please proceed to the designated window on your chosen date.</li>
+                <li>If you cannot make it, please cancel or reschedule through the portal at least 24 hours in advance.</li>
+              </ul>
+            </div>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
           </div>
         </div>
       </body>
@@ -319,82 +358,46 @@ const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmen
 const sendPasswordResetOTPEmail = async (to, otp, firstName = 'Resident') => {
   const mailOptions = {
     from: {
-      name: 'Barangay Portal',
+      name: 'Barangay Bulua Portal',
       address: process.env.GMAIL_USER,
     },
     to,
-    subject: 'Password Reset Code - Barangay Portal',
+    subject: 'Password Reset - Barangay Bulua',
     html: `
       <!DOCTYPE html>
       <html>
       <head>
         <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <style>
-          body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; line-height: 1.6; color: #333; }
-          .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-          .header { background: linear-gradient(135deg, #f59e0b, #d97706); color: white; padding: 30px; border-radius: 12px 12px 0 0; text-align: center; }
-          .logo { width: 60px; height: 60px; margin: 0 auto 15px; background: rgba(255,255,255,0.2); border-radius: 12px; display: flex; align-items: center; justify-content: center; }
-          .content { background: #ffffff; padding: 40px 30px; border-radius: 0 0 12px 12px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-          .otp-box { background: #fef3c7; border: 2px dashed #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 25px 0; }
-          .otp-code { font-size: 36px; font-weight: bold; color: #d97706; letter-spacing: 8px; font-family: 'Courier New', monospace; }
-          .otp-label { color: #78350f; font-size: 14px; margin-bottom: 10px; font-weight: 600; }
-          .warning { background: #fee2e2; border-left: 4px solid #dc2626; padding: 15px; margin: 20px 0; border-radius: 6px; font-size: 14px; }
-          .footer { text-align: center; color: #6b7280; font-size: 13px; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e5e7eb; }
-          ul { padding-left: 20px; }
-          li { margin: 8px 0; }
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #1e40af; color: white; padding: 40px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 24px; font-weight: 800; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .otp-card { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 32px; text-align: center; margin: 32px 0; }
+          .otp-code { font-size: 42px; font-weight: 800; color: #1e40af; letter-spacing: 12px; margin: 12px 0; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
         </style>
       </head>
       <body>
         <div class="container">
           <div class="header">
-            <div class="logo">
-              <svg width="36" height="36" viewBox="0 0 32 32" fill="none">
-                <path d="M16 4L4 11v2h24v-2L16 4zM6 14v10h4V14H6zm8 0v10h4V14h-4zm8 0v10h4V14h-4zM4 26h24v2H4v-2z" fill="white"/>
-              </svg>
-            </div>
-            <h1 style="margin: 0; font-size: 24px; font-weight: 700;">Password Reset</h1>
-            <p style="margin: 10px 0 0; opacity: 0.95; font-size: 15px;">Barangay Citizen Services Portal</p>
+            <div class="brand">Barangay Bulua</div>
+            <h1>Password Reset</h1>
           </div>
-          
           <div class="content">
-            <h2 style="color: #d97706; margin-top: 0;">Hello, ${firstName}!</h2>
+            <h2 style="font-size: 20px; font-weight: 700; margin-top: 0;">Hello ${firstName},</h2>
+            <p>We received a request to reset the password for your Barangay Bulua portal account. To proceed, please use the following reset code.</p>
             
-            <p>We received a request to reset your password. To proceed with resetting your password, please use the One-Time Password (OTP) below:</p>
-            
-            <div class="otp-box">
-              <div class="otp-label">YOUR PASSWORD RESET CODE</div>
+            <div class="otp-card">
+              <div style="font-size: 12px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.1em;">Reset Code</div>
               <div class="otp-code">${otp}</div>
             </div>
-            
-            <div class="warning">
-              <strong>⚠️ Important:</strong> This OTP will expire in <strong>15 minutes</strong>. Do not share this code with anyone, and barangay staff will never ask for it.
-            </div>
-            
-            <h3 style="color: #374151; font-size: 16px;">To Reset Your Password:</h3>
-            <ul style="color: #4b5563;">
-              <li>Go to the password reset page on the portal</li>
-              <li>Enter your email address</li>
-              <li>Enter the OTP code above</li>
-              <li>Create a new password (minimum 5 characters)</li>
-              <li>Confirm your new password and submit</li>
-            </ul>
-            
-            <div style="background: #f0fdf4; padding: 20px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #10b981;">
-              <p style="margin: 0; font-size: 14px; color: #166534;">
-                <strong>💡 Security Reminder:</strong> Use a strong, unique password that you haven't used before. Avoid using personal information like birthdate or address.
-              </p>
-            </div>
-            
-            <p style="color: #6b7280; font-size: 14px; margin-top: 30px;">
-              If you didn't request this password reset, please ignore this email. Your account is still secure.
-            </p>
+
+            <p style="font-size: 14px; color: #64748b;"><strong>Security Note:</strong> This code will expire in 15 minutes. If you did not request a password reset, your account is still secure, and you can safely ignore this email.</p>
           </div>
-          
           <div class="footer">
-            <p><strong>Barangay Citizen Services Portal</strong></p>
-            <p>This is an automated message. Please do not reply to this email.</p>
-            <p style="margin-top: 10px;">© ${new Date().getFullYear()} Barangay Portal. All rights reserved.</p>
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
           </div>
         </div>
       </body>
