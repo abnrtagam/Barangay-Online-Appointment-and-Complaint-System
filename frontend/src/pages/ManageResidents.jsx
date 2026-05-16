@@ -30,7 +30,7 @@ export default function ManageResidents() {
   const loadStats = () => {
     axios.get('/api/admin/residents/zone-stats', {
       headers: { Authorization: `Bearer ${token}` }
-    }).then(r => setZoneStats(r.data || [])).catch(() => {})
+    }).then(r => setZoneStats(r.data.data || [])).catch(() => {})
   }
 
   useEffect(() => { 
