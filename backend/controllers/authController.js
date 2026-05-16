@@ -33,7 +33,7 @@ const checkRateLimit = async (ipAddress, email) => {
 
     // Check attempt count in last hour
     const hourAgo = new Date(Date.now() - 60 * 60 * 1000)
-    if (new Date(attempt.last_attempt) > hourAgo && attempt.attempt_count >= 5) {
+    if (new Date(attempt.last_attempt) > hourAgo && attempt.attempt_count >= 20) {
       // Block for 1 hour
       const blockUntil = new Date(Date.now() + 60 * 60 * 1000)
       await db.query(
@@ -93,9 +93,9 @@ exports.register = async (req, res) => {
   }
 
   try {
-    // Rate limiting (temporarily disabled for testing)
-    // const ipAddress = req.ip || req.connection.remoteAddress
-    // await checkRateLimit(ipAddress, email)
+    // Rate limiting
+    const ipAddress = req.ip || req.connection.remoteAddress
+    await checkRateLimit(ipAddress, email)
 
     // Check for existing email
     const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email])
