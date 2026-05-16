@@ -26,8 +26,9 @@ export default function SubmitComplaint() {
     const e = {}
     if (!form.category_id) e.category_id = 'Please select a category.'
     if (!form.subject.trim() || form.subject.length < 5) e.subject = 'Subject must be at least 5 characters.'
-    if (!form.details.trim() || form.details.length < 20) e.details = 'Details must be at least 20 characters.'
+    if (!form.details.trim()) e.details = 'Details are required.'
     return e
+
   }
 
   const handleChange = e => {
@@ -114,11 +115,7 @@ export default function SubmitComplaint() {
                   value={form.subject}
                   onChange={handleChange}
                   placeholder="Brief description of your complaint"
-                  maxLength={150}
                 />
-                <div style={{ fontSize: '.75rem', color: 'var(--gray-400)', textAlign: 'right', marginTop: 4 }}>
-                  {form.subject.length}/150
-                </div>
                 {errors.subject && <div className="form-error">{errors.subject}</div>}
               </div>
 
