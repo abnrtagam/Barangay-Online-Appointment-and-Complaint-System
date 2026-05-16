@@ -136,6 +136,10 @@ class AuthProvider with ChangeNotifier {
     required String email,
     required String phone,
     required String address,
+    required String dob,
+    required String zone,
+    required String govIdType,
+    required String govIdNumber,
     required String password,
     required List<String> documentPaths,
   }) async {
@@ -150,6 +154,10 @@ class AuthProvider with ChangeNotifier {
         email: email,
         phone: phone,
         address: address,
+        dob: dob,
+        zone: zone,
+        govIdType: govIdType,
+        govIdNumber: govIdNumber,
         password: password,
         documentPaths: documentPaths,
       );

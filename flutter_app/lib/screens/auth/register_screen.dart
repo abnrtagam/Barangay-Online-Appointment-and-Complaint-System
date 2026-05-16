@@ -15,12 +15,21 @@ class RegisterScreen extends StatefulWidget {
 class _RegisterScreenState extends State<RegisterScreen> {
   final _firstNameController = TextEditingController();
   final _lastNameController = TextEditingController();
+  final _dobController = TextEditingController(); // New
   final _emailController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
+  final _idNumberController = TextEditingController(); // New
   final _passwordController = TextEditingController();
+  
+  String? _selectedZone; // New
+  String? _selectedIdType; // New
+  
   final List<XFile> _selectedDocuments = [];
   final ImagePicker _picker = ImagePicker();
+
+  final List<String> _zones = List.generate(10, (i) => 'Zone ${i + 1}');
+  final List<String> _idTypes = ['SSS', 'UMID', 'Driver\'s License', 'Passport', 'PhilHealth', 'National ID'];
 
   Future<void> _pickDocuments() async {
     try {
@@ -44,25 +53,59 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void dispose() {
     _firstNameController.dispose();
     _lastNameController.dispose();
+    _dobController.dispose();
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _idNumberController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
 
+  Future<void> _selectDate() async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now().subtract(const Duration(days: 365 * 18)),
+      firstDate: DateTime(1900),
+      lastDate: DateTime.now(),
+    );
+    if (picked != null) {
+      setState(() {
+        _dobController.text = "${picked.year}-${picked.month.toString().padLeft(2, '0')}-${picked.day.toString().padLeft(2, '0')}";
+      });
+    }
+  }
+
   void _handleRegister() async {
-    if (_firstNameController.text.isEmpty || _lastNameController.text.isEmpty || _emailController.text.isEmpty || _phoneController.text.isEmpty || _addressController.text.isEmpty || _passwordController.text.isEmpty) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill in all fields')));
+    if (_firstNameController.text.isEmpty || 
+        _lastNameController.text.isEmpty || 
+        _dobController.text.isEmpty ||
+        _emailController.text.isEmpty || 
+        _phoneController.text.isEmpty || 
+        _addressController.text.isEmpty || 
+        _selectedZone == null ||
+        _selectedIdType == null ||
+        _idNumberController.text.isEmpty ||
+        _passwordController.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please fill in all required fields')));
+      return;
+    }
+
+    if (_selectedDocuments.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Please upload at least one proof of residency')));
       return;
     }
 
     final result = await context.read<AuthProvider>().register(
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
+      dob: _dobController.text,
       email: _emailController.text,
       phone: _phoneController.text,
       address: _addressController.text,
+      zone: _selectedZone!,
+      govIdType: _selectedIdType!,
+      govIdNumber: _idNumberController.text,
       password: _passwordController.text,
       documentPaths: _selectedDocuments.map((f) => f.path).toList(),
     );
@@ -135,7 +178,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     _sectionHeader('PERSONAL INFORMATION'),
                     const SizedBox(height: 16),
 
-                    _inputLabel('FIRST NAME'),
+                    _inputLabel('FIRST NAME *'),
                     _textField(
                       controller: _firstNameController,
                       hint: 'e.g. Juan',
@@ -143,7 +186,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    _inputLabel('LAST NAME'),
+                    _inputLabel('LAST NAME *'),
                     _textField(
                       controller: _lastNameController,
                       hint: 'e.g. Dela Cruz',
@@ -151,7 +194,38 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    _inputLabel('EMAIL ADDRESS'),
+                    _inputLabel('DATE OF BIRTH *'),
+                    GestureDetector(
+                      onTap: _selectDate,
+                      child: AbsorbPointer(
+                        child: _textField(
+                          controller: _dobController,
+                          hint: 'YYYY-MM-DD',
+                          icon: Icons.calendar_today_rounded,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+
+                    _inputLabel('GOVERNMENT ID TYPE *'),
+                    _dropdownField(
+                      value: _selectedIdType,
+                      hint: 'Select ID Type',
+                      icon: Icons.badge_outlined,
+                      items: _idTypes,
+                      onChanged: (val) => setState(() => _selectedIdType = val),
+                    ),
+                    const SizedBox(height: 20),
+
+                    _inputLabel('GOVERNMENT ID NUMBER *'),
+                    _textField(
+                      controller: _idNumberController,
+                      hint: 'Enter ID Number',
+                      icon: Icons.pin_outlined,
+                    ),
+                    const SizedBox(height: 20),
+
+                    _inputLabel('EMAIL ADDRESS *'),
                     _textField(
                       controller: _emailController,
                       hint: 'e.g. juan@example.com',
@@ -160,7 +234,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    _inputLabel('PHONE NUMBER'),
+                    _inputLabel('PHONE NUMBER *'),
                     _textField(
                       controller: _phoneController,
                       hint: 'e.g. 09123456789',
@@ -169,15 +243,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                     ),
                     const SizedBox(height: 20),
 
-                    _inputLabel('HOME ADDRESS'),
+                    _inputLabel('BARANGAY ZONE *'),
+                    _dropdownField(
+                      value: _selectedZone,
+                      hint: 'Select your Zone',
+                      icon: Icons.map_outlined,
+                      items: _zones,
+                      onChanged: (val) => setState(() => _selectedZone = val),
+                    ),
+                    const SizedBox(height: 20),
+
+                    _inputLabel('HOME ADDRESS *'),
                     _textField(
                       controller: _addressController,
-                      hint: 'e.g. Phase 1, Blk 2, Lot 3',
+                      hint: 'House No., Street, etc.',
                       icon: Icons.location_on_outlined,
                     ),
                     const SizedBox(height: 20),
 
-                    _inputLabel('ACCOUNT PASSWORD'),
+                    _inputLabel('ACCOUNT PASSWORD *'),
                     _textField(
                       controller: _passwordController,
                       hint: 'At least 5 characters',
@@ -188,7 +272,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
 
                     _sectionHeader('PROOF OF RESIDENCY'),
                     const SizedBox(height: 8),
-                    const Text('Upload Valid ID or Brgy. Certificate (Max 3)', style: TextStyle(fontSize: 12, color: AppColors.gray500, fontFamily: 'DM Sans')),
+                    const Text('Upload Valid ID or Brgy. Certificate (Max 3) *', style: TextStyle(fontSize: 12, color: AppColors.gray500, fontFamily: 'DM Sans')),
                     const SizedBox(height: 16),
                     
                     OutlinedButton.icon(
@@ -255,6 +339,37 @@ class _RegisterScreenState extends State<RegisterScreen> {
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _dropdownField({required String? value, required String hint, required IconData icon, required List<String> items, required void Function(String?) onChanged}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: AppColors.gray50,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      child: DropdownButtonHideUnderline(
+        child: DropdownButton<String>(
+          value: value,
+          hint: Row(
+            children: [
+              Icon(icon, size: 20, color: AppColors.primary600),
+              const SizedBox(width: 12),
+              Text(hint, style: const TextStyle(color: AppColors.gray400, fontWeight: FontWeight.w500, fontSize: 15)),
+            ],
+          ),
+          isExpanded: true,
+          icon: const Icon(Icons.arrow_drop_down_rounded, color: AppColors.gray400),
+          items: items.map((String item) {
+            return DropdownMenuItem<String>(
+              value: item,
+              child: Text(item, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600, color: AppColors.primary900)),
+            );
+          }).toList(),
+          onChanged: onChanged,
         ),
       ),
     );
