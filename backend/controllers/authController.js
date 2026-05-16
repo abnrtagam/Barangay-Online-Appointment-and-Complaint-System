@@ -106,11 +106,11 @@ exports.register = async (req, res) => {
     // Hash password
     const hash = await bcrypt.hash(password, 12)
 
-    // Handle uploaded documents
-    let documentPaths = null
-    if (req.files && req.files.length > 0) {
-      documentPaths = JSON.stringify(req.files.map(file => file.filename))
+    // Handle uploaded documents (required)
+    if (!req.files || req.files.length === 0) {
+      return res.status(422).json({ message: 'Please upload at least one proof of residency document.' })
     }
+    const documentPaths = JSON.stringify(req.files.map(file => file.filename))
 
     // Generate OTP
     const otp = generateOTP()
