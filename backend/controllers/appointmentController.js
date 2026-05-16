@@ -57,8 +57,7 @@ exports.create = async (req, res) => {
       return res.status(409).json({ message: 'You already have an appointment on this date.' })
     }
     const [result] = await db.query(
-      `INSERT INTO appointments (resident_id, appointment_date, time_slot, purpose, notes, status)
-       VALUES (?,?,?,?,?,?)`,
+      'INSERT INTO appointments (resident_id, appointment_date, time_slot, purpose, notes, status, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
       [resident_id, appointment_date, time_slot, purpose, notes || null, 'Pending']
     )
     const appointmentId = result.insertId
@@ -84,7 +83,7 @@ exports.getMyAppointments = async (req, res) => {
   try {
     const offset = (parseInt(page) - 1) * parseInt(limit)
     const [rows] = await db.query(
-      `SELECT a.* FROM appointments a ${where} ORDER BY a.appointment_date DESC, a.time_slot ASC LIMIT ? OFFSET ?`,
+      `SELECT a.*, a.created_at FROM appointments a ${where} ORDER BY a.created_at DESC, a.time_slot ASC LIMIT ? OFFSET ?`,
       [...params, parseInt(limit), offset]
     )
     const [[{ total }]] = await db.query(
@@ -108,7 +107,7 @@ exports.getMyAppointmentById = async (req, res) => {
   const resident_id = req.user.resident_id
   try {
     const [[appointment]] = await db.query(
-      `SELECT a.* FROM appointments a
+      `SELECT a.*, a.created_at FROM appointments a
        JOIN residents r ON a.resident_id = r.id
        WHERE a.id = ? AND r.id = ?`,
       [id, resident_id]

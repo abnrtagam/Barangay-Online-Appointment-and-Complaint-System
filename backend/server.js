@@ -1,5 +1,28 @@
 require('dotenv').config()
 const express  = require('express')
+const db = require('./config/db')
+;(async () => {
+  try {
+    const [cols] = await db.query('DESCRIBE complaints')
+    const hasCreatedAt = cols.some(c => c.Field === 'created_at')
+    if (!hasCreatedAt) {
+      console.log('修复 (Repair): Adding missing created_at to complaints...')
+      await db.query('ALTER TABLE complaints ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER status')
+    }
+    
+    const [cols2] = await db.query('DESCRIBE appointments')
+    const hasCreatedAt2 = cols2.some(c => c.Field === 'created_at')
+    if (!hasCreatedAt2) {
+      console.log('修复 (Repair): Adding missing created_at to appointments...')
+      await db.query('ALTER TABLE appointments ADD COLUMN created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP AFTER status')
+    }
+    
+    // BACKFILL existing rows if they have NULL or zero created_at
+    await db.query('UPDATE complaints SET created_at = NOW() WHERE created_at IS NULL OR created_at = "0000-00-00 00:00:00" OR created_at = ""')
+    await db.query('UPDATE appointments SET created_at = NOW() WHERE created_at IS NULL OR created_at = "0000-00-00 00:00:00" OR created_at = ""')
+    console.log('✅ Schema repair and backfill complete')
+  } catch (err) { console.error('Schema check failed:', err.message) }
+})()
 const cors     = require('cors')
 const morgan   = require('morgan')
 const path     = require('path')

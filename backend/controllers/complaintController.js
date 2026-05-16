@@ -31,7 +31,7 @@ exports.create = async (req, res) => {
   try {
     const attachment = req.file ? req.file.filename : null
     const [result] = await db.query(
-      'INSERT INTO complaints (resident_id, category_id, subject, details, attachment_path, status) VALUES (?,?,?,?,?,?)',
+      'INSERT INTO complaints (resident_id, category_id, subject, details, attachment_path, status, created_at) VALUES (?, ?, ?, ?, ?, ?, NOW())',
       [resident_id, category_id, subject, details, attachment, 'Pending']
     )
     const complaintId = result.insertId
@@ -59,7 +59,7 @@ exports.getMyComplaints = async (req, res) => {
   try {
     const offset = (parseInt(page) - 1) * parseInt(limit)
     const [rows] = await db.query(
-      `SELECT c.*, cc.name AS category_name
+      `SELECT c.*, c.created_at, cc.name AS category_name
        FROM complaints c
        JOIN complaint_categories cc ON c.category_id = cc.id
        ${where}
@@ -90,7 +90,7 @@ exports.getMyComplaintById = async (req, res) => {
   const resident_id = req.user.resident_id
   try {
     const [[complaint]] = await db.query(
-      `SELECT c.*, cc.name AS category_name
+      `SELECT c.*, c.created_at, cc.name AS category_name
        FROM complaints c
        JOIN complaint_categories cc ON c.category_id = cc.id
        JOIN residents r ON c.resident_id = r.id

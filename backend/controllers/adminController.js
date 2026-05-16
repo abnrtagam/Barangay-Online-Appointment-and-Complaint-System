@@ -54,7 +54,7 @@ exports.getComplaints = async (req, res) => {
        JOIN residents r ON c.resident_id = r.id
        JOIN users u ON r.user_id = u.id
        ${where}
-       ORDER BY c.created_at DESC
+        ORDER BY c.created_at DESC
        LIMIT ? OFFSET ?`,
       [...params, parseInt(limit), offset]
     )
@@ -388,5 +388,36 @@ exports.exportReport = async (req, res) => {
     res.send(csv)
   } catch (err) {
     res.status(500).json({ message: 'Export failed.' })
+  }
+}
+// GET /api/admin/daily-stats
+exports.getDailyStats = async (req, res) => {
+  try {
+    // Get last 7 days of complaints
+    const [complaints] = await db.query(`
+      SELECT DATE(created_at) as date, COUNT(*) as count 
+      FROM complaints 
+      WHERE created_at >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      GROUP BY DATE(created_at)
+      ORDER BY date ASC
+    `)
+
+    // Get last 7 days of appointments
+    const [appointments] = await db.query(`
+      SELECT DATE(appointment_date) as date, COUNT(*) as count 
+      FROM appointments 
+      WHERE appointment_date >= DATE_SUB(CURDATE(), INTERVAL 7 DAY)
+      GROUP BY DATE(appointment_date)
+      ORDER BY date ASC
+    `)
+
+    res.json({
+      success: true,
+      complaints,
+      appointments
+    })
+  } catch (err) {
+    console.error(err)
+    res.status(500).json({ message: 'Failed to fetch daily stats.' })
   }
 }
