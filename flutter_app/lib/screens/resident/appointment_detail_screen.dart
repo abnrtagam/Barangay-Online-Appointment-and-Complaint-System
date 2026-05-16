@@ -106,6 +106,10 @@ class AppointmentDetailScreen extends StatelessWidget {
     );
   }
 
+  bool _isFinalStatus(String status) {
+    return ['resolved', 'completed', 'cancelled', 'rejected'].contains(status.toLowerCase());
+  }
+
   Widget _buildTimeline(List<dynamic> history) {
     if (history.isEmpty) {
       return const Text('No history available', style: TextStyle(fontSize: 13, color: AppColors.gray400));
@@ -118,22 +122,27 @@ class AppointmentDetailScreen extends StatelessWidget {
       itemBuilder: (context, index) {
         final item = history[index];
         final isLast = index == history.length - 1;
+        final isLatest = index == 0;
+        final finalStatus = _isFinalStatus(item.newStatus);
         
         return IntrinsicHeight(
           child: Row(
             children: [
               Column(
                 children: [
-                  Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                      color: index == 0 ? AppColors.primary600 : AppColors.gray300,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: Colors.white, width: 2),
-                      boxShadow: [BoxShadow(color: AppColors.primary600.withValues(alpha: 0.3), blurRadius: 4)],
+                  if (isLatest && finalStatus)
+                    const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 16)
+                  else
+                    Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                        color: isLatest ? AppColors.primary600 : AppColors.gray300,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.white, width: 2),
+                        boxShadow: isLatest ? [BoxShadow(color: AppColors.primary600.withValues(alpha: 0.3), blurRadius: 4)] : null,
+                      ),
                     ),
-                  ),
                   if (!isLast)
                     Expanded(
                       child: Container(width: 2, color: AppColors.gray200),
