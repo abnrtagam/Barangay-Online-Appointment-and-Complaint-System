@@ -127,8 +127,8 @@ export default function Sidebar() {
       </div>
 
       <style>{`
-        aside::-webkit-scrollbar { display: none; }
-        aside { -ms-overflow-style: none; scrollbar-width: none; }
+        aside::-webkit-scrollbar, aside nav::-webkit-scrollbar { display: none; }
+        aside, aside nav { -ms-overflow-style: none; scrollbar-width: none; }
       `}</style>
     </aside>
   )
