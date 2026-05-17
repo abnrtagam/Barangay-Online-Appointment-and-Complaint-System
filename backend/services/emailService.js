@@ -229,7 +229,12 @@ const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'y
           </div>
           <div class="content">
             <p>Hello ${firstName},</p>
-            <p>We are writing to inform you that the status of your complaint regarding <strong>"${subject}"</strong> has been updated by the Barangay Administration.</p>
+            ${status.toLowerCase() === 'resolved' 
+              ? `<p>Your complaint regarding <strong>"${subject}"</strong> has been resolved by the barangay administration.</p>` 
+              : status.toLowerCase() === 'rejected'
+              ? `<p>Your request regarding <strong>"${subject}"</strong> has been rejected.${adminRemarks ? ' Reason: ' + adminRemarks : ''}</p>`
+              : `<p>We are writing to inform you that the status of your complaint regarding <strong>"${subject}"</strong> has been updated by the Barangay Administration.</p>`
+            }
             
             <div class="info-card">
               <p style="margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">Current Status</p>
@@ -277,6 +282,30 @@ const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'y
  * Send appointment status update email
  */
 const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmentDate = '', timeSlot = '', status = '', adminRemarks = '') => {
+  const s = status.toLowerCase()
+  let introMessage = ''
+  let extraMessage = ''
+  let showGuidelines = false
+
+  if (s === 'pending') {
+    introMessage = `<p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> is awaiting confirmation.</p>`
+    showGuidelines = true
+  } else if (s === 'approved') {
+    introMessage = `<p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been confirmed.</p>`
+    showGuidelines = true
+  } else if (s === 'completed') {
+    introMessage = `<p>Your appointment on <strong>${appointmentDate} at ${timeSlot}</strong> has been successfully completed.</p>`
+    extraMessage = `<p style="margin:0;">Thank you for visiting Barangay Bulua. If you have further concerns, please file a new request through the portal.</p>`
+  } else if (s === 'rejected') {
+    introMessage = `<p>Your appointment on <strong>${appointmentDate} at ${timeSlot}</strong> could not be accommodated.</p>`
+    extraMessage = `<p style="margin:0;">Please contact the barangay office for assistance.</p>`
+  } else if (s === 'cancelled') {
+    introMessage = `<p>Your appointment on <strong>${appointmentDate} at ${timeSlot}</strong> has been cancelled.</p>`
+    extraMessage = `<p style="margin:0;">Book a new appointment if you wish to reschedule.</p>`
+  } else {
+    introMessage = `<p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been updated.</p>`
+  }
+
   const mailOptions = {
     from: {
       name: 'Barangay Bulua Portal',
@@ -298,6 +327,7 @@ const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmen
           .info-card { background: #f8fafc; border-left: 4px solid #1e40af; padding: 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
           .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
           .instruction-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 24px; margin-top: 24px; }
+          .extra-box { background: #f1f5f9; border-radius: 8px; padding: 20px; margin-top: 24px; font-size: 14px; color: #334155; }
         </style>
       </head>
       <body>
@@ -308,7 +338,7 @@ const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmen
           </div>
           <div class="content">
             <p>Hello ${firstName},</p>
-            <p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been updated.</p>
+            ${introMessage}
             
             <div class="info-card">
               <p style="margin: 0; font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em;">New Status</p>
@@ -320,6 +350,9 @@ const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmen
               ` : ''}
             </div>
 
+            ${extraMessage ? `<div class="extra-box">${extraMessage}</div>` : ''}
+
+            ${showGuidelines ? `
             <div class="instruction-box">
               <p style="margin: 0 0 12px; font-weight: 800; color: #1e293b;">Guidelines for your Visit:</p>
               <ul style="margin: 0; padding-left: 20px; font-size: 13px; color: #475569;">
@@ -329,6 +362,7 @@ const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmen
                 <li>If you cannot make it, please cancel or reschedule through the portal at least 24 hours in advance.</li>
               </ul>
             </div>
+            ` : ''}
           </div>
           <div class="footer">
             <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
