@@ -9,6 +9,8 @@ import '../../models/announcement_model.dart';
 import '../../constants/app_colors.dart';
 import 'announcement_history_screen.dart';
 import 'notification_center_screen.dart';
+import '../../services/notification_service.dart';
+import '../../services/storage_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -18,6 +20,8 @@ class DashboardScreen extends StatefulWidget {
 }
 
 class _DashboardScreenState extends State<DashboardScreen> {
+  bool _hasUnreadNotifications = false;
+
   @override
   void initState() {
     super.initState();
@@ -34,6 +38,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
       appointmentProvider.fetchAppointments(),
       announcementProvider.fetchAnnouncements(),
     ]);
+
+    try {
+      final notifsResult = await NotificationService.getNotifications();
+      if (notifsResult['success'] && mounted) {
+        final notifs = notifsResult['data'] as List;
+        if (notifs.isNotEmpty) {
+          final lastViewed = await StorageService.getLastViewedNotification();
+          final latestNotifDate = notifs[0]['created_at']?.toString();
+          
+          if (lastViewed == null || latestNotifDate == null) {
+            setState(() => _hasUnreadNotifications = true);
+          } else {
+            final latest = DateTime.tryParse(latestNotifDate);
+            final viewed = DateTime.tryParse(lastViewed);
+            if (latest != null && viewed != null && latest.isAfter(viewed)) {
+              setState(() => _hasUnreadNotifications = true);
+            } else {
+              setState(() => _hasUnreadNotifications = false);
+            }
+          }
+        } else {
+          setState(() => _hasUnreadNotifications = false);
+        }
+      }
+    } catch (e) {
+      // ignore
+    }
   }
 
   @override
@@ -112,7 +143,13 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                 ),
                               ),
                               InkWell(
-                                onTap: () => Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationCenterScreen())),
+                                onTap: () async {
+                                  setState(() => _hasUnreadNotifications = false);
+                                  await StorageService.saveLastViewedNotification(DateTime.now().toUtc().toIso8601String());
+                                  if (mounted) {
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => const NotificationCenterScreen()));
+                                  }
+                                },
                                 borderRadius: BorderRadius.circular(12),
                                 child: Container(
                                   padding: const EdgeInsets.all(10),
@@ -121,7 +158,25 @@ class _DashboardScreenState extends State<DashboardScreen> {
                                     borderRadius: BorderRadius.circular(12),
                                     border: Border.all(color: Colors.white.withValues(alpha: 0.1), width: 1),
                                   ),
-                                  child: const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 22),
+                                  child: Stack(
+                                    clipBehavior: Clip.none,
+                                    children: [
+                                      const Icon(Icons.notifications_active_rounded, color: Colors.white, size: 22),
+                                      if (_hasUnreadNotifications)
+                                        Positioned(
+                                          top: -2,
+                                          right: -2,
+                                          child: Container(
+                                            width: 10,
+                                            height: 10,
+                                            decoration: const BoxDecoration(
+                                              color: Colors.red,
+                                              shape: BoxShape.circle,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             ],

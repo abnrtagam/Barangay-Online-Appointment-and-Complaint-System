@@ -55,4 +55,16 @@ class StorageService {
     final prefs = await SharedPreferences.getInstance();
     await prefs.clear();
   }
+
+  // Save the timestamp when notifications were last viewed
+  static Future<void> saveLastViewedNotification(String timestamp) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('last_viewed_notification', timestamp);
+  }
+
+  // Get the last viewed notification timestamp
+  static Future<String?> getLastViewedNotification() async {
+    final prefs = await SharedPreferences.getInstance();
+    return prefs.getString('last_viewed_notification');
+  }
 }
