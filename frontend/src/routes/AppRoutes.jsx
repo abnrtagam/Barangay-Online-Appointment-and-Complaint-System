@@ -12,6 +12,7 @@ import ResidentRegister from '../pages/ResidentRegister'
 import VerifyOTP from '../pages/VerifyOTP'
 import ForgotPassword from '../pages/ForgotPassword'
 import AdminLogin from '../pages/AdminLogin'
+import AdminForgotPassword from '../pages/AdminForgotPassword'
 
 // Resident pages
 import ResidentDashboard from '../pages/ResidentDashboard'
@@ -71,7 +72,10 @@ export default function AppRoutes() {
       <Route path="/register" element={<ResidentRegister />} />
       <Route path="/verify-otp" element={<VerifyOTP />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
+
+      {/* Admin Auth */}
       <Route path="/admin/login" element={<AdminLogin />} />
+      <Route path="/admin/forgot-password" element={<AdminForgotPassword />} />
 
       {/* Resident Protected */}
       <Route path="/resident" element={<ResidentGuard><ResidentLayout /></ResidentGuard>}>

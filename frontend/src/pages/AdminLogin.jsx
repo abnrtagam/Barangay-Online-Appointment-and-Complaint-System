@@ -60,7 +60,10 @@ export default function AdminLogin() {
                        style={{ borderRadius: '12px', padding: '14px 18px', border: '1.5px solid #e2e8f0', background: '#f8fafc', fontSize: '1rem' }} />
               </div>
               <div className="form-group" style={{ marginBottom: 32 }}>
-                <label className="form-label" style={{ fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em', marginBottom: 10 }}>Password</label>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+                  <label className="form-label" style={{ fontWeight: 700, fontSize: '0.8rem', textTransform: 'uppercase', color: '#64748b', letterSpacing: '0.05em', margin: 0 }}>Password</label>
+                  <Link to="/admin/forgot-password" style={{ fontSize: '0.8rem', fontWeight: 600, color: '#2563eb', textDecoration: 'none' }}>Forgot Password?</Link>
+                </div>
                 <input className="form-control" name="password" type="password" value={form.password} onChange={e => setForm(p => ({...p, password: e.target.value}))} placeholder="••••••••"
                        style={{ borderRadius: '12px', padding: '14px 18px', border: '1.5px solid #e2e8f0', background: '#f8fafc', fontSize: '1rem' }} />
               </div>
