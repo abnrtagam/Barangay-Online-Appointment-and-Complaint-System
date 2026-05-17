@@ -16,6 +16,7 @@ ALTER TABLE `users` ADD COLUMN `dob`                     DATE          DEFAULT N
 ALTER TABLE `users` ADD COLUMN `gov_id_type`             VARCHAR(50)   DEFAULT NULL AFTER `dob`;
 ALTER TABLE `users` ADD COLUMN `gov_id_number`           VARCHAR(50)   DEFAULT NULL AFTER `gov_id_type`;
 ALTER TABLE `users` ADD COLUMN `status`                  ENUM('pending','approved','rejected','suspended') DEFAULT 'pending' AFTER `role`;
+ALTER TABLE `users` ADD COLUMN `two_factor_enabled`      BOOLEAN DEFAULT FALSE AFTER `status`;
 ALTER TABLE `users` ADD COLUMN `email_verified`          BOOLEAN       DEFAULT FALSE AFTER `status`;
 ALTER TABLE `users` ADD COLUMN `verification_documents`  TEXT          DEFAULT NULL AFTER `email_verified`;
 ALTER TABLE `users` ADD COLUMN `zone`                    VARCHAR(50)   DEFAULT NULL AFTER `address`;

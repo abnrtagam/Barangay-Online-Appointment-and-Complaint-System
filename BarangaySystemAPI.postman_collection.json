@@ -1,30 +1,14 @@
 {
   "info": {
     "name": "Barangay Bulua Service Portal API",
-    "description": "Premium API collection for the Barangay Bulua Online Appointment and Complaint System. Designed for school project evaluation and learning demonstration.",
+    "description": "Complete API collection for the Barangay Bulua Digital Service Portal. Covers authentication, admin management, resident features, and public endpoints.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:5000/api",
-      "type": "string"
-    },
-    {
-      "key": "resident_token",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "admin_token",
-      "value": "",
-      "type": "string"
-    },
-    {
-      "key": "user_id",
-      "value": "",
-      "type": "string"
-    }
+    { "key": "base_url", "value": "http://localhost:5000/api", "type": "string" },
+    { "key": "resident_token", "value": "", "type": "string" },
+    { "key": "admin_token", "value": "", "type": "string" },
+    { "key": "user_id", "value": "", "type": "string" }
   ],
   "item": [
     {
@@ -38,311 +22,314 @@
             "body": {
               "mode": "formdata",
               "formdata": [
-                {
-                  "key": "first_name",
-                  "value": "Juan",
-                  "type": "text"
-                },
-                {
-                  "key": "last_name",
-                  "value": "Dela Cruz",
-                  "type": "text"
-                },
-                {
-                  "key": "email",
-                  "value": "juan.dc@example.com",
-                  "type": "text"
-                },
-                {
-                  "key": "phone",
-                  "value": "09123456789",
-                  "type": "text"
-                },
-                {
-                  "key": "address",
-                  "value": "P-1, Barangay Bulua, CDO",
-                  "type": "text"
-                },
-                {
-                  "key": "password",
-                  "value": "password123",
-                  "type": "text"
-                },
-                {
-                  "key": "documents",
-                  "type": "file",
-                  "description": "Required: Upload verification documents (max 3 files)"
-                }
+                { "key": "first_name", "value": "Juan", "type": "text" },
+                { "key": "last_name", "value": "Dela Cruz", "type": "text" },
+                { "key": "email", "value": "juan.dc@example.com", "type": "text" },
+                { "key": "phone", "value": "09123456789", "type": "text" },
+                { "key": "address", "value": "P-1, Barangay Bulua, CDO", "type": "text" },
+                { "key": "password", "value": "password123", "type": "text" },
+                { "key": "documents", "type": "file", "description": "Upload verification documents (max 3)" }
               ]
             },
-            "url": {
-              "raw": "{{base_url}}/auth/register",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "register"]
-            },
-            "description": "Register a new resident account for Barangay Bulua"
+            "url": { "raw": "{{base_url}}/auth/register", "host": ["{{base_url}}"], "path": ["auth","register"] },
+            "description": "Register a new resident account"
           }
         },
         {
           "name": "Verify OTP",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"juan.dc@example.com\",\n  \"otp\": \"123456\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/verify-otp",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "verify-otp"]
-            },
-            "description": "Verify email address with OTP code sent during registration"
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"juan.dc@example.com\",\n  \"otp\": \"123456\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/verify-otp", "host": ["{{base_url}}"], "path": ["auth","verify-otp"] },
+            "description": "Verify email with OTP code"
           }
         },
         {
           "name": "Resend OTP",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"juan.dc@example.com\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/resend-otp",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "resend-otp"]
-            },
-            "description": "Resend OTP code to email address"
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"juan.dc@example.com\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/resend-otp", "host": ["{{base_url}}"], "path": ["auth","resend-otp"] }
           }
         },
         {
           "name": "Resident Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const response = pm.response.json();",
-                  "    pm.collectionVariables.set('resident_token', response.token);",
-                  "    pm.collectionVariables.set('user_id', response.user.id);",
-                  "}"
-                ]
-              }
-            }
-          ],
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) {","    const r = pm.response.json();","    pm.collectionVariables.set('resident_token', r.token);","    pm.collectionVariables.set('user_id', r.user.id);","}"] } }],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"juan.dc@example.com\",\n  \"password\": \"password123\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "login"]
-            },
-            "description": "Login as resident. Token will be saved automatically."
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"juan.dc@example.com\",\n  \"password\": \"password123\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/login", "host": ["{{base_url}}"], "path": ["auth","login"] },
+            "description": "Login as resident. Token auto-saved."
           }
         },
         {
           "name": "Admin Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "if (pm.response.code === 200) {",
-                  "    const response = pm.response.json();",
-                  "    pm.collectionVariables.set('admin_token', response.token);",
-                  "}"
-                ]
-              }
-            }
-          ],
+          "event": [{ "listen": "test", "script": { "exec": ["if (pm.response.code === 200) {","    const r = pm.response.json();","    pm.collectionVariables.set('admin_token', r.token);","}"] } }],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"email\": \"admin@bulua.gov\",\n  \"password\": \"admin123\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/auth/admin-login",
-              "host": ["{{base_url}}"],
-              "path": ["auth", "admin-login"]
-            },
-            "description": "Login as admin. Token will be saved automatically."
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"admin@barangay.gov.ph\",\n  \"password\": \"admin1234\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/admin-login", "host": ["{{base_url}}"], "path": ["auth","admin-login"] },
+            "description": "Login as admin. Token auto-saved."
+          }
+        },
+        {
+          "name": "Forgot Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"juan.dc@example.com\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/forgot-password", "host": ["{{base_url}}"], "path": ["auth","forgot-password"] }
+          }
+        },
+        {
+          "name": "Reset Password",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"email\": \"juan.dc@example.com\",\n  \"otp\": \"123456\",\n  \"new_password\": \"newpassword123\"\n}" },
+            "url": { "raw": "{{base_url}}/auth/reset-password", "host": ["{{base_url}}"], "path": ["auth","reset-password"] }
           }
         }
       ]
     },
     {
-      "name": "Admin Verification",
+      "name": "Admin - Dashboard",
+      "item": [
+        {
+          "name": "Get Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/stats", "host": ["{{base_url}}"], "path": ["admin","stats"] }
+          }
+        },
+        {
+          "name": "Get Daily Stats (7-day)",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/daily-stats", "host": ["{{base_url}}"], "path": ["admin","daily-stats"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Complaints",
+      "item": [
+        {
+          "name": "Get All Complaints",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/complaints?page=1&limit=20", "host": ["{{base_url}}"], "path": ["admin","complaints"], "query": [{ "key": "page", "value": "1" },{ "key": "limit", "value": "20" }] }
+          }
+        },
+        {
+          "name": "Filter Complaints by Status",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/complaints?status=Pending", "host": ["{{base_url}}"], "path": ["admin","complaints"], "query": [{ "key": "status", "value": "Pending" }] }
+          }
+        },
+        {
+          "name": "Update Complaint Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"Approved\",\n  \"admin_remarks\": \"Complaint verified and approved for action.\"\n}" },
+            "url": { "raw": "{{base_url}}/admin/complaints/1/status", "host": ["{{base_url}}"], "path": ["admin","complaints","1","status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Appointments",
+      "item": [
+        {
+          "name": "Get All Appointments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/appointments?page=1&limit=20", "host": ["{{base_url}}"], "path": ["admin","appointments"], "query": [{ "key": "page", "value": "1" },{ "key": "limit", "value": "20" }] }
+          }
+        },
+        {
+          "name": "Update Appointment Status",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"status\": \"Approved\",\n  \"admin_remarks\": \"Appointment confirmed.\"\n}" },
+            "url": { "raw": "{{base_url}}/admin/appointments/1/status", "host": ["{{base_url}}"], "path": ["admin","appointments","1","status"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Residents",
+      "item": [
+        {
+          "name": "Get All Residents",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/residents?page=1&limit=20", "host": ["{{base_url}}"], "path": ["admin","residents"], "query": [{ "key": "page", "value": "1" },{ "key": "limit", "value": "20" }] }
+          }
+        },
+        {
+          "name": "Search Residents",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/residents?search=Juan", "host": ["{{base_url}}"], "path": ["admin","residents"], "query": [{ "key": "search", "value": "Juan" }] }
+          }
+        },
+        {
+          "name": "Get Zone Stats",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/residents/zone-stats", "host": ["{{base_url}}"], "path": ["admin","residents","zone-stats"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Verification",
       "item": [
         {
           "name": "Get Verification Stats",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/admin/verifications/stats",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications", "stats"]
-            },
-            "description": "Get verification statistics (pending, approved, rejected, suspended counts)"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/verifications/stats", "host": ["{{base_url}}"], "path": ["admin","verifications","stats"] }
           }
         },
         {
           "name": "Get All Accounts",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/admin/verifications",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications"]
-            },
-            "description": "Get all resident accounts with optional filtering by status and search"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/verifications", "host": ["{{base_url}}"], "path": ["admin","verifications"] }
           }
         },
         {
           "name": "Get Pending Accounts",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/admin/verifications/pending",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications", "pending"]
-            },
-            "description": "Get only pending resident accounts"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/verifications/pending", "host": ["{{base_url}}"], "path": ["admin","verifications","pending"] }
           }
         },
         {
           "name": "Get Reactivation Requests",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/admin/verifications/reactivation-requests",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications", "reactivation-requests"]
-            },
-            "description": "Get pending reactivation requests from suspended users"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/verifications/reactivation-requests", "host": ["{{base_url}}"], "path": ["admin","verifications","reactivation-requests"] }
           }
         },
         {
           "name": "Get Account Details",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/admin/verifications/{{user_id}}",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications", "{{user_id}}"]
-            },
-            "description": "Get detailed information about a specific account including verification history"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/verifications/{{user_id}}", "host": ["{{base_url}}"], "path": ["admin","verifications","{{user_id}}"] }
           }
         },
         {
           "name": "Approve Account",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"notes\": \"Account approved after document verification\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/admin/verifications/{{user_id}}/approve",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications", "{{user_id}}", "approve"]
-            },
-            "description": "Approve a pending resident account"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"notes\": \"Documents verified. Account approved.\"\n}" },
+            "url": { "raw": "{{base_url}}/admin/verifications/{{user_id}}/approve", "host": ["{{base_url}}"], "path": ["admin","verifications","{{user_id}}","approve"] }
           }
         },
         {
           "name": "Reject Account",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{admin_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"notes\": \"Documents incomplete - please resubmit with clearer images\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/admin/verifications/{{user_id}}/reject",
-              "host": ["{{base_url}}"],
-              "path": ["admin", "verifications", "{{user_id}}", "reject"]
-            },
-            "description": "Reject a pending resident account (requires notes)"
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"notes\": \"Documents incomplete — resubmit with clearer images.\"\n}" },
+            "url": { "raw": "{{base_url}}/admin/verifications/{{user_id}}/reject", "host": ["{{base_url}}"], "path": ["admin","verifications","{{user_id}}","reject"] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Reports",
+      "item": [
+        {
+          "name": "Get Report Data",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/reports?from=2026-01-01&to=2026-12-31", "host": ["{{base_url}}"], "path": ["admin","reports"], "query": [{ "key": "from", "value": "2026-01-01" },{ "key": "to", "value": "2026-12-31" }] }
+          }
+        },
+        {
+          "name": "Export Complaints CSV",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/reports/export?type=complaints", "host": ["{{base_url}}"], "path": ["admin","reports","export"], "query": [{ "key": "type", "value": "complaints" }] }
+          }
+        },
+        {
+          "name": "Export Appointments CSV",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/reports/export?type=appointments", "host": ["{{base_url}}"], "path": ["admin","reports","export"], "query": [{ "key": "type", "value": "appointments" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Activity Log",
+      "item": [
+        {
+          "name": "Get Activity Log",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/activity-log?page=1&limit=20", "host": ["{{base_url}}"], "path": ["admin","activity-log"], "query": [{ "key": "page", "value": "1" },{ "key": "limit", "value": "20" }] }
+          }
+        },
+        {
+          "name": "Filter by Action Type",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" }],
+            "url": { "raw": "{{base_url}}/admin/activity-log?action_type=status_update", "host": ["{{base_url}}"], "path": ["admin","activity-log"], "query": [{ "key": "action_type", "value": "status_update" }] }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Admin - Profile",
+      "item": [
+        {
+          "name": "Update Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"first_name\": \"Admin\",\n  \"last_name\": \"Bulua\",\n  \"email\": \"admin@barangay.gov.ph\",\n  \"phone\": \"09171234567\",\n  \"two_factor_enabled\": false\n}" },
+            "url": { "raw": "{{base_url}}/admin/profile", "host": ["{{base_url}}"], "path": ["admin","profile"] }
+          }
+        },
+        {
+          "name": "Change Password",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{admin_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"current_password\": \"admin1234\",\n  \"new_password\": \"newSecurePass123\"\n}" },
+            "url": { "raw": "{{base_url}}/admin/profile/password", "host": ["{{base_url}}"], "path": ["admin","profile","password"] }
           }
         }
       ]
@@ -351,128 +338,132 @@
       "name": "Resident Features",
       "item": [
         {
-          "name": "Get Complaint Categories",
+          "name": "Get Dashboard Stats",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{resident_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/complaints/categories",
-              "host": ["{{base_url}}"],
-              "path": ["complaints", "categories"]
-            },
-            "description": "Get available complaint categories"
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/dashboard-stats", "host": ["{{base_url}}"], "path": ["residents","dashboard-stats"] }
+          }
+        },
+        {
+          "name": "Get My Complaints",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/complaints", "host": ["{{base_url}}"], "path": ["residents","complaints"] }
+          }
+        },
+        {
+          "name": "Get Complaint Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/complaints/1", "host": ["{{base_url}}"], "path": ["residents","complaints","1"] }
           }
         },
         {
           "name": "Create Complaint",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{resident_token}}"
-              }
-            ],
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
             "body": {
               "mode": "formdata",
               "formdata": [
-                {
-                  "key": "category_id",
-                  "value": "1",
-                  "type": "text"
-                },
-                {
-                  "key": "description",
-                  "value": "Public lighting issue in Zone 3",
-                  "type": "text"
-                },
-                {
-                  "key": "attachment",
-                  "type": "file",
-                  "description": "Optional: Upload photo evidence"
-                }
+                { "key": "category_id", "value": "1", "type": "text" },
+                { "key": "subject", "value": "Broken streetlight", "type": "text" },
+                { "key": "description", "value": "Streetlight at Zone 3 corner has been broken for a week.", "type": "text" },
+                { "key": "attachment", "type": "file", "description": "Optional photo evidence" }
               ]
             },
-            "url": {
-              "raw": "{{base_url}}/complaints",
-              "host": ["{{base_url}}"],
-              "path": ["complaints"]
-            },
-            "description": "Create a new complaint for Barangay Bulua"
+            "url": { "raw": "{{base_url}}/complaints", "host": ["{{base_url}}"], "path": ["complaints"] }
           }
         },
         {
-          "name": "Get Taken Appointment Slots",
+          "name": "Get Complaint Categories",
           "request": {
             "method": "GET",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{resident_token}}"
-              }
-            ],
-            "url": {
-              "raw": "{{base_url}}/appointments/taken-slots?date=2024-05-20",
-              "host": ["{{base_url}}"],
-              "path": ["appointments", "taken-slots"],
-              "query": [
-                {
-                  "key": "date",
-                  "value": "2024-05-20",
-                  "description": "Date in YYYY-MM-DD format"
-                }
-              ]
-            },
-            "description": "Get taken appointment slots for a specific date"
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/complaints/categories", "host": ["{{base_url}}"], "path": ["complaints","categories"] }
+          }
+        },
+        {
+          "name": "Get My Appointments",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/appointments", "host": ["{{base_url}}"], "path": ["residents","appointments"] }
+          }
+        },
+        {
+          "name": "Get Appointment Detail",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/appointments/1", "host": ["{{base_url}}"], "path": ["residents","appointments","1"] }
           }
         },
         {
           "name": "Create Appointment",
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Authorization",
-                "value": "Bearer {{resident_token}}"
-              },
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n  \"category_id\": 1,\n  \"scheduled_date\": \"2024-05-20\",\n  \"scheduled_time\": \"09:00\",\n  \"purpose\": \"Barangay Clearance Application\"\n}"
-            },
-            "url": {
-              "raw": "{{base_url}}/appointments",
-              "host": ["{{base_url}}"],
-              "path": ["appointments"]
-            },
-            "description": "Book a new appointment with Bulua barangay office"
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"appointment_date\": \"2026-06-15\",\n  \"time_slot\": \"09:00 AM - 10:00 AM\",\n  \"purpose\": \"Barangay Clearance Application\"\n}" },
+            "url": { "raw": "{{base_url}}/appointments", "host": ["{{base_url}}"], "path": ["appointments"] }
+          }
+        },
+        {
+          "name": "Get Taken Slots",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/appointments/taken-slots?date=2026-06-15", "host": ["{{base_url}}"], "path": ["appointments","taken-slots"], "query": [{ "key": "date", "value": "2026-06-15" }] }
+          }
+        },
+        {
+          "name": "Cancel Appointment",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/appointments/1/cancel", "host": ["{{base_url}}"], "path": ["residents","appointments","1","cancel"] },
+            "description": "Cancel own appointment (only Pending/Approved, ≥24hrs before date)"
+          }
+        },
+        {
+          "name": "Update Resident Profile",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" },{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n  \"phone\": \"09187654321\",\n  \"address\": \"Zone 5, Barangay Bulua\"\n}" },
+            "url": { "raw": "{{base_url}}/residents/profile", "host": ["{{base_url}}"], "path": ["residents","profile"] }
+          }
+        },
+        {
+          "name": "Get Notifications",
+          "request": {
+            "method": "GET",
+            "header": [{ "key": "Authorization", "value": "Bearer {{resident_token}}" }],
+            "url": { "raw": "{{base_url}}/residents/notifications", "host": ["{{base_url}}"], "path": ["residents","notifications"] }
           }
         }
       ]
     },
     {
-      "name": "Health Check",
+      "name": "Public",
       "item": [
         {
-          "name": "API Health Check",
+          "name": "Health Check",
           "request": {
             "method": "GET",
             "header": [],
-            "url": {
-              "raw": "{{base_url}}/../health",
-              "host": ["{{base_url}}"],
-              "path": ["..", "health"]
-            },
-            "description": "Check if the API server is running and healthy"
+            "url": { "raw": "http://localhost:5000/api/health", "host": ["http://localhost:5000"], "path": ["api","health"] }
+          }
+        },
+        {
+          "name": "Get Announcements",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{base_url}}/announcements", "host": ["{{base_url}}"], "path": ["announcements"] }
           }
         }
       ]

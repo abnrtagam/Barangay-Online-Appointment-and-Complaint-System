@@ -482,3 +482,35 @@ exports.changePassword = async (req, res) => {
     res.status(500).json({ message: 'Failed to change password.' })
   }
 }
+exports.updateProfile = async (req, res) => {
+  const { first_name, last_name, email, phone, two_factor_enabled } = req.body;
+  const adminId = req.user.id;
+
+  if (!first_name && !last_name && !email && !phone && (two_factor_enabled === undefined)) {
+    return res.status(400).json({ message: 'No fields provided to update.' });
+  }
+
+  const fields = [];
+  const values = [];
+  if (first_name) { fields.push('first_name = ?'); values.push(first_name); }
+  if (last_name) { fields.push('last_name = ?'); values.push(last_name); }
+  if (email) { fields.push('email = ?'); values.push(email); }
+  if (phone !== undefined) { fields.push('phone = ?'); values.push(phone || null); }
+  if (two_factor_enabled !== undefined) { fields.push('two_factor_enabled = ?'); values.push(two_factor_enabled ? 1 : 0); }
+
+  if (fields.length === 0) {
+    return res.status(400).json({ message: 'Nothing to update.' });
+  }
+
+  const sql = `UPDATE users SET ${fields.join(', ')}, updated_at = NOW() WHERE id = ?`;
+  values.push(adminId);
+
+  try {
+    await db.query(sql, values);
+    await logActivity(adminId, 'profile_update', 'admin', adminId, 'Admin updated their profile');
+    res.json({ message: 'Profile updated successfully.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Failed to update profile.' });
+  }
+};

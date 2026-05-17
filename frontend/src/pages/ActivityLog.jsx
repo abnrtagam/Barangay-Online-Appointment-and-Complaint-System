@@ -7,18 +7,21 @@ const ACTION_ICONS = {
   status_update: <FiAlertCircle />,
   password_change: <FiShield />,
   verification: <FiCalendar />,
+  profile_update: <FiActivity />,
 }
 
 const ACTION_COLORS = {
   status_update: { bg: 'var(--primary-100)', color: 'var(--primary-700)' },
   password_change: { bg: 'var(--warning-100)', color: 'var(--warning-700)' },
   verification: { bg: '#dcfce7', color: '#15803d' },
+  profile_update: { bg: '#dbeafe', color: '#1d4ed8' },
 }
 
 const ACTION_LABELS = {
   status_update: 'Status Update',
   password_change: 'Password Change',
   verification: 'Verification',
+  profile_update: 'Profile Update',
 }
 
 export default function ActivityLog() {
@@ -78,6 +81,7 @@ export default function ActivityLog() {
             <option value="">All Actions</option>
             <option value="status_update">Status Updates</option>
             <option value="password_change">Password Changes</option>
+            <option value="profile_update">Profile Updates</option>
             <option value="verification">Verifications</option>
           </select>
         </div>

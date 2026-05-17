@@ -17,6 +17,10 @@ const db = require('./config/db')
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
       INDEX(admin_id), INDEX(action_type), INDEX(created_at)
     ) ENGINE=InnoDB`)
+    // Ensure two_factor_enabled column exists on users table
+    try {
+      await db.query(`ALTER TABLE users ADD COLUMN two_factor_enabled BOOLEAN DEFAULT FALSE AFTER status`)
+    } catch (e) { /* column already exists – ignore */ }
   } catch (err) {
     console.error('❌ Database connection failed:', err.message)
     process.exit(1)

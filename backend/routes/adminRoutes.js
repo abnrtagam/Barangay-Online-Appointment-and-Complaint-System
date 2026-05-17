@@ -36,6 +36,7 @@ router.get('/reports/export',  ctrl.exportReport)
 router.get('/activity-log', actLog.getActivityLog)
 
 // Profile
+router.patch('/profile', ctrl.updateProfile)
 router.patch('/profile/password', ctrl.changePassword)
 
 module.exports = router
