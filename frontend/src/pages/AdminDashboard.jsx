@@ -176,7 +176,7 @@ export default function AdminDashboard() {
           <div style={{ fontSize: '0.85rem', fontWeight: 600, color: '#64748b' }}>Last updated: Just now</div>
         </div>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '24px' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '24px' }}>
           <DashboardCard 
             title="Total Population"    
             value={stats.totalResidents || 0} 
@@ -197,13 +197,6 @@ export default function AdminDashboard() {
             icon={<FiClock />} 
             color="warning"   
             sub="Scheduled for today" 
-          />
-          <DashboardCard 
-            title="Resolution Rate"     
-            value={stats.totalComplaints > 0 ? Math.round(((stats.resolvedComplaints || 0) / stats.totalComplaints) * 100) + '%' : '100%'} 
-            icon={<FiTrendingUp />} 
-            color="success" 
-            sub="Monthly average" 
           />
         </div>
       </div>
@@ -302,6 +295,8 @@ export default function AdminDashboard() {
           </button>
         </div>
       </div>
+
+
 
       {/* Detailed Activity Tables */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px' }}>
