@@ -235,7 +235,7 @@ exports.suspendAccount = async (req, res) => {
     await connection.beginTransaction()
 
     const [users] = await connection.query(
-      'SELECT status FROM users WHERE id = ? AND role = "resident"',
+      'SELECT first_name, email, status FROM users WHERE id = ? AND role = "resident"',
       [id]
     )
 
@@ -261,6 +261,12 @@ exports.suspendAccount = async (req, res) => {
     )
 
     await connection.commit()
+
+    // Send suspension email asynchronously and handle errors gracefully
+    emailService.sendSuspensionEmail(users[0].email, users[0].first_name).catch(err => {
+      console.error('Graceful error: Failed to send account suspension email:', err)
+    })
+
     res.json({ 
       message: 'Account suspended successfully.',
       status: 'suspended' 
@@ -340,7 +346,7 @@ exports.reactivateAccount = async (req, res) => {
     await connection.beginTransaction()
 
     const [users] = await connection.query(
-      'SELECT status FROM users WHERE id = ? AND role = "resident"',
+      'SELECT first_name, email, status FROM users WHERE id = ? AND role = "resident"',
       [id]
     )
 
@@ -369,6 +375,12 @@ exports.reactivateAccount = async (req, res) => {
     )
 
     await connection.commit()
+
+    // Send reactivation email asynchronously and handle errors gracefully
+    emailService.sendReactivationEmail(users[0].email, users[0].first_name).catch(err => {
+      console.error('Graceful error: Failed to send account reactivation email:', err)
+    })
+
     res.json({ 
       message: 'Account reactivated successfully.',
       status: 'approved' 

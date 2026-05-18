@@ -488,6 +488,166 @@ const sendPasswordResetOTPEmail = async (to, otp, firstName = 'Resident') => {
   }
 }
 
+/**
+ * Send account suspension email to resident
+ */
+const sendSuspensionEmail = async (to, firstName = 'Resident') => {
+  const mailOptions = {
+    from: {
+      name: 'Barangay Bulua Portal',
+      address: process.env.GMAIL_USER,
+    },
+    to,
+    subject: 'Account Suspended — Barangay Bulua',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #ef4444; color: white; padding: 32px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .info-card { background: #fef2f2; border-left: 4px solid #ef4444; padding: 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
+          .section-title { font-weight: 700; margin: 20px 0 8px 0; color: #0f172a; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="brand">Barangay Bulua</div>
+            <h1>Account Suspended</h1>
+          </div>
+          <div class="content">
+            <p>Hello ${firstName},</p>
+            <p>We are writing to inform you that your account on the Barangay Bulua Online Appointment and Complaint System has been temporarily suspended by the barangay admin.</p>
+            
+            <div class="info-card">
+              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #991b1b; text-transform: uppercase; letter-spacing: 0.05em;">Current Account Status</p>
+              <p style="margin: 4px 0 0 0; font-size: 20px; font-weight: 800; color: #991b1b;">Suspended</p>
+            </div>
+
+            <div class="section-title">What this means:</div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #475569;">
+              <li>You are temporarily unable to log in to your account</li>
+              <li>Any pending complaints or appointments may be affected</li>
+              <li>You cannot file new complaints or book appointments while your account is suspended</li>
+            </ul>
+
+            <div class="section-title">Why this may have happened:</div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #475569;">
+              <li>Violation of barangay portal guidelines</li>
+              <li>Submission of false or misleading information</li>
+              <li>Misuse of the complaint or appointment system</li>
+              <li>Multiple unverified or fraudulent account attempts</li>
+            </ul>
+
+            <div class="section-title">What you can do:</div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #475569;">
+              <li>Visit the Barangay Bulua office in person to clarify the reason for suspension</li>
+              <li>Bring a valid government ID when you visit</li>
+              <li>Request for account reactivation from the barangay admin directly</li>
+              <li>Office hours: Monday to Friday, 8:00 AM to 5:00 PM</li>
+            </ul>
+
+            <p style="margin-top: 24px; font-size: 14px; color: #64748b;">If you believe this suspension was made in error, please contact the barangay office immediately.</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Account suspension email sent:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Failed to send account suspension email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
+/**
+ * Send account reactivation email to resident
+ */
+const sendReactivationEmail = async (to, firstName = 'Resident') => {
+  const mailOptions = {
+    from: {
+      name: 'Barangay Bulua Portal',
+      address: process.env.GMAIL_USER,
+    },
+    to,
+    subject: 'Account Reactivated — Barangay Bulua',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8">
+        <style>
+          .container { max-width: 600px; margin: 0 auto; font-family: 'Inter', sans-serif; color: #1e293b; line-height: 1.6; }
+          .header { background: #10b981; color: white; padding: 32px 20px; text-align: center; border-radius: 16px 16px 0 0; }
+          .header .brand { font-size: 14px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.15em; margin-bottom: 8px; opacity: 0.9; }
+          .header h1 { margin: 0; font-size: 22px; font-weight: 800; }
+          .content { background: #ffffff; padding: 40px; border: 1px solid #e2e8f0; border-top: none; border-radius: 0 0 16px 16px; }
+          .info-card { background: #ecfdf5; border-left: 4px solid #10b981; padding: 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+          .footer { text-align: center; padding: 32px; color: #94a3b8; font-size: 12px; }
+          .section-title { font-weight: 700; margin: 20px 0 8px 0; color: #0f172a; font-size: 14px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="brand">Barangay Bulua</div>
+            <h1>Account Reactivated</h1>
+          </div>
+          <div class="content">
+            <p>Hello ${firstName},</p>
+            <p>Good news! Your account on the Barangay Bulua Online Appointment and Complaint System has been reactivated by the barangay admin.</p>
+            
+            <div class="info-card">
+              <p style="margin: 0; font-size: 13px; font-weight: 700; color: #065f46; text-transform: uppercase; letter-spacing: 0.05em;">Current Account Status</p>
+              <p style="margin: 4px 0 0 0; font-size: 20px; font-weight: 800; color: #065f46;">Active</p>
+            </div>
+
+            <div class="section-title">You can now:</div>
+            <ul style="margin: 0; padding-left: 20px; font-size: 14px; color: #475569;">
+              <li>Log in to your account normally</li>
+              <li>File complaints through the portal</li>
+              <li>Book appointments with the barangay</li>
+              <li>Track the status of your requests</li>
+            </ul>
+
+            <p style="margin-top: 24px; font-size: 14px; color: #64748b;">Please ensure that you follow the barangay portal guidelines to avoid future account issues.</p>
+            <p style="font-size: 14px; color: #64748b;">If you experience any difficulty logging in, please contact the barangay office for assistance.</p>
+            
+            <p style="margin-top: 24px; font-weight: 700; color: #0f172a;">Welcome back!</p>
+          </div>
+          <div class="footer">
+            <p>&copy; ${new Date().getFullYear()} Barangay Bulua. All rights reserved.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }
+
+  try {
+    const info = await transporter.sendMail(mailOptions)
+    console.log('Account reactivation email sent:', info.messageId)
+    return { success: true, messageId: info.messageId }
+  } catch (error) {
+    console.error('Failed to send account reactivation email:', error)
+    return { success: false, error: error.message }
+  }
+}
+
 module.exports = {
   verifyConnection,
   sendOTPEmail,
@@ -495,4 +655,6 @@ module.exports = {
   sendComplaintStatusEmail,
   sendAppointmentStatusEmail,
   sendPasswordResetOTPEmail,
+  sendSuspensionEmail,
+  sendReactivationEmail,
 }
