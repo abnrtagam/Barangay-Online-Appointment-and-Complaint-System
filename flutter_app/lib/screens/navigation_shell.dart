@@ -56,15 +56,30 @@ class _NavigationShellState extends State<NavigationShell> {
 
     try {
       final response = await ApiService.get(ApiConstants.checkStatus);
+      
+      // Case 1: Success check response
       if (response['success'] == true && response['data'] != null) {
         final status = response['data']['status'];
         if (status == 'suspended') {
+          _handleSuspension();
+          return;
+        }
+      }
+      
+      // Case 2: Auth middleware safety net response (blocked with 403 / suspended payload)
+      if (response['success'] == false) {
+        final data = response['data'];
+        final isSuspended = (data != null && data['suspended'] == true) || 
+                            response['statusCode'] == 403 || 
+                            (response['message'] != null && 
+                             response['message'].toString().toLowerCase().contains('suspend'));
+        if (isSuspended) {
           _handleSuspension();
         }
       }
     } catch (e) {
       final errorStr = e.toString();
-      if (errorStr.contains('suspended') || errorStr.contains('Suspended') || errorStr.contains('403')) {
+      if (errorStr.toLowerCase().contains('suspended') || errorStr.contains('403')) {
         _handleSuspension();
       }
     }

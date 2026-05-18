@@ -15,6 +15,7 @@ class AuthProvider with ChangeNotifier {
   String? _token;
   bool _isLoggedIn = false;
   bool _isLoading = false;
+  bool _isInitializing = true;
   String? _errorMessage;
 
   // Getters - other parts of the app read these
@@ -22,6 +23,7 @@ class AuthProvider with ChangeNotifier {
   String? get token => _token;
   bool get isLoggedIn => _isLoggedIn;
   bool get isLoading => _isLoading;
+  bool get isInitializing => _isInitializing;
   String? get errorMessage => _errorMessage;
 
   // Check if user is admin
@@ -31,10 +33,15 @@ class AuthProvider with ChangeNotifier {
   // Initialize provider - restore login if token exists
   Future<void> initializeAuth() async {
     // 1. Defensive Check: If already logged in (from a recent login call), stop.
-    if (_isLoggedIn) return;
+    if (_isLoggedIn) {
+      _isInitializing = false;
+      notifyListeners();
+      return;
+    }
 
     print('DEBUG: initializeAuth started. Current isLoggedIn: $_isLoggedIn');
     _isLoading = true;
+    _isInitializing = true;
     notifyListeners();
 
     try {
@@ -52,6 +59,8 @@ class AuthProvider with ChangeNotifier {
 
       if (_isLoggedIn) {
         print('DEBUG: initializeAuth exiting early - user already logged in.');
+        _isInitializing = false;
+        notifyListeners();
         return;
       }
 
@@ -71,7 +80,6 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {
       print('Auth Initialization Error: $e');
-      // If error occurs, only clear if we aren't already logged in
       if (!_isLoggedIn) {
         _token = null;
         _user = null;
@@ -79,6 +87,7 @@ class AuthProvider with ChangeNotifier {
       }
     } finally {
       _isLoading = false;
+      _isInitializing = false;
       notifyListeners();
     }
   }

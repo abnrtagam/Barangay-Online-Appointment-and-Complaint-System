@@ -48,10 +48,10 @@ class AppRoot extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(
       builder: (context, authProvider, _) {
-        print('DEBUG: AppRoot build. isLoggedIn: ${authProvider.isLoggedIn}, isLoading: ${authProvider.isLoading}');
+        print('DEBUG: AppRoot build. isLoggedIn: ${authProvider.isLoggedIn}, isInitializing: ${authProvider.isInitializing}');
         
-        // If the provider says we're loading and we aren't logged in yet, show splash
-        if (authProvider.isLoading && !authProvider.isLoggedIn) {
+        // Only show splash screen during initial session setup
+        if (authProvider.isInitializing) {
           return const SplashScreen();
         }
 
