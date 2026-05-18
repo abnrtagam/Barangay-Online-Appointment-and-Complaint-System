@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect } from 'react'
+import { Link, useNavigate, useLocation } from 'react-router-dom'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
 import { 
@@ -8,9 +8,20 @@ import {
 
 export default function ResidentLogin() {
   const navigate = useNavigate()
+  const { search } = useLocation()
   const [form, setForm] = useState({ email: '', password: '' })
   const [alert, setAlert] = useState(null)
   const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    const params = new URLSearchParams(search)
+    if (params.get('suspended') === 'true') {
+      setAlert({
+        type: 'error',
+        message: 'Your account has been suspended. Contact Barangay Bulua for assistance.'
+      })
+    }
+  }, [search])
 
   const handleChange = e => setForm(p => ({ ...p, [e.target.name]: e.target.value }))
 

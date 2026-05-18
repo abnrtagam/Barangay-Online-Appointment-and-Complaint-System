@@ -10,6 +10,8 @@ import 'forgot_password_screen.dart';
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
+  static bool showSuspendedSnackBar = false;
+
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -18,6 +20,23 @@ class _LoginScreenState extends State<LoginScreen> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _showPassword = false;
+
+  @override
+  void initState() {
+    super.initState();
+    if (LoginScreen.showSuspendedSnackBar) {
+      LoginScreen.showSuspendedSnackBar = false;
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Your account has been suspended. Contact Barangay Bulua for assistance.'),
+            backgroundColor: AppColors.danger,
+            duration: Duration(seconds: 5),
+          ),
+        );
+      });
+    }
+  }
 
   @override
   void dispose() {

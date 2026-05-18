@@ -10,6 +10,7 @@ class ApiConstants {
   static const String forgotPassword = '$baseUrl/auth/forgot-password';
   static const String resetPassword = '$baseUrl/auth/reset-password';
   static const String reactivate = '$baseUrl/auth/reactivate';
+  static const String checkStatus = '$baseUrl/auth/check-status';
 
   // Resident Endpoints
   static const String dashboardStats = '$baseUrl/residents/dashboard-stats';
