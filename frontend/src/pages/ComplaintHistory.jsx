@@ -5,7 +5,7 @@ import { StatusBadge, Modal } from '../components/DashboardCard'
 import StatusTimeline from '../components/StatusTimeline'
 import { FiEye, FiPlus, FiFilter } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
-import { uploadUrl } from '../utils/uploads'
+import ComplaintAttachment from '../components/ComplaintAttachment'
 
 export default function ComplaintHistory() {
   const [complaints, setComplaints] = useState([])
@@ -151,28 +151,22 @@ export default function ComplaintHistory() {
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Filed</span>
               <span>{formatDate(selected.created_at, { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
             </div>
-            <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 4 }}>{selected.subject}</div>
-            <div style={{ color: 'var(--gray-600)', marginBottom: 16, whiteSpace: 'pre-wrap' }}>{selected.details}</div>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16, alignItems: 'start' }}>
+              <div>
+                <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, marginBottom: 4 }}>{selected.subject}</div>
+                <div style={{ color: 'var(--gray-600)', whiteSpace: 'pre-wrap' }}>{selected.details}</div>
+              </div>
+              <ComplaintAttachment attachmentPath={selected.attachment_path} compact />
+            </div>
             {selected.admin_remarks && (
               <div style={{
                 background: 'var(--primary-50)', border: '1px solid var(--primary-200)',
-                borderRadius: 'var(--radius-md)', padding: '14px 16px',
+                borderRadius: 'var(--radius-md)', padding: '14px 16px', marginBottom: 16,
               }}>
                 <div style={{ fontFamily: 'var(--font-heading)', fontWeight: 700, fontSize: '.85rem', color: 'var(--primary-700)', marginBottom: 4 }}>
                   Admin Remarks
                 </div>
                 <div style={{ color: 'var(--gray-700)', fontSize: '.9rem' }}>{selected.admin_remarks}</div>
-              </div>
-            )}
-            {selected.attachment_path && (
-              <div style={{ marginTop: 14 }}>
-                <a
-                  href={uploadUrl(selected.attachment_path)}
-                  target="_blank" rel="noreferrer"
-                  className="btn btn-secondary btn-sm"
-                >
-                  View Attachment
-                </a>
               </div>
             )}
             {selected.history && (

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { StatusBadge, Modal, AlertMessage } from '../components/DashboardCard'
-import { FiEye, FiFilter, FiCheckCircle, FiX, FiCalendar, FiCheckSquare, FiAlertCircle } from 'react-icons/fi'
+import { FiEye, FiFilter, FiCheckCircle, FiX, FiCheckSquare, FiPaperclip } from 'react-icons/fi'
+import ComplaintAttachment from '../components/ComplaintAttachment'
 import { formatDate } from '../utils/date'
 
 const STATUS_OPTS = ['', 'Pending', 'Approved', 'Scheduled', 'Resolved', 'Rejected']
@@ -167,12 +168,12 @@ export default function ManageComplaints() {
               <thead>
                 <tr>
                   <th>#</th><th>Resident</th><th>Category</th><th>Subject</th>
-                  <th>Filed</th><th>Status</th><th>Actions</th>
+                  <th>Filed</th><th>Attachment</th><th>Status</th><th>Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {complaints.length === 0
-                  ? <tr><td colSpan={7} style={{ textAlign: 'center', color: 'var(--gray-400)', padding: 30 }}>No complaints found.</td></tr>
+                  ? <tr><td colSpan={8} style={{ textAlign: 'center', color: 'var(--gray-400)', padding: 30 }}>No complaints found.</td></tr>
                   : complaints.map((c, i) => {
                     if (!c) return null
                     return (
@@ -186,6 +187,18 @@ export default function ManageComplaints() {
                         </div>
                       </td>
                       <td style={{ fontSize: '.82rem', color: 'var(--gray-500)' }}>{formatDate(c.created_at)}</td>
+                      <td>
+                        {c.attachment_path ? (
+                          <span title="Has attachment" style={{
+                            display: 'inline-flex', alignItems: 'center', gap: 4,
+                            fontSize: '.78rem', fontWeight: 600, color: 'var(--primary-600)',
+                          }}>
+                            <FiPaperclip size={14} /> Yes
+                          </span>
+                        ) : (
+                          <span style={{ fontSize: '.78rem', color: 'var(--gray-400)' }}>—</span>
+                        )}
+                      </td>
                       <td><StatusBadge status={c.status}/></td>
                       <td>
                         <div style={{ display: 'flex', gap: 6 }}>
@@ -253,8 +266,21 @@ export default function ManageComplaints() {
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Category</span><span>{selected.category_name}</span>
               <span style={{ color: 'var(--gray-500)', fontWeight: 600 }}>Filed</span><span>{formatDate(selected.created_at)}</span>
             </div>
-            <div style={{ background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', padding: '12px 14px', marginBottom: 18, fontSize: '.88rem', color: 'var(--gray-700)', whiteSpace: 'pre-wrap' }}>
-              {selected.details}
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 18, alignItems: 'start' }}>
+              <div>
+                <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', marginBottom: 8 }}>
+                  Complaint details
+                </div>
+                <div style={{ background: 'var(--gray-50)', borderRadius: 'var(--radius-md)', padding: '12px 14px', fontSize: '.88rem', color: 'var(--gray-700)', whiteSpace: 'pre-wrap', minHeight: 80 }}>
+                  {selected.details}
+                </div>
+              </div>
+              <div>
+                <div style={{ fontSize: '.75rem', fontWeight: 700, color: 'var(--gray-500)', textTransform: 'uppercase', marginBottom: 8 }}>
+                  Resident attachment
+                </div>
+                <ComplaintAttachment attachmentPath={selected.attachment_path} compact />
+              </div>
             </div>
             <div style={{ marginBottom: 16, padding: 12, borderRadius: 'var(--radius-md)', background: 'var(--gray-50)', border: '1px solid var(--gray-150)', color: 'var(--gray-700)' }}>
               {isFinalized
