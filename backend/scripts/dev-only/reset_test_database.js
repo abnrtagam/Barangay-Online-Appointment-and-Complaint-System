@@ -1,8 +1,8 @@
 const fs = require('fs');
 const path = require('path');
-const db = require('./config/db');
+const db = require('../../config/db');
 
-const uploadsDir = path.join(__dirname, 'uploads');
+const uploadsDir = path.join(__dirname, '..', '..', 'uploads');
 
 async function tableExists(connection, tableName) {
   const [rows] = await connection.query(
@@ -62,6 +62,26 @@ async function runCleanup() {
       await connection.query('DELETE FROM reactivation_requests');
     }
 
+    if (await tableExists(connection, 'admin_activity_log')) {
+      await connection.query('DELETE FROM admin_activity_log');
+    }
+
+    if (await tableExists(connection, 'complaint_status_history')) {
+      await connection.query('DELETE FROM complaint_status_history');
+    }
+
+    if (await tableExists(connection, 'appointment_status_history')) {
+      await connection.query('DELETE FROM appointment_status_history');
+    }
+
+    if (await tableExists(connection, 'login_attempts')) {
+      await connection.query('DELETE FROM login_attempts');
+    }
+
+    if (await tableExists(connection, 'registration_attempts')) {
+      await connection.query('DELETE FROM registration_attempts');
+    }
+
     await connection.query('DELETE FROM users WHERE role = ?', ['resident']);
     await connection.query('DELETE FROM residents');
 
@@ -80,6 +100,21 @@ async function runCleanup() {
     }
     if (await tableExists(connection, 'reactivation_requests')) {
       await resetAutoIncrement(connection, 'reactivation_requests');
+    }
+    if (await tableExists(connection, 'admin_activity_log')) {
+      await resetAutoIncrement(connection, 'admin_activity_log');
+    }
+    if (await tableExists(connection, 'complaint_status_history')) {
+      await resetAutoIncrement(connection, 'complaint_status_history');
+    }
+    if (await tableExists(connection, 'appointment_status_history')) {
+      await resetAutoIncrement(connection, 'appointment_status_history');
+    }
+    if (await tableExists(connection, 'login_attempts')) {
+      await resetAutoIncrement(connection, 'login_attempts');
+    }
+    if (await tableExists(connection, 'registration_attempts')) {
+      await resetAutoIncrement(connection, 'registration_attempts');
     }
     await resetAutoIncrement(connection, 'residents');
     await resetAutoIncrement(connection, 'users');

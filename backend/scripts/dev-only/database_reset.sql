@@ -9,6 +9,12 @@ DELETE FROM complaints;
 DELETE FROM appointments;
 DELETE FROM announcements;
 DELETE FROM verification_notes;
+DELETE FROM reactivation_requests;
+DELETE FROM admin_activity_log;
+DELETE FROM complaint_status_history;
+DELETE FROM appointment_status_history;
+DELETE FROM login_attempts;
+DELETE FROM registration_attempts;
 DELETE FROM users WHERE role = 'resident';
 DELETE FROM residents;
 
@@ -21,6 +27,12 @@ ALTER TABLE complaints AUTO_INCREMENT = 1;
 ALTER TABLE appointments AUTO_INCREMENT = 1;
 ALTER TABLE announcements AUTO_INCREMENT = 1;
 ALTER TABLE verification_notes AUTO_INCREMENT = 1;
+ALTER TABLE reactivation_requests AUTO_INCREMENT = 1;
+ALTER TABLE admin_activity_log AUTO_INCREMENT = 1;
+ALTER TABLE complaint_status_history AUTO_INCREMENT = 1;
+ALTER TABLE appointment_status_history AUTO_INCREMENT = 1;
+ALTER TABLE login_attempts AUTO_INCREMENT = 1;
+ALTER TABLE registration_attempts AUTO_INCREMENT = 1;
 ALTER TABLE residents AUTO_INCREMENT = 1;
 
 -- Preserve admin users, but reset the next available user ID
