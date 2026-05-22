@@ -1,5 +1,4 @@
 # Barangay Bulua Online Appointment and Complaint System
-## Capstone Project Manuscript
 
 **Project Context:** Barangay Bulua, Cagayan de Oro City
 
