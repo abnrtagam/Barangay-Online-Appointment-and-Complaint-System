@@ -54,11 +54,25 @@ The system does not handle financial transactions, digital payment processing fo
 
 ## 5. System Feature
 
-The platform is engineered with several advanced technical and operational features:
+The platform provides dedicated functionalities tailored for both administrators and residents, supported by advanced technical features.
 
-* **Real-Time Account Suspension:** When an administrator suspends a resident, a background status check detects the change. The system forces a logout on both the web portal and mobile app within 30 seconds, immediately cutting off the user's access and closing the session persistence security gap.
-* **24-Hour Cancellation Policy:** Residents can only cancel their appointments if the scheduled date is at least 24 hours away. The system uses the secure server clock to validate this rule, preventing manipulation from the user's device clock.
-* **Administrative Audit Trail:** Every significant action taken by an admin (approving a user, updating a complaint, changing a password) is permanently recorded with the admin's identity, action type, and exact timestamp. This log cannot be modified.
+**Resident Features (Mobile Application):**
+* Account registration with secure OTP email verification.
+* Submission of complaints with photographic attachments.
+* Calendar-based booking of barangay hall appointments.
+* A **24-Hour Cancellation Policy** that allows residents to cancel appointments only if the scheduled date is at least 24 hours away.
+* Real-time tracking of complaint and appointment statuses through an interactive timeline.
+
+**Administrator Features (Web Dashboard):**
+* Review and verification of resident identity documents for account approval.
+* Centralized management of complaint workflows (Pending -> Approved -> Resolved) and appointment scheduling.
+* Live dashboard feeds displaying incoming resident submissions and real-time statistical analytics.
+* Manual suspension or reactivation of resident accounts.
+* Generation and export of CSV reports for barangay operations.
+
+**Advanced System-Wide Features:**
+* **Real-Time Account Suspension:** When an administrator suspends a resident, a background status check forces a logout on both the web portal and mobile app within 30 seconds, immediately cutting off the user's access.
+* **Administrative Audit Trail:** Every significant action taken by an admin (approving a user, updating a complaint, changing a password) is permanently recorded with the admin's identity, action type, and exact timestamp.
 * **Multi-Layered Security:**
   * **Brute-Force Protection:** A global rate limiter is applied to endpoints, and a stateful login lock blocks accounts for 15 minutes after 5 consecutive failed login attempts.
   * **Helmet & XSS-Clean:** HTTP security headers protect the web dashboard from clickjacking, while input sanitization scrubs malicious scripts from user submissions.
