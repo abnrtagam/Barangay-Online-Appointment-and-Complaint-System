@@ -1,5 +1,6 @@
 const db = require('../config/db')
 const emailService = require('../services/emailService')
+const { logActivity } = require('./activityLogController')
 
 /**
  * Get all pending resident accounts for verification
@@ -147,6 +148,15 @@ exports.approveAccount = async (req, res) => {
       [id, adminId, notes || 'Account approved']
     )
 
+    // Log admin activity
+    await logActivity(
+      adminId,
+      'verification',
+      'resident',
+      id,
+      `Approved account for resident ${user.first_name} ${user.last_name}`
+    )
+
     // Send approval email
     await emailService.sendApprovalEmail(user.email, user.first_name, true)
 
@@ -201,6 +211,15 @@ exports.rejectAccount = async (req, res) => {
       [id, adminId, notes]
     )
 
+    // Log admin activity
+    await logActivity(
+      adminId,
+      'verification',
+      'resident',
+      id,
+      `Rejected account for resident ${user.first_name} ${user.last_name}`
+    )
+
     // Send rejection email
     await emailService.sendApprovalEmail(user.email, user.first_name, false)
 
@@ -235,7 +254,7 @@ exports.suspendAccount = async (req, res) => {
     await connection.beginTransaction()
 
     const [users] = await connection.query(
-      'SELECT first_name, email, status FROM users WHERE id = ? AND role = "resident"',
+      'SELECT first_name, last_name, email, status FROM users WHERE id = ? AND role = "resident"',
       [id]
     )
 
@@ -261,6 +280,15 @@ exports.suspendAccount = async (req, res) => {
     )
 
     await connection.commit()
+
+    // Log admin activity
+    await logActivity(
+      adminId,
+      'verification',
+      'resident',
+      id,
+      `Suspended account for resident ${users[0].first_name} ${users[0].last_name}`
+    )
 
     // Send suspension email asynchronously and handle errors gracefully
     emailService.sendSuspensionEmail(users[0].email, users[0].first_name).catch(err => {
@@ -346,7 +374,7 @@ exports.reactivateAccount = async (req, res) => {
     await connection.beginTransaction()
 
     const [users] = await connection.query(
-      'SELECT first_name, email, status FROM users WHERE id = ? AND role = "resident"',
+      'SELECT first_name, last_name, email, status FROM users WHERE id = ? AND role = "resident"',
       [id]
     )
 
@@ -375,6 +403,15 @@ exports.reactivateAccount = async (req, res) => {
     )
 
     await connection.commit()
+
+    // Log admin activity
+    await logActivity(
+      adminId,
+      'verification',
+      'resident',
+      id,
+      `Reactivated account for resident ${users[0].first_name} ${users[0].last_name}`
+    )
 
     // Send reactivation email asynchronously and handle errors gracefully
     emailService.sendReactivationEmail(users[0].email, users[0].first_name).catch(err => {

@@ -221,9 +221,10 @@ const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'y
     `
   } else if (normalizedStatus === 'rejected') {
     guidelinesHtml = `
-      <li>Your complaint has been reviewed but could not be processed at this time</li>
-      <li>You may contact the barangay office directly for clarification on why it was rejected</li>
-      <li>You may file a new complaint if the issue persists</li>
+      <li>Your complaint has been carefully reviewed by the barangay administration</li>
+      <li>If a reason was provided by the administrator, it is shown in the <strong>Admin Remarks</strong> section above</li>
+      <li>Visit the Barangay Hall (Mon–Fri, 8:00 AM–5:00 PM) if you need personal clarification</li>
+      <li>You may file a new complaint if the issue persists or you have additional evidence to submit</li>
     `
   } else if (normalizedStatus === 'resolved') {
     guidelinesHtml = `
@@ -273,7 +274,10 @@ const sendComplaintStatusEmail = async (to, firstName = 'Resident', subject = 'y
             ${status.toLowerCase() === 'resolved' 
               ? `<p>Your complaint regarding <strong>"${subject}"</strong> has been resolved by the barangay administration.</p>` 
               : status.toLowerCase() === 'rejected'
-              ? `<p>Your request regarding <strong>"${subject}"</strong> has been rejected.${adminRemarks ? ' Reason: ' + adminRemarks : ''}</p>`
+              ? `
+                <p>We regret to inform you that your complaint regarding <strong>"${subject}"</strong> has been <strong style="color:#dc2626;">rejected</strong> by the barangay administration.</p>
+                ${!adminRemarks ? `<p style="font-size:13px;color:#64748b;background:#f8fafc;border-radius:8px;padding:12px 16px;border:1px solid #e2e8f0;">ℹ️ No specific reason was provided by the administrator. Please visit the Barangay Hall (Mon–Fri, 8:00 AM–5:00 PM) or contact the office directly for clarification.</p>` : ''}
+              `
               : `<p>We are writing to inform you that the status of your complaint regarding <strong>"${subject}"</strong> has been updated by the Barangay Administration.</p>`
             }
             
@@ -336,11 +340,27 @@ const sendAppointmentStatusEmail = async (to, firstName = 'Resident', appointmen
     introMessage = `<p>Your appointment on <strong>${appointmentDate} at ${timeSlot}</strong> has been successfully completed.</p>`
     extraMessage = `<p style="margin:0;">Thank you for visiting Barangay Bulua. If you have further concerns, please file a new request through the portal.</p>`
   } else if (s === 'rejected') {
-    introMessage = `<p>Your appointment on <strong>${appointmentDate} at ${timeSlot}</strong> could not be accommodated.</p>`
-    extraMessage = `<p style="margin:0;">Please contact the barangay office for assistance.</p>`
+    introMessage = `<p>We regret to inform you that your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been <strong style="color:#dc2626;">rejected</strong> by the barangay administration.</p>
+      ${!adminRemarks ? `<p style="font-size:13px;color:#64748b;background:#f8fafc;border-radius:8px;padding:12px 16px;border:1px solid #e2e8f0;">ℹ️ No specific reason was provided. Please contact the barangay office for clarification.</p>` : ''}`
+    extraMessage = `
+      <div style="background:#fef2f2;border-left:4px solid #dc2626;padding:20px;border-radius:0 8px 8px 0;margin-top:8px;">
+        <p style="margin:0 0 10px;font-weight:700;color:#991b1b;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;">What you can do next:</p>
+        <ul style="margin:0;padding-left:20px;font-size:13px;color:#7f1d1d;line-height:1.8;">
+          <li>Book a new appointment through the portal for a different available date and time</li>
+          <li>Visit the Barangay Hall in person during office hours (Mon–Fri, 8:00 AM–5:00 PM)</li>
+          <li>Contact the barangay office directly to understand the reason for rejection and how to proceed</li>
+        </ul>
+      </div>`
   } else if (s === 'cancelled') {
-    introMessage = `<p>Your appointment on <strong>${appointmentDate} at ${timeSlot}</strong> has been cancelled.</p>`
-    extraMessage = `<p style="margin:0;">Book a new appointment if you wish to reschedule.</p>`
+    introMessage = `<p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been <strong style="color:#b45309;">cancelled</strong>.</p>`
+    extraMessage = `
+      <div style="background:#fffbeb;border-left:4px solid #f59e0b;padding:20px;border-radius:0 8px 8px 0;margin-top:8px;">
+        <p style="margin:0 0 10px;font-weight:700;color:#92400e;font-size:13px;text-transform:uppercase;letter-spacing:0.05em;">Need to reschedule?</p>
+        <ul style="margin:0;padding-left:20px;font-size:13px;color:#78350f;line-height:1.8;">
+          <li>Log in to the portal and book a new appointment at your preferred date and time</li>
+          <li>If you need urgent assistance, visit the Barangay Hall during office hours (Mon–Fri, 8:00 AM–5:00 PM)</li>
+        </ul>
+      </div>`
   } else {
     introMessage = `<p>Your appointment on <strong>${appointmentDate}</strong> at <strong>${timeSlot}</strong> has been updated.</p>`
   }
