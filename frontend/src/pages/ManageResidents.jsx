@@ -77,12 +77,12 @@ export default function ManageResidents() {
 
   const handleSearch = (e) => {
     e.preventDefault()
-    load(search, zone)
+    load(1, search, zone)
   }
 
   const handleZoneChange = (newZone) => {
     setZone(newZone)
-    load(search, newZone)
+    load(1, search, newZone)
   }
 
   return (
