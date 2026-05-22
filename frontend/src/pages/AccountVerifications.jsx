@@ -3,6 +3,7 @@ import axios from 'axios'
 import { DashboardCard, AlertMessage } from '../components/DashboardCard'
 import { FiCheckCircle, FiX, FiEye, FiClock, FiUser, FiMail, FiPhone, FiMapPin, FiFileText, FiRefreshCw } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
+import { uploadUrl } from '../utils/uploads'
 
 export default function AccountVerifications() {
   const [accounts, setAccounts] = useState([])
@@ -19,7 +20,6 @@ export default function AccountVerifications() {
   const [viewingImage, setViewingImage] = useState(null)
 
   const token = localStorage.getItem('admin_token')
-  const API_BASE = 'http://localhost:5000'
 
   const isNotesValid = notes.trim().length >= 10
 
@@ -214,9 +214,7 @@ export default function AccountVerifications() {
   }
 
   const viewDocument = (filename) => {
-    // FIXED: Properly construct the file URL to backend uploads directory
-    const imageUrl = `${API_BASE}/uploads/${filename}`
-    setViewingImage(imageUrl)
+    setViewingImage(uploadUrl(filename))
   }
 
   return (

@@ -5,6 +5,7 @@ import { StatusBadge, Modal } from '../components/DashboardCard'
 import StatusTimeline from '../components/StatusTimeline'
 import { FiEye, FiPlus, FiFilter } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
+import { uploadUrl } from '../utils/uploads'
 
 export default function ComplaintHistory() {
   const [complaints, setComplaints] = useState([])
@@ -166,7 +167,7 @@ export default function ComplaintHistory() {
             {selected.attachment_path && (
               <div style={{ marginTop: 14 }}>
                 <a
-                  href={`http://localhost:5000/uploads/${selected.attachment_path}`}
+                  href={uploadUrl(selected.attachment_path)}
                   target="_blank" rel="noreferrer"
                   className="btn btn-secondary btn-sm"
                 >
