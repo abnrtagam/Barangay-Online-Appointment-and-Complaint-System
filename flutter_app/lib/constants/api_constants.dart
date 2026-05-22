@@ -1,6 +1,9 @@
 class ApiConstants {
-  // TO TEST ON REAL DEVICE: Change '10.0.2.2' to your PC's IP address (e.g. 192.168.x.x)
-  static const String baseUrl = 'http://192.168.100.3:5000/api';
+  // Android emulator → host machine. Physical device: flutter run --dart-define=API_BASE_URL=http://YOUR_PC_IP:5000/api
+  static const String baseUrl = String.fromEnvironment(
+    'API_BASE_URL',
+    defaultValue: 'http://10.0.2.2:5000/api',
+  );
 
   // Authentication Endpoints
   static const String register = '$baseUrl/auth/register';

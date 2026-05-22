@@ -39,7 +39,7 @@ class ApiService {
   }) async {
     try {
       final token = await StorageService.getToken();
-      final headers = _buildHeaders(token);
+      final headers = _buildHeaders(token, jsonBody: !isFormData);
 
       late http.Response response;
 
@@ -143,11 +143,13 @@ class ApiService {
 
   // Build headers with JWT token
   // This is like showing your VIP pass to the backend
-  static Map<String, String> _buildHeaders(String? token) {
-    final headers = {
-      'Content-Type': 'application/json',
+  static Map<String, String> _buildHeaders(String? token, {bool jsonBody = true}) {
+    final headers = <String, String>{
       'Accept': 'application/json',
     };
+    if (jsonBody) {
+      headers['Content-Type'] = 'application/json';
+    }
 
     // If we have a token, add it to the Authorization header
     if (token != null && token.isNotEmpty) {
