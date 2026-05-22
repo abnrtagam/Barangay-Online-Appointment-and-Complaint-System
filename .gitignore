@@ -7,6 +7,7 @@ backend/node_modules/
 dist/
 build/
 frontend/dist/
+frontend/.vite/
 backend/dist/
 
 # IDEs and Editors
@@ -20,6 +21,7 @@ backend/dist/
 
 # Environment variables
 .env
+backend/.env
 .env.local
 .env.development.local
 .env.test.local
@@ -46,7 +48,11 @@ backend/scripts/temp/
 .packages
 .pub-cache/
 .pub/
-/build/
+flutter_app/build/
+**/generated_plugin_registrant.cc
+**/generated_plugin_registrant.h
+**/generated_plugins.cmake
+**/GeneratedPluginRegistrant.swift
 ios/Flutter/Generated.xcconfig
 ios/Flutter/flutter_export_environment.sh
 ios/Flutter/Flutter.podspec
