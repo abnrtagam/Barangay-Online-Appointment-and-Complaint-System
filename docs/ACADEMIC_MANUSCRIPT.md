@@ -9,7 +9,7 @@
 
 Barangay Bulua is one of the busiest barangays in Cagayan de Oro City. Its administrative office processes a high volume of complaints, document requests, and appointment scheduling on a daily basis. Traditionally, these processes are handled through manual paperwork, requiring residents to physically visit the barangay hall, wait in long queues, and fill out physical forms. Records are stored in filing cabinets, making them difficult to search, track, or update efficiently.
 
-To address these inefficiencies, the **Barangay Bulua Online Appointment and Complaint System** was developed. It is a multi-platform digital service portal that replaces the manual operations of the barangay. Residents use a mobile application (built with Flutter) to file complaints and book appointments remotely, while administrators manage everything through a centralized web dashboard (built with React). A secure Node.js backend coordinates all data, providing a modernized, transparent, and accountable digital governance solution.
+To address these inefficiencies, the **Barangay Bulua Online Appointment and Complaint System** was developed. It is a multi-platform digital service portal that replaces the manual operations of the barangay. Residents can use either a mobile application (built with Flutter) or a web portal (built with React) to file complaints and book appointments remotely, while administrators manage everything through a centralized web dashboard. A secure Node.js backend coordinates all data, providing a modernized, transparent, and accountable digital governance solution.
 
 ---
 
@@ -56,7 +56,7 @@ The system does not handle financial transactions, digital payment processing fo
 
 The platform provides dedicated functionalities tailored for both administrators and residents, supported by advanced technical features.
 
-**Resident Features (Mobile Application):**
+**Resident Features (Mobile Application & Web Portal):**
 * Account registration with secure OTP email verification.
 * Submission of complaints with photographic attachments.
 * Calendar-based booking of barangay hall appointments.
@@ -97,7 +97,7 @@ The system uses a highly normalized **MySQL 8** relational database to ensure da
 
 ## 7. User Manual
 
-### For Residents (Mobile Application)
+### For Residents (Mobile Application & Web Portal)
 1. **Registration:** Open the app and fill out the registration form. Upload a valid ID. Check your email for a 6-digit OTP code to verify your account.
 2. **Login:** Wait for an administrator to approve your account. Once approved, log in using your email and password.
 3. **Filing a Complaint:** Navigate to the "Complaints" tab. Click the (+) button, fill in the incident details, attach a photo if necessary, and submit. You can track the status (Pending -> Approved -> Resolved) on your dashboard.
