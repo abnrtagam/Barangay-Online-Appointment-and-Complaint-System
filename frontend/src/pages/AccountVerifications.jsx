@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { DashboardCard, AlertMessage } from '../components/DashboardCard'
-import { FiCheck, FiX, FiEye, FiClock, FiUser, FiMail, FiPhone, FiMapPin, FiFileText, FiRefreshCw } from 'react-icons/fi'
+import { FiCheckCircle, FiX, FiEye, FiClock, FiUser, FiMail, FiPhone, FiMapPin, FiFileText, FiRefreshCw } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
 
 export default function AccountVerifications() {
@@ -189,7 +189,7 @@ export default function AccountVerifications() {
   const getStatusBadge = (status) => {
     const styles = {
       pending: { bg: 'var(--amber-100)', color: 'var(--amber-700)', icon: FiClock },
-      approved: { bg: 'var(--green-100)', color: 'var(--green-700)', icon: FiCheck },
+      approved: { bg: 'var(--green-100)', color: 'var(--green-700)', icon: FiCheckCircle },
       rejected: { bg: 'var(--red-100)', color: 'var(--red-700)', icon: FiX },
       suspended: { bg: 'var(--gray-100)', color: 'var(--gray-700)', icon: FiX },
     }
@@ -245,7 +245,7 @@ export default function AccountVerifications() {
       {stats && (
         <div className="grid-4" style={{ marginBottom: 24 }}>
           <DashboardCard title="Pending" value={stats.pending} icon={<FiClock/>} color="warning" />
-          <DashboardCard title="Approved" value={stats.approved} icon={<FiCheck/>} color="green" />
+          <DashboardCard title="Approved" value={stats.approved} icon={<FiCheckCircle/>} color="green" />
           <DashboardCard title="Rejected" value={stats.rejected} icon={<FiX/>} color="red" />
           <DashboardCard title="Total Accounts" value={stats.total} icon={<FiUser/>} color="blue" />
         </div>
@@ -287,7 +287,7 @@ export default function AccountVerifications() {
                     onClick={() => handleReactivate(req.user_id)}
                     disabled={actionLoading}
                   >
-                    <FiCheck size={16} /> Reactivate
+                    <FiCheckCircle size={16} /> Reactivate
                   </button>
                 </div>
               ))}
@@ -368,7 +368,7 @@ export default function AccountVerifications() {
                       <td>
                         {account.email_verified ? (
                           <span style={{ color: 'var(--green-600)', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                            <FiCheck size={14} /> Verified
+                            <FiCheckCircle size={14} /> Verified
                           </span>
                         ) : (
                           <span style={{ color: 'var(--amber-600)', fontSize: '0.85rem', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
@@ -530,7 +530,7 @@ export default function AccountVerifications() {
                       onClick={() => handleApprove(selectedAccount.id)}
                       disabled={actionLoading}
                     >
-                      <FiCheck size={18} /> {actionLoading ? 'Processing...' : 'Approve Account'}
+                      <FiCheckCircle size={18} /> {actionLoading ? 'Processing...' : 'Approve Account'}
                     </button>
                     <button
                       className="btn btn-danger"
@@ -556,7 +556,7 @@ export default function AccountVerifications() {
                     onClick={() => handleReactivate(selectedAccount.id)}
                     disabled={actionLoading}
                   >
-                    <FiCheck size={18} /> {actionLoading ? 'Processing...' : 'Reactivate Account'}
+                    <FiCheckCircle size={18} /> {actionLoading ? 'Processing...' : 'Reactivate Account'}
                   </button>
                 )}
               </div>

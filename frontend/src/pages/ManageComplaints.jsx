@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { StatusBadge, Modal, AlertMessage } from '../components/DashboardCard'
-import { FiEye, FiFilter, FiCheck, FiX, FiCalendar, FiCheckSquare, FiAlertCircle } from 'react-icons/fi'
+import { FiEye, FiFilter, FiCheckCircle, FiX, FiCalendar, FiCheckSquare, FiAlertCircle } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
 
 const STATUS_OPTS = ['', 'Pending', 'Approved', 'Scheduled', 'Resolved', 'Rejected']
@@ -136,7 +136,7 @@ export default function ManageComplaints() {
           <div className="filter-bar">
             <div className="form-group">
               <label className="form-label" style={{ fontWeight: 700, color: 'var(--gray-600)', fontSize: '.75rem', textTransform: 'uppercase' }}>Status</label>
-              <select className="form-control" style={{ borderRadius: '8px', border: '1px solid var(--gray-200)', background: 'var(--gray-50)' }} value={filter.status} onChange={e => setFilter(p => ({ ...p, status: e.target.value }))}>
+              <select className="form-control" style={{ borderRadius: '8px', border: '1px solid var(--gray-200)', backgroundColor: 'var(--gray-50)' }} value={filter.status} onChange={e => setFilter(p => ({ ...p, status: e.target.value }))}>
                 {STATUS_OPTS.map(s => <option key={s} value={s}>{s || 'All Statuses'}</option>)}
               </select>
             </div>
@@ -191,7 +191,7 @@ export default function ManageComplaints() {
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button className="btn btn-secondary btn-sm" onClick={() => openDetail(c)} title="View/Edit"><FiEye/></button>
                           {c.status === 'Pending' && <>
-                            <button className="btn btn-success btn-sm" onClick={() => quickAction(c.id, 'Approved')} title="Approve"><FiCheck/></button>
+                            <button className="btn btn-success btn-sm" onClick={() => quickAction(c.id, 'Approved')} title="Approve"><FiCheckCircle/></button>
                             <button className="btn btn-danger btn-sm" onClick={() => quickAction(c.id, 'Rejected')} title="Reject"><FiX/></button>
                           </>}
                           {c.status === 'Approved' && (
@@ -268,7 +268,7 @@ export default function ManageComplaints() {
                 value={newStatus}
                 onChange={e => setNewStatus(e.target.value)}
                 disabled={isFinalized}
-                style={isFinalized ? { background: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
+                style={isFinalized ? { backgroundColor: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
               >
                 {(COMPLAINT_TRANSITIONS[selected.status] || []).map(s => <option key={s} value={s}>{s}</option>)}
               </select>

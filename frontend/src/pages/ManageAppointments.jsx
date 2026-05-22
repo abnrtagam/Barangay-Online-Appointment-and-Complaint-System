@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { StatusBadge, Modal, AlertMessage } from '../components/DashboardCard'
-import { FiEye, FiCheck, FiX, FiCalendar } from 'react-icons/fi'
+import { FiEye, FiCheckCircle, FiX, FiCalendar } from 'react-icons/fi'
 import { formatDate } from '../utils/date'
 
 const APPT_STATUSES = ['Pending', 'Approved', 'Completed', 'Cancelled', 'Rejected']
@@ -132,7 +132,7 @@ export default function ManageAppointments() {
           <div className="filter-bar">
             <div className="form-group">
               <label className="form-label" style={{ fontWeight: 700, color: 'var(--gray-600)', fontSize: '.75rem', textTransform: 'uppercase' }}>Status</label>
-              <select className="form-control" style={{ borderRadius: '8px', border: '1px solid var(--gray-200)', background: 'var(--gray-50)' }} value={filter.status} onChange={e => setFilter(p => ({ ...p, status: e.target.value }))}>
+              <select className="form-control" style={{ borderRadius: '8px', border: '1px solid var(--gray-200)', backgroundColor: 'var(--gray-50)' }} value={filter.status} onChange={e => setFilter(p => ({ ...p, status: e.target.value }))}>
                 <option value="">All Statuses</option>
                 {APPT_STATUSES.map(s => <option key={s}>{s}</option>)}
               </select>
@@ -170,7 +170,7 @@ export default function ManageAppointments() {
                         <div style={{ display: 'flex', gap: 6 }}>
                           <button className="btn btn-secondary btn-sm" onClick={() => openModal(a)}><FiEye/></button>
                           {a.status === 'Pending' && <>
-                            <button className="btn btn-success btn-sm" onClick={() => quick(a.id, 'Approved')}><FiCheck/></button>
+                            <button className="btn btn-success btn-sm" onClick={() => quick(a.id, 'Approved')}><FiCheckCircle/></button>
                             <button className="btn btn-danger btn-sm" onClick={() => quick(a.id, 'Rejected')}><FiX/></button>
                           </>}
                           {a.status === 'Approved' && (
@@ -242,7 +242,7 @@ export default function ManageAppointments() {
                 value={newStatus}
                 onChange={e => setNewStatus(e.target.value)}
                 disabled={isFinalized}
-                style={isFinalized ? { background: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
+                style={isFinalized ? { backgroundColor: 'var(--gray-100)', cursor: 'not-allowed' } : {}}
               >
                 {(APPT_TRANSITIONS[selected?.status] || []).map(s => <option key={s}>{s}</option>)}
               </select>

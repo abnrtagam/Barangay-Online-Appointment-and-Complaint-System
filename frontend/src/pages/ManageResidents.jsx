@@ -149,8 +149,8 @@ export default function ManageResidents() {
                   style={{ 
                     borderRadius: '8px', 
                     border: '1px solid var(--gray-200)', 
-                    background: 'var(--gray-50)',
-                    padding: '10px 16px',
+                    backgroundColor: 'var(--gray-50)',
+                    padding: '10px 40px 10px 16px',
                     fontSize: '0.9rem',
                     height: '42px'
                   }}

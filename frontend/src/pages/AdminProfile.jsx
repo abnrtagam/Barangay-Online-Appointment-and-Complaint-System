@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
-import { FiUser, FiLock, FiShield, FiCheck, FiEdit, FiSave } from 'react-icons/fi'
+import { FiUser, FiLock, FiShield, FiCheckCircle, FiEdit, FiSave } from 'react-icons/fi'
 
 export default function AdminProfile() {
   // ── State ──────────────────────────────────────────────────
@@ -245,7 +245,7 @@ export default function AdminProfile() {
                   <input className="form-control" type="password" name="confirm_password" value={passwordForm.confirm_password} onChange={handlePasswordChange} placeholder="Re-enter new password" />
                 </div>
                 <button type="submit" className="btn btn-primary" disabled={loading} style={{ width: '100%' }}>
-                  <FiCheck /> {loading ? 'Changing...' : 'Update Password'}
+                  <FiCheckCircle /> {loading ? 'Changing...' : 'Update Password'}
                 </button>
               </form>
 

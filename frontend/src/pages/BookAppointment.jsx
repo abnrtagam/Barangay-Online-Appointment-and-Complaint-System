@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
-import { FiCalendar, FiCheck, FiClock, FiSend } from 'react-icons/fi'
+import { FiCalendar, FiCheckCircle, FiClock, FiSend } from 'react-icons/fi'
 
 const TIME_SLOTS = [
   '8:00 AM', '8:30 AM', '9:00 AM', '9:30 AM',
@@ -287,11 +287,11 @@ export default function BookAppointment() {
                 gap: '8px',
                 color: 'var(--primary-700)'
               }}>
-                <FiCheck /> What to Bring
+                <FiCheckCircle /> What to Bring
               </h3>
               {['Valid government ID', 'Proof of residency', 'Supporting documents', 'Completed forms'].map(item => (
                 <div key={item} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 0', fontSize: '.88rem', color: 'var(--gray-600)' }}>
-                  <FiCheck size={14} color='var(--success)' />
+                  <FiCheckCircle size={14} color='var(--success)' />
                   <span>{item}</span>
                 </div>
               ))}

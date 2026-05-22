@@ -91,7 +91,7 @@ export default function AppointmentHistory() {
           <div className="filter-bar">
             <div className="form-group">
               <label className="form-label" style={{ fontWeight: 700, color: 'var(--gray-600)', fontSize: '.75rem', textTransform: 'uppercase' }}>Filter Status</label>
-              <select className="form-control" style={{ borderRadius: '8px', border: '1px solid var(--gray-200)', background: 'var(--gray-50)' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+              <select className="form-control" style={{ borderRadius: '8px', border: '1px solid var(--gray-200)', backgroundColor: 'var(--gray-50)' }} value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
                 {STATUS_OPTS.map(s => <option key={s} value={s}>{s || 'All Statuses'}</option>)}
               </select>
             </div>

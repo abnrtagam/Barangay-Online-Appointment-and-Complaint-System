@@ -74,7 +74,7 @@ export default function ActivityLog() {
           <FiFilter size={16} color="var(--gray-400)" />
           <select
             className="form-control"
-            style={{ maxWidth: 220, borderRadius: '8px', border: '1px solid var(--gray-200)', background: 'var(--gray-50)' }}
+            style={{ maxWidth: 220, borderRadius: '8px', border: '1px solid var(--gray-200)', backgroundColor: 'var(--gray-50)' }}
             value={filterType}
             onChange={e => setFilterType(e.target.value)}
           >

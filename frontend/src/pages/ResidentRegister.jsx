@@ -36,7 +36,64 @@ export default function ResidentRegister() {
   const handleSubmit = async e => {
     e.preventDefault()
     setErrors({})
+    setAlert(null)
     setLoading(true)
+
+    // Client-side validation
+    const newErrors = {}
+    if (!form.first_name.trim()) newErrors.first_name = 'First name is required.'
+    if (!form.last_name.trim()) newErrors.last_name = 'Last name is required.'
+    if (!form.dob) newErrors.dob = 'Date of birth is required.'
+    if (!form.gov_id_type) newErrors.gov_id_type = 'Government ID type is required.'
+    if (!form.gov_id_number.trim()) newErrors.gov_id_number = 'Government ID number is required.'
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!form.email.trim()) {
+      newErrors.email = 'Email address is required.'
+    } else if (!emailRegex.test(form.email)) {
+      newErrors.email = 'Invalid email format.'
+    }
+    
+    // Phone validation (Philippine format)
+    const phoneRegex = /^(09|\+639)\d{9}$/
+    if (!form.phone.trim()) {
+      newErrors.phone = 'Phone number is required.'
+    } else if (!phoneRegex.test(form.phone.replace(/\s/g, ''))) {
+      newErrors.phone = 'Invalid phone number format. Use 09XXXXXXXXX.'
+    }
+    
+    if (!form.address.trim()) newErrors.address = 'Home address is required.'
+    if (!form.zone) newErrors.zone = 'Zone is required.'
+    
+    // Password validation
+    if (!form.password) {
+      newErrors.password = 'Password is required.'
+    } else if (form.password.length < 5) {
+      newErrors.password = 'Password must be at least 5 characters.'
+    }
+    
+    if (!form.password_confirmation) {
+      newErrors.password_confirmation = 'Please confirm your password.'
+    } else if (form.password !== form.password_confirmation) {
+      newErrors.password_confirmation = 'Passwords do not match.'
+    }
+
+    // Document validation
+    if (documents.length === 0) {
+      setAlert({ type: 'error', message: 'Please upload at least one proof of residency document.' })
+      setLoading(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors)
+      setAlert({ type: 'error', message: 'Please correct the highlighted errors below.' })
+      setLoading(false)
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
 
     const formData = new FormData()
     Object.keys(form).forEach(key => formData.append(key, form[key]))
@@ -51,8 +108,11 @@ export default function ResidentRegister() {
       if (err.response?.data?.errors) {
         setErrors(err.response.data.errors)
       } else {
-        setAlert({ type: 'error', message: err.response?.data?.message || 'Registration failed.' })
+        const errorMsg = err.response?.data?.message || 
+          (err.request ? 'Connection to server failed. Please ensure the backend server is running.' : 'Registration failed.')
+        setAlert({ type: 'error', message: errorMsg })
       }
+      window.scrollTo({ top: 0, behavior: 'smooth' })
     } finally {
       setLoading(false)
     }
@@ -154,7 +214,7 @@ export default function ResidentRegister() {
               </div>
               <div className="form-group">
                 <label className="form-label">Government ID Type *</label>
-                <select className="form-select" name="gov_id_type" value={form.gov_id_type} onChange={handleChange} style={{ background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '40px', fontSize: '0.9rem' }}>
+                <select className="form-select" name="gov_id_type" value={form.gov_id_type} onChange={handleChange} style={{ backgroundColor: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '40px', fontSize: '0.9rem' }}>
 
 
                   <option value="">Select ID Type</option>
@@ -215,7 +275,7 @@ export default function ResidentRegister() {
                   name="zone" 
                   value={form.zone} 
                   onChange={handleChange} 
-                  style={{ background: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '40px', fontSize: '0.9rem' }}
+                  style={{ backgroundColor: 'var(--gray-50)', border: '1px solid var(--gray-200)', borderRadius: 12, height: '42px', paddingLeft: '14px', paddingRight: '40px', fontSize: '0.9rem' }}
 
 
 

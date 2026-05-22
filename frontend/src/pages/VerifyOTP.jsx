@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import axios from 'axios'
 import { AlertMessage } from '../components/DashboardCard'
-import { FiCheck } from 'react-icons/fi'
+import { FiCheckCircle } from 'react-icons/fi'
 
 export default function VerifyOTP() {
   const navigate = useNavigate()
@@ -210,7 +210,7 @@ export default function VerifyOTP() {
           <ul style={{ fontSize: 13, color: 'var(--gray-600)', lineHeight: 1.8, paddingLeft: 20 }}>
             {['Your email will be verified', 'Your account will be pending admin review', 'You will receive an email when approved', 'Then you can log in and access services'].map(item => (
               <li key={item} style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                <FiCheck size={14} style={{ color: 'var(--success)' }}/>
+                <FiCheckCircle size={14} style={{ color: 'var(--success)' }}/>
                 {item}
               </li>
             ))}
